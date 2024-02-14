@@ -7,9 +7,10 @@ from gymfc.envs.fc_env import FlightControlEnv
 import time
 from .rewards import RewardEnv
 
-class StepEnv(RewardEnv): 
-    def __init__(self, pulse_width = 1, max_rate = 100, state_fn = None,
-                 max_sim_time = 1 ):
+
+class StepEnv(RewardEnv):
+    def __init__(self, pulse_width=1, max_rate=100, state_fn=None,
+                 max_sim_time=1):
         """Create a reinforcement learning environment that generates step input
         setpoints. Technically this is a multi-axis singlet input, the
         terminology in this package needs to be updated to reflect flight test
@@ -32,7 +33,7 @@ class StepEnv(RewardEnv):
             max_sim_time: See BaseEnv
         """
 
-        super().__init__(max_sim_time = max_sim_time, state_fn = state_fn)
+        super().__init__(max_sim_time=max_sim_time, state_fn=state_fn)
 
         self.pulse_width = pulse_width
         self.max_rate = max_rate
@@ -41,7 +42,6 @@ class StepEnv(RewardEnv):
         self.outputs = []
         self.angular_rate_sp = np.zeros(3)
         self.next_pulse_time = 0.512
-
 
     def update_setpoint(self):
         if self.sim_time > self.next_pulse_time:
@@ -66,5 +66,3 @@ class StepEnv(RewardEnv):
     def sample_target(self):
         """Sample a random angular velocity setpoint """
         return self.np_random.normal(0, self.max_rate, size=3)
-
-

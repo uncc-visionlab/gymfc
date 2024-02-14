@@ -1,9 +1,10 @@
-"""Helper functions for plotting""" 
+"""Helper functions for plotting"""
 
 import matplotlib.pyplot as plt
 import math
 import logging
 import numpy as np
+
 
 def plot_rates(ax, t, pqr_desired, pqr_actual):
     """Plot angular rates where each axis is placed in its own Matplotlib
@@ -18,13 +19,12 @@ def plot_rates(ax, t, pqr_desired, pqr_actual):
             pitch and yaw axis.
     """
 
-
     unit_rotation = " (deg/s)"
     axis_label = ["p", "q", "r"]
     for i in range(len(ax)):
-        ax[i].plot(t, pqr_desired[:,i], '--', c='k', label="Desired")
-        ax[i].plot(t, pqr_actual[:,i], '-', c='b', label="Actual")
-        #ax[i].axhline(0, color="#AAAAAA")
+        ax[i].plot(t, pqr_desired[:, i], '--', c='k', label="Desired")
+        ax[i].plot(t, pqr_actual[:, i], '-', c='b', label="Actual")
+        # ax[i].axhline(0, color="#AAAAAA")
         ax[i].legend(loc="right")
         ax[i].grid(True)
         ax[i].set_ylabel(axis_label[i] + unit_rotation)
@@ -44,8 +44,7 @@ def plot_motor_rpms(ax, t, rpms, alpha=1.0):
 
     lines = ["-", "-.", ":", "--"]
     for i in range(4):
-        ax.plot(t, rpms[:,i], label="M{}".format(i+1), linestyle=lines[i], 
-                alpha=alpha)
+        ax.plot(t, rpms[:, i], label="M{}".format(i + 1), linestyle=lines[i], alpha=alpha)
 
     ax.legend(loc='upper right', ncol=4)
     ax.grid(True)
@@ -56,10 +55,7 @@ def plot_u(ax, t, u, alpha=1.0):
     ax.set_ylabel("u (\%)")
     lines = ["-", "-.", ":", "--"]
     for i in range(4):
-        ax.plot(t, u[:,i], label="M{}".format(i+1), linestyle=lines[i], 
-                alpha=alpha)
+        ax.plot(t, u[:, i], label="M{}".format(i + 1), linestyle=lines[i], alpha=alpha)
 
     ax.legend(loc='upper right', ncol=4)
     ax.grid(True)
-
-

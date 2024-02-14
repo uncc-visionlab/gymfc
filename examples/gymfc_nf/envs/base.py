@@ -34,7 +34,7 @@ class BaseEnv(FlightControlEnv, gym.Env):
         self._init()
 
         # Define the Gym action and observation spaces
-        self.action_space = spaces.Box(-np.ones(4), np.ones(4), dtype=np.float32)
+        self.action_space = spaces.Box(-np.ones(4), np.ones(4), dtype=np.float64)
         self.action = self.action_space.low 
         num_inputs = len(self.state_fn(self))
         self.observation_space = spaces.Box(-np.inf, np.inf, shape=(num_inputs,), 

@@ -17,17 +17,22 @@ import time
 import datetime
 import subprocess
 import numpy as np
+
 np.seterr('ignore')
 import gym
 import argparse
+
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
 
-tf.logging.set_verbosity(tf.logging.ERROR)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+
 def get_commit_hash():
     out = subprocess.run(["git", "describe", "--always"], stdout=subprocess.PIPE, encoding="utf-8")
     commit = out.stdout.strip()
     return commit
+
 
 def get_training_name():
     now = datetime.datetime.now()
@@ -39,7 +44,6 @@ def train(env, num_timesteps, seed, ckpt_dir=None,
           render=False, ckpt_freq=0, restore_dir=None, optim_stepsize=3e-4,
           schedule="linear", gamma=0.99, optim_epochs=10, optim_batchsize=64,
           horizon=2048):
-
     from baselines.common.fc_learning_utils import FlightLog
     from mpi4py import MPI
     from baselines import logger
@@ -57,9 +61,12 @@ def train(env, num_timesteps, seed, ckpt_dir=None,
         logger.configure(format_strs=[])
     logger.set_level(logger.DISABLED)
     workerseed = seed + 1000000 * rank
+    env.reset()
+
     def policy_fn(name, ob_space, ac_space):
         return MlpPolicy(name=name, ob_space=ob_space, ac_space=ac_space,
                          hid_size=32, num_hid_layers=2)
+
     if render:
         env.render()
     env.seed(workerseed)
@@ -72,10 +79,10 @@ def train(env, num_timesteps, seed, ckpt_dir=None,
                         optim_stepsize=optim_stepsize,
                         optim_batchsize=optim_batchsize,
                         gamma=0.99, lam=0.95, schedule=schedule,
-                        flight_log = None,
-                        ckpt_dir = ckpt_dir,
-                        restore_dir = restore_dir,
-                        save_timestep_period= ckpt_freq
+                        flight_log=None,
+                        ckpt_dir=ckpt_dir,
+                        restore_dir=restore_dir,
+                        save_timestep_period=ckpt_freq
                         )
     env.close()
 
@@ -98,16 +105,13 @@ class StepCallback:
         self.log_header = ["Ep",
                            "Done",
                            "Steps",
-
                            "r",
                            "-ydelta",
                            "+ymin",
                            "+/-e",
                            "-ahigh",
                            "-nothing",
-
                            "score",
-
                            "pMAE",
                            "qMAE",
                            "rMAE"]
@@ -115,16 +119,13 @@ class StepCallback:
         header_format = ["{:<5}",
                          "{:<7}",
                          "{:<15}",
-
                          "{:<15}",
                          "{:<15}",
                          "{:<15}",
                          "{:<15}",
                          "{:<15}",
                          "{:<15}",
-
                          "{:<10}",
-
                          "{:<7}",
                          "{:<7}",
                          "{:<7}"]
@@ -133,16 +134,13 @@ class StepCallback:
         log_format_entries = ["{:<5}",
                               "{:<7.0%}",
                               "{:<15}",
-
                               "{:<15.0f}",
                               "{:<15.0f}",
                               "{:<15.0f}",
                               "{:<15.0f}",
                               "{:<15.0f}",
                               "{:<15.0f}",
-
                               "{:<10.2f}",
-
                               "{:<7.0f}",
                               "{:<7.0f}",
                               "{:<7.0f}"]
@@ -154,10 +152,10 @@ class StepCallback:
         self.es.append(local.true_error)
         self.sps.append(local.angular_rate_sp)
 
-        assert local.ind_rewards[0] <= 0 # oscillation penalty
-        assert local.ind_rewards[1] >= 0 # min output reward
-        assert local.ind_rewards[3] <= 0 # over saturation penalty
-        assert local.ind_rewards[4] <= 0 # do nothing penalty
+        assert local.ind_rewards[0] <= 0  # oscillation penalty
+        assert local.ind_rewards[1] >= 0  # min output reward
+        assert local.ind_rewards[3] <= 0  # over saturation penalty
+        assert local.ind_rewards[4] <= 0  # do nothing penalty
 
         self.rewards.append(local.ind_rewards)
 
@@ -180,31 +178,30 @@ class StepCallback:
 
                 log_data = [
                     self.ep,
-                    self.steps_taken/self.timesteps,
+                    self.steps_taken / self.timesteps,
                     self.steps_taken,
-
                     np.mean(self.rewards),
                     ave_ind_rewards[0],
                     ave_ind_rewards[1],
                     ave_ind_rewards[2],
                     ave_ind_rewards[3],
                     ave_ind_rewards[4],
-
                     e_score,
                     mae_pqr[0],
                     mae_pqr[1],
                     mae_pqr[2]
                 ]
-                print (self.log_format.format(*log_data))
+                print(self.log_format.format(*log_data))
 
             self.ep += 1
             self.es = []
             self.sps = []
             self.rewards = []
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser("Synthesize a neuro-flight controller.")
-    parser.add_argument('--model_dir', default="../../models",
+    parser.add_argument('--model_dir', default="models",
                         help="Directory where models are saved to.")
     parser.add_argument('--twin', default="./gymfc_nf/twins/nf1/model.sdf",
                         help="File path of the aircraft digitial twin/model SDF.")
@@ -219,8 +216,8 @@ if __name__ == '__main__':
 
     seed = args.seed
     ckpt_dir = os.path.abspath(os.path.join(training_dir, "checkpoints"))
-    print ("Saving checkpoints to {}.".format(ckpt_dir))
-    render = False
+    print("Saving checkpoints to {}.".format(ckpt_dir))
+    render = True
     # How many timesteps until a checkpoint is saved
     ckpt_freq = args.ckpt_freq
 
@@ -235,13 +232,16 @@ if __name__ == '__main__':
 
     env_id = args.gym_id
     env = gym.make(env_id)
+
+
     def sample_noise(inst):
-        # Experiementally derived for MatekF7 FC, see Chapter 5 of "Flight
+        # Experimentally derived for MatekF7 FC, see Chapter 5 of "Flight
         # Controller Synthesis Via Deep Reinforcement Learning" for methodology.
         r_noise = inst.np_random.normal(-0.25465, 1.3373)
         p_noise = inst.np_random.normal(0.241961, 0.9990)
         y_noise = inst.np_random.normal(0.07906, 1.45168)
         return np.array([r_noise, p_noise, y_noise])
+
 
     env.sample_noise = sample_noise
     env.set_aircraft_model(args.twin)
@@ -249,8 +249,7 @@ if __name__ == '__main__':
     cb = StepCallback(timesteps)
     env.step_callback = cb.callback
 
-    train(env, timesteps, seed, ckpt_dir = ckpt_dir, render = render,
-          ckpt_freq = ckpt_freq, schedule = schedule, optim_stepsize = step_size,
-          horizon = horizon, optim_batchsize = batchsize, optim_epochs = epochs,
-          gamma = gamma)
-
+    train(env, timesteps, seed, ckpt_dir=ckpt_dir, render=render,
+          ckpt_freq=ckpt_freq, schedule=schedule, optim_stepsize=step_size,
+          horizon=horizon, optim_batchsize=batchsize, optim_epochs=epochs,
+          gamma=gamma)

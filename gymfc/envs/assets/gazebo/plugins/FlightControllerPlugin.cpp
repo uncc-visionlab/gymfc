@@ -177,9 +177,9 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
         this->imuSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::Imu>(this->imuSubTopic, &FlightControllerPlugin::ImuCallback, this);
         break;
       case ESC:
-        //Each defined motor will have a unique index, since they are indpendent they must come in 
+        //Each defined motor will have a unique index, since they are independent they must come in
         //as separate messages
-        //XXX NOTE index starts at 1 to match that of betaflight mixer
+        //XXX NOTE index starts at 1 to match that of beta flight mixer
         //for (unsigned int i = 1; i <= this->numActuators; i++)
         for (unsigned int i = 0; i < this->numActuators; i++)
         {

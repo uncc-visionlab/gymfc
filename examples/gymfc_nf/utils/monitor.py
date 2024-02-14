@@ -1,4 +1,6 @@
 import tensorflow as tf
+# import tensorflow.compat.v1 as tf
+# tf.disable_v2_behavior()
 import os.path
 import time
 
@@ -34,7 +36,7 @@ class CheckpointMonitor:
         ckpt = tf.train.get_checkpoint_state(self.checkpoint_dir)
         for path in ckpt.all_model_checkpoint_paths:
             checkpoint_filename = os.path.split(path)[-1]
-            if tf.train.checkpoint_exists(path):
+            if tf.compat.v1.train.checkpoint_exists(path):
                 # Make sure there is a checkpoint meta file before allowing it
                 # to be processed
                 meta_file = path + ".meta"

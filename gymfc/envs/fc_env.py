@@ -13,9 +13,10 @@ import psutil
 import time
 import configparser
 import json
+
 logger = logging.getLogger("gymfc")
-from gymfc.msgs import State_pb2 
-from gymfc.msgs import Action_pb2 
+from gymfc.msgs import State_pb2
+from gymfc.msgs import Action_pb2
 from abc import ABC, abstractmethod
 from google.protobuf import descriptor
 
@@ -27,28 +28,30 @@ class ActionPacket:
             motor (np.array): an array of motor control signals.  
             world_control: 
         """
-        self.motor = motor 
+        self.motor = motor
         self.ac = Action_pb2.Action()
-        #print ("Sending motor ", motor.tolist())
+        # print ("Sending motor ", motor.tolist())
         self.ac.motor.extend(motor.tolist())
         self.ac.world_control = world_control
 
     def encode(self):
         """  Encode packet data"""
-        msg = self.ac.SerializeToString() 
-        #print ("Sending ", self.ac, " to Gazebo size=", len(msg), " ",   msg.hex())
+        msg = self.ac.SerializeToString()
+        # print("Sending ", self.ac, " to Gazebo size=", len(msg), " ", msg.hex())
         return msg
 
     def __str__(self):
         return str(self.motor)
+
 
 class StatePacket:
 
     def decode(self, data):
         state = State_pb2.State()
         state.ParseFromString(data)
-        #print ("State=", state)
+        # print("State=", state)
         return state
+
 
 class ActionProtocol:
 
@@ -65,7 +68,7 @@ class ActionProtocol:
 
     async def write(self, motor_values, world_control=Action_pb2.Action.STEP):
         """ Write the motor values to the ESC and then return 
-        the current sensor values and an exception if anything bad happend.
+        the current sensor values and an exception if anything bad happens.
         
         Args:
             motor_values (np.array): Range dependent on aircraft motor model 
@@ -98,11 +101,12 @@ class ActionProtocol:
         self.exception = None
         self.packet_received = True
         self.state_message = StatePacket().decode(data)
-    
+
     def connection_lost(self, exc):
         print("Socket closed, stop the event loop")
         loop = asyncio.get_event_loop()
         loop.stop()
+
 
 class FlightControlEnv(ABC):
     """ A generic OpenAI flight control gym environment.
@@ -110,14 +114,13 @@ class FlightControlEnv(ABC):
     This class must be extended to implement the task whether for 
     attitude or position control. The observations returned by the 
     environment are configurable to support a number of different
-    aircraft confirations. Actions in the environment consist of 
+    aircraft configurations. Actions in the environment consist of
     motor (and/or actuator) control signals defined by a configurable 
     range.
 
     The inherited class must also ensure in the constructor sets the 
     OpenAI gym attributes action_space observation_space.
     """
-
 
     """ This is the name of the environment variable
     that must be set to the JSON configuration file
@@ -142,7 +145,7 @@ class FlightControlEnv(ABC):
         self.aircraft_sdf_filepath = aircraft_config
         self.enabled_sensor_measurements = []
         try:
-            self.load_config(aircraft_config, config_filepath = config_filepath)
+            self.load_config(aircraft_config, config_filepath=config_filepath)
         except ConfigLoadException as e:
             raise SystemExit(e)
 
@@ -153,7 +156,7 @@ class FlightControlEnv(ABC):
         else:
             self.loop = loop
 
-        self.stepsize = self.sdf_max_step_size()        
+        self.stepsize = self.sdf_max_step_size()
         self.sim_time = 0
         self.last_sim_time = -self.stepsize
 
@@ -164,20 +167,20 @@ class FlightControlEnv(ABC):
         self.sim_stats["packets_dropped"] = 0
         self.sim_stats["time_start_seconds"] = time.time()
 
-        print ("Sending motor control signals to port ", self.aircraft_port)
+        print("Sending motor control signals to port ", self.aircraft_port)
         # Connect to the Aircraft plugin
         writer = self.loop.create_datagram_endpoint(
             lambda: ActionProtocol(),
             remote_addr=(self.host, self.aircraft_port))
-        _, self.ac_protocol = self.loop.run_until_complete(writer) 
+        _, self.ac_protocol = self.loop.run_until_complete(writer)
 
         self._start_sim()
 
-    def load_config(self, aircraft_config, config_filepath = None):
+    def load_config(self, aircraft_config, config_filepath=None):
         """ Load the JSON configuration file defined by the environment 
         variable """
 
-        # Priotiry of load, constructor -> environment variable -> default 
+        # Priority of load, constructor -> environment variable -> default
         current_dir = os.path.dirname(__file__)
         default_config_path = os.path.join(current_dir, "../gymfc.ini")
         if config_filepath:
@@ -190,7 +193,7 @@ class FlightControlEnv(ABC):
         elif self.GYMFC_CONFIG_ENV_VAR in os.environ:
             env_config_path = os.environ[self.GYMFC_CONFIG_ENV_VAR]
             if not os.path.isfile(env_config_path):
-                message = "Configuration file set by environment varaiable '{}' does not exist.".format(env_config_path)
+                message = "Configuration file set by environment variable '{}' does not exist.".format(env_config_path)
                 raise ConfigLoadException(message)
             else:
                 config_filepath = env_config_path
@@ -208,8 +211,9 @@ class FlightControlEnv(ABC):
         # Gazebo configuration
         self.setup_file = os.path.expandvars(default["SetupFile"])
         if not os.path.isfile(self.setup_file):
-                message = "Could not find Gazebo setup.sh file at '{}'. Confirm SetupFile in gymfc/gymfc.ini is pointing to the correct location.".format(self.setup_file)
-                raise ConfigLoadException(message)
+            message = "Could not find Gazebo setup.sh file at '{}'. Confirm SetupFile in gymfc/gymfc.ini is pointing to the correct location.".format(
+                self.setup_file)
+            raise ConfigLoadException(message)
         self.world = default["World"]
         self.host = default["Hostname"]
 
@@ -230,17 +234,12 @@ class FlightControlEnv(ABC):
         else:
             self.aircraft_port = default.getint("FCPluginPortRangeBegin")
 
-
-
         self._parse_model_sdf()
 
     def step_sim(self, ac):
-        """ Take a single step in the simulator and return the current 
-        observations.
+        """ Take a single step in the simulator and return the current observations.
         Args:
-            ac (np.array): Action to take in the environment bounded by 
-            output range specificed in config.
-
+            ac (np.array): Action to take in the environment bounded by output range specified in config.
         Returns:
             Numpy array defining the environment observations
         """
@@ -255,11 +254,11 @@ class FlightControlEnv(ABC):
         
         Returns: 
             Numpy array order maintained from aircraft configuration file."""
-        ob = [] 
+        ob = []
 
-        #XXX Proto3 doesnt have HasField so we iterate on the enabled
-        #sensor measurements from the SDF and maintain order so the agent
-        #can index the flatten array
+        # XXX Proto3 doesn't have HasField so we iterate on the enabled
+        # sensor measurements from the SDF and maintain order so the agent
+        # can index the flatten array
         for key in self.enabled_sensor_measurements:
             field = self.state_message.DESCRIPTOR.fields_by_name[key]
             value = getattr(self.state_message, key)
@@ -269,7 +268,7 @@ class FlightControlEnv(ABC):
             else:
                 ob += [value]
                 setattr(self, key, value)
-            
+
         return np.array(ob).flatten()
 
     async def _step_sim(self, ac, world_control=Action_pb2.Action.STEP):
@@ -287,39 +286,39 @@ class FlightControlEnv(ABC):
             they are defined in the configuration file.
         """
 
-        # Packets are sent over UDP so they can be dropped, there is no 
-        # gaurentee. First we try and send command. If an error occurs in transition 
-        # try again or for some reason something goes wrong in the simualator and 
-        # the packet wasnt processsed correctly. 
+        # Packets are sent over UDP so they can be dropped, there is no
+        # guarantee. First we try and send command. If an error occurs in transition
+        # try again or for some reason something goes wrong in the simulator and
+        # the packet wasn't processed correctly.
         for i in range(self.MAX_CONNECT_TRIES):
             self.state_message, e = await self.ac_protocol.write(ac, world_control=world_control)
             if self.state_message:
                 break
-            if i == self.MAX_CONNECT_TRIES -1:
-                print ("Timeout communicating with flight control plugin.")
+            if i == self.MAX_CONNECT_TRIES - 1:
+                print("Timeout communicating with flight control plugin.")
                 self.shutdown()
                 raise SystemExit("Timeout communicating with flight control plugin.")
             await asyncio.sleep(1)
 
         # Handle some special cases
-        self.sim_time = np.around(self.state_message.sim_time , 3)
+        self.sim_time = np.around(self.state_message.sim_time, 3)
         self.force = self.state_message.force
-        #self.rate_actual = np.array(list(self.state_message.imu_angular_velocity_rpy))
-        #print ("Actual rate=", self.rate_actual)
+        # self.rate_actual = np.array(list(self.state_message.imu_angular_velocity_rpy))
+        # print ("Actual rate=", self.rate_actual)
         # Update the error
-        #self.rate_error = self.desired_state() - self.rate_actual
+        # self.rate_error = self.desired_state() - self.rate_actual
 
         # In the event a packet is dropped we could be out of sync. This has only ever been
-        # observed when dozens of simulations are run in parellel. We need the speed 
+        # observed when dozens of simulations are run in parallel. We need the speed
         # of UDP so until this becomes an issue just track how many we suspect were dropped.
         if not np.isclose(self.sim_time, (self.last_sim_time + self.stepsize), 1e-6):
             self.sim_stats["packets_dropped"] += 1
 
-        self.last_sim_time = self.sim_time 
+        self.last_sim_time = self.sim_time
         self.sim_stats["steps"] += 1
 
         return self._flatten_ob()
-    
+
     def _signal_handler(self, signal, frame):
         print("Ctrl+C detected, shutting down gazebo and application")
         self.shutdown()
@@ -331,7 +330,7 @@ class FlightControlEnv(ABC):
         Args:
             source_file (string): Path to the Gazebo source file.
         """
-	# Source the file in the current environment then use env to dump the 
+        # Source the file in the current environment then use env to dump the
         # current environment variables (including the ones sourced) then
         # set these variables in the python environment 
         command = ". {}; env".format(source_file)
@@ -348,7 +347,7 @@ class FlightControlEnv(ABC):
         # next valid one
         for i in range(len(lines)):
             line = lines[i].decode("utf-8")
-            kv = line.split("=", 1)         
+            kv = line.split("=", 1)
             # There was a line break and the new env didnt start
             if len(kv) < 2:
                 separated_v += kv[0]
@@ -378,19 +377,20 @@ class FlightControlEnv(ABC):
         root = tree.getroot()
         els = root.findall(".//plugin[@filename='libAircraftConfigPlugin.so']")
         if len(els) != 1:
-            raise SystemExit("Could not find plugin with filename {} from SDF file {} required to load the aircraft model.".format("libAircraftConfigPlugin.so", model_sdf))
+            raise SystemExit(
+                "Could not find plugin with filename {} from SDF file {} required to load the aircraft model.".format(
+                    "libAircraftConfigPlugin.so", model_sdf))
         plugin_el = els[0]
 
         self.motor_count = int(plugin_el.find("motorCount").text)
         self._get_supported_sensors(plugin_el)
-
 
     def _get_supported_sensors(self, plugin_el):
         sdf_to_protobuf = {
             "imu": {
                 "enable_angular_velocity": "imu_angular_velocity_rpy",
                 "enable_linear_acceleration": "imu_linear_acceleration_xyz",
-                "enable_orientation":"imu_orientation_quat",
+                "enable_orientation": "imu_orientation_quat",
             },
             "esc": {
                 "enable_angular_velocity": "esc_motor_angular_velocity",
@@ -401,7 +401,7 @@ class FlightControlEnv(ABC):
                 "enable_torque": "esc_torque"
             },
             "battery": {
-                "enable_voltage":  "vbat_voltage",
+                "enable_voltage": "vbat_voltage",
                 "enable_current": "vbat_current"
             },
             "position": {
@@ -419,21 +419,20 @@ class FlightControlEnv(ABC):
                 raise SystemExit("Unsupported sensor {} found in SDF file".format(sensor_type))
 
     def _plugins_exist(self, build_path):
-        return (os.path.isfile(os.path.join(build_path, "libFlightControllerPlugin.so")) and 
-            os.path.isfile(os.path.join(build_path, "libAircraftConfigPlugin.so")))
+        return (os.path.isfile(os.path.join(build_path, "libFlightControllerPlugin.so")) and
+                os.path.isfile(os.path.join(build_path, "libAircraftConfigPlugin.so")))
 
     def _start_sim(self):
         """ Start Gazebo by first updating all the necessary environment
         variables and then starting the Gazebo server"""
 
-
         # XXX
-        #signal.signal(signal.SIGINT, self._signal_handler)
+        # signal.signal(signal.SIGINT, self._signal_handler)
 
         # Port the aircraft reads in through this environment variable,
         # this is the network channel set up to pass sensor and ESC
         # data back and forth
-        # XXX Could actual be a race condition if 2+ processes are started 
+        # XXX Could actually be a race condition if 2+ processes are started
         # at the same time
         container_env = os.environ.copy()
 
@@ -462,18 +461,17 @@ class FlightControlEnv(ABC):
         world_path = os.path.join(gz_assets_path, "worlds")
 
         # From the gazebo model directory structure the model directory is levels up
-        aircraft_model_dir = os.path.abspath(os.path.join(self.aircraft_sdf_filepath, "../../")) 
+        aircraft_model_dir = os.path.abspath(os.path.join(self.aircraft_sdf_filepath, "../../"))
 
-        aircraft_plugin_dir = os.path.abspath(os.path.join(self.aircraft_sdf_filepath, "../plugins/build")) 
-
+        aircraft_plugin_dir = os.path.abspath(os.path.join(self.aircraft_sdf_filepath, "../plugins/build"))
 
         # Add the new paths required for Gazebo to load our custom
         # models, plugins and worlds
         container_env["GAZEBO_MODEL_PATH"] += (os.pathsep + model_path + os.pathsep
-        + aircraft_model_dir)
+                                               + aircraft_model_dir)
         container_env["GAZEBO_RESOURCE_PATH"] += os.pathsep + world_path
         container_env["GAZEBO_PLUGIN_PATH"] += (os.pathsep + plugin_path + os.pathsep +
-aircraft_plugin_dir)
+                                                aircraft_plugin_dir)
         # When installing via pip the FlightControllerPlugin plugin is unable 
         # to find the custom control and sensor messages unless the path is 
         # included in this variable. It may be due how the library files move 
@@ -481,20 +479,18 @@ aircraft_plugin_dir)
         # with pip in edit/develop mode.
         container_env["LD_LIBRARY_PATH"] += os.pathsep + plugin_path
 
-
-        print ("Gazebo Model Path =", container_env["GAZEBO_MODEL_PATH"])
-        print ("Gazebo Plugin Path =",container_env["GAZEBO_PLUGIN_PATH"] )
+        print("Gazebo Model Path =", container_env["GAZEBO_MODEL_PATH"])
+        print("Gazebo Plugin Path =", container_env["GAZEBO_PLUGIN_PATH"])
 
         target_world = os.path.join(gz_assets_path, "worlds", self.world)
         p = None
         if self.verbose:
-            p = subprocess.Popen(["gzserver", "--verbose", target_world], shell=False, env=container_env) 
+            p = subprocess.Popen(["gzserver", "--verbose", target_world], shell=False, env=container_env)
         else:
-            p = subprocess.Popen(["gzserver", target_world], shell=False, env=container_env) 
+            p = subprocess.Popen(["gzserver", target_world], shell=False, env=container_env)
         self.env = container_env
-        print ("Starting gzserver with process ID=", p.pid)
+        print("Starting gzserver with process ID=", p.pid)
         self.process_ids.append(p.pid)
-
 
     def sdf_max_step_size(self):
         """ Return the max step size read and parsed from the world file"""
@@ -515,12 +511,12 @@ aircraft_plugin_dir)
         Args:
             start_port (int): first port to try, will increment until port is open
         """
-         
+
         connections = psutil.net_connections()
         open_ports = []
         for c in connections:
             open_ports.append(c.laddr.port)
-        for port in range(start_port, 2**16):
+        for port in range(start_port, 2 ** 16):
             if not (port in open_ports):
                 return port
 
@@ -533,15 +529,15 @@ aircraft_plugin_dir)
             print("Killing Gazebo process with ID=", pid)
 
     def print_post_simulation_stats(self):
-        print ("\nSimulation Stats")
-        print ("-----------------")
-        key_len = max(list(map(len,list(self.sim_stats.keys())))) + 5
+        print("\nSimulation Stats")
+        print("-----------------")
+        key_len = max(list(map(len, list(self.sim_stats.keys())))) + 5
         for key, values in self.sim_stats.items():
             print("{0: <{fill}}{1}".format(key, values, fill=key_len))
-        print ("\n")
+        print("\n")
 
     def shutdown(self):
-        self.sim_stats["time_lapse_hours"] = (time.time() - self.sim_stats["time_start_seconds"])/(60*60)
+        self.sim_stats["time_lapse_hours"] = (time.time() - self.sim_stats["time_start_seconds"]) / (60 * 60)
         self.print_post_simulation_stats()
         self.kill_sim()
 
@@ -555,7 +551,8 @@ aircraft_plugin_dir)
         # its possible well miss the recieve message
         self.last_sim_time = -self.stepsize
         # Motor values are ignored during a reset so just send whatever
-        ob = self.loop.run_until_complete(self._step_sim(np.zeros(self.motor_count), world_control=Action_pb2.Action.RESET))
+        ob = self.loop.run_until_complete(
+            self._step_sim(np.zeros(self.motor_count), world_control=Action_pb2.Action.RESET))
         assert np.isclose(self.sim_time, 0.0, 1e-6), "sim time after reset is incorrect, {} ".format(self.sim_time)
         return ob
 
@@ -569,12 +566,13 @@ aircraft_plugin_dir)
         return p
 
 
-
 class SDFNoMaxStepSizeFoundException(Exception):
     pass
 
+
 class ConfigLoadException(Exception):
     pass
+
 
 class ReadTimeoutException(Exception):
     pass

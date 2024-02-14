@@ -3,7 +3,7 @@ import tensorflow as tf
 from .policy import Policy
 class PpoBaselinesPolicy(Policy):
     def __init__(self, sess):
-        graph = tf.get_default_graph()
+        graph = tf.compat.v1.get_default_graph()
         self.x = graph.get_tensor_by_name('pi/ob:0') 
         self.y = graph.get_tensor_by_name('pi/pol/final/BiasAdd:0')
         self.sess = sess

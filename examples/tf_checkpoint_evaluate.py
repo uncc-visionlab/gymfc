@@ -4,7 +4,7 @@ import os.path
 import numpy as np
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 import tensorflow as tf
-tf.logging.set_verbosity(tf.logging.ERROR)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 import gym
 from gymfc_nf.envs import *
 from gymfc_nf.utils.monitor import CheckpointMonitor
@@ -59,8 +59,8 @@ if __name__ == "__main__":
         Path(ckpt_eval_dir).mkdir(parents=True, exist_ok=True)
 
         print ("Evaluating checkpoint {}".format(checkpoint_path))
-        with tf.Session() as sess:
-            saver = tf.train.import_meta_graph(checkpoint_path + '.meta',
+        with tf.compat.v1.Session() as sess:
+            saver = tf.compat.v1.train.import_meta_graph(checkpoint_path + '.meta',
                                                clear_devices=True)
             saver.restore(sess, checkpoint_path)
             pi = PpoBaselinesPolicy(sess)

@@ -71,7 +71,7 @@ class ReferenceModel(FlightControlEnv, gym.Env):
 
         super().__init__(aircraft_config=aircraft_config, verbose=False)
 
-        self.action_space = spaces.Box(-np.ones(4), np.ones(4), dtype=np.float32)
+        self.action_space = spaces.Box(-np.ones(4), np.ones(4), dtype=np.float64)
         self.action = self.action_space.low 
 
         # TODO make this dynamic based on whats enabled

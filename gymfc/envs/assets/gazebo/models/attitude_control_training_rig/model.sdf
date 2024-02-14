@@ -5,7 +5,6 @@
 	<enable_wind>true</enable_wind>
 	<pose>0 0 0 0 0 0</pose> 
     <link name="pivot">
-   
         <!-- Uncomment for debugging
       <visual name="pivot_visual">
         <pose>0 0 0 0 -0 0</pose>
@@ -26,7 +25,7 @@
 
     <!-- XXX Fix the pivot base to the world, can't create
          ball joint directly to the world because it hasn't been figured
-         out how to do this programmically. 
+         out how to do this programmatically.
 
         See http://answers.gazebosim.org/question/22102/how-to-use-world-as-a-joint-link-programmically/ -->
 	<joint name="base_joint" type="fixed">

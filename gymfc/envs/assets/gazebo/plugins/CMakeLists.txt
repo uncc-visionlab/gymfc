@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.5)
 project(gymfc_flightcontroller_plugin)
 
 find_package(gazebo REQUIRED)
@@ -15,6 +15,8 @@ endforeach()
 # PROTOBUF_IMPORT_DIRS has to be set before
 # find_package is called
 find_package(Protobuf REQUIRED)
+find_package(Eigen3 REQUIRED)
+
 pkg_check_modules(PROTOBUF protobuf)
 
 if ("${PROTOBUF_VERSION}" VERSION_LESS "2.5.0")
@@ -27,20 +29,22 @@ else()
   message("Gazebo version: ${GAZEBO_VERSION}")
 endif()
 #
-# End Find Protobut
+# End Find Protobuf
 #
 
 include_directories(
   include 
   ${GAZEBO_INCLUDE_DIRS}
   ${CMAKE_CURRENT_BINARY_DIR}
+#  /usr/include/eigen3
+  ${EIGEN3_INCLUDE_DIR}
   )
 link_directories(${GAZEBO_LIBRARY_DIRS})
 list(APPEND CMAKE_CXX_FLAGS ${GAZEBO_CXX_FLAGS})
 
-#--------------------#
+#--------------------------#
 # Begin Message Generation #
-#--------------------#
+#--------------------------#
 
 set(control_msgs
   msgs/MotorCommand.proto
@@ -61,9 +65,9 @@ PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
 add_library(control_msgs SHARED ${CTRL_PROTO_SRCS})
 add_library(sensor_msgs SHARED ${SEN_PROTO_SRCS})
 
-#--------------------#
+#------------------------#
 # End Message Generation #
-#--------------------#
+#------------------------#
 
 link_libraries(control_msgs sensor_msgs)
 
