@@ -1,3 +1,0 @@
-[submodule "modules/control/pid/ivPID"]
-	path = modules/control/pid/ivPID
-	url = https://github.com/ivmech/ivPID
