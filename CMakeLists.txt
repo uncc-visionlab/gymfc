@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(gymfc_plugins)
 
 add_subdirectory(gymfc/envs/assets/gazebo/plugins ${CMAKE_CURRENT_BINARY_DIR}/gymfc_plugins)
-add_subdirectory(examples/gymfc_nf/twins/nf1/gymfc-aircraft-plugins ${CMAKE_CURRENT_BINARY_DIR}/gymfc_nf1_aircraft_plugins)
+add_subdirectory(gazebo/plugins ${CMAKE_CURRENT_BINARY_DIR}/gazebo_plugins)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/gymfc/envs/assets/gazebo/plugins/build)
 

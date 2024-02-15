@@ -81,8 +81,8 @@ set(sensor_msgs
 PROTOBUF_GENERATE_CPP(CTRL_PROTO_SRCS CTRL_PROTO_HDRS ${control_msgs})
 PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
 
-add_library(nf1_control_msgs SHARED ${CTRL_PROTO_SRCS})
-add_library(nf1_sensor_msgs SHARED ${SEN_PROTO_SRCS})
+add_library(gz_control_msgs SHARED ${CTRL_PROTO_SRCS})
+add_library(gz_sensor_msgs SHARED ${SEN_PROTO_SRCS})
 
 #--------------------#
 # End Message Generation #
