@@ -12,7 +12,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import cm
-import pygazebo.msg.poses_stamped_pb2
+import pygazebo.msg.v11.poses_stamped_pb2
 
 RUNNING = True
 
@@ -98,8 +98,7 @@ class GazeboMessageHandler:
         I measured it to be around 60Hz
         """
         # Sending of the data is at a fixed rate hardcoded in Gazebo
-        # self.pose_stamped = pygazebo.msg.v11.poses_stamped_pb2.PosesStamped()
-        self.pose_stamped = pygazebo.msg.poses_stamped_pb2.PosesStamped()
+        self.pose_stamped = pygazebo.msg.v11.poses_stamped_pb2.PosesStamped()
         self.pose_stamped.ParseFromString(data)
 
         t = np.around(self.pose_stamped.time.sec + (self.pose_stamped.time.nsec * 1e-9), 3)
