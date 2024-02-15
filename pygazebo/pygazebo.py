@@ -13,11 +13,11 @@ import sys
 import time
 
 from . import msg
-from .msg import gz_string_pb2
-from .msg import gz_string_v_pb2
-from .msg import packet_pb2
-from .msg import publishers_pb2
-from .msg import subscribe_pb2
+from .msg.v11 import gz_string_pb2
+from .msg.v11 import gz_string_v_pb2
+from .msg.v11 import packet_pb2
+from .msg.v11 import publishers_pb2
+from .msg.v11 import subscribe_pb2
 
 logger = logging.getLogger(__name__)
 
@@ -186,7 +186,7 @@ class Subscriber(object):
 
         # Send the initial message, which is encapsulated inside of a
         # Packet structure.
-        to_send = msg.subscribe_pb2.Subscribe()
+        to_send = msg.v11.subscribe_pb2.Subscribe()
         to_send.topic = pub.topic
         to_send.host = self._local_host
         to_send.port = self._local_port
@@ -368,7 +368,7 @@ class _Connection(object):
                 result.set_result(None)
                 return
 
-            packet = msg.packet_pb2.Packet.FromString(data)
+            packet = msg.v11.packet_pb2.Packet.FromString(data)
             result.set_result(packet)
         except Exception as e:
             result.set_exception(e)
@@ -428,7 +428,7 @@ class _Connection(object):
             return
 
     def write_packet(self, name, message):
-        packet = msg.packet_pb2.Packet()
+        packet = msg.v11.packet_pb2.Packet()
         cur_time = time.time()
         packet.stamp.sec = int(cur_time)
         packet.stamp.nsec = int(math.fmod(cur_time, 1) * 1e9)
@@ -487,7 +487,7 @@ class Manager(object):
         if topic_name in self._publishers:
             raise RuntimeError('multiple publishers for: ' + topic_name)
 
-        to_send = msg.publish_pb2.Publish()
+        to_send = msg.v11.publish_pb2.Publish()
         to_send.topic = topic_name
         to_send.msg_type = msg_type
         to_send.host = self._server.local_host
@@ -522,7 +522,7 @@ class Manager(object):
         if topic_name in self._subscribers:
             raise RuntimeError('multiple subscribers for: ' + topic_name)
 
-        to_send = msg.subscribe_pb2.Subscribe()
+        to_send = msg.v11.subscribe_pb2.Subscribe()
         to_send.topic = topic_name
         to_send.msg_type = msg_type
         to_send.host = self._server.local_host
@@ -587,7 +587,7 @@ class Manager(object):
                 raise ParseError('unexpected initialization packet: ' +
                                  initData.type)
             self._handle_version_init(
-                msg.gz_string_pb2.GzString.FromString(
+                msg.v11.gz_string_pb2.GzString.FromString(
                     initData.serialized_data))
 
             future = self._master.read()
@@ -608,7 +608,7 @@ class Manager(object):
                 raise ParseError('unexpected namespaces init packet: ' +
                                  namespacesData.type)
             self._handle_topic_namespaces_init(
-                msg.gz_string_v_pb2.GzString_V.FromString(
+                msg.v11.gz_string_v_pb2.GzString_V.FromString(
                     namespacesData.serialized_data))
 
             future = self._master.read()
@@ -625,7 +625,7 @@ class Manager(object):
                 raise ParseError('unexpected publishers init packet: ' +
                                  publishersData.type)
             self._handle_publishers_init(
-                msg.publishers_pb2.Publishers.FromString(
+                msg.v11.publishers_pb2.Publishers.FromString(
                     publishersData.serialized_data))
 
             logger.debug('Connection: initialized!')
@@ -670,7 +670,7 @@ class Manager(object):
         if message.type == 'sub':
             self._handle_server_sub(
                 connection,
-                msg.subscribe_pb2.Subscribe.FromString(
+                msg.v11.subscribe_pb2.Subscribe.FromString(
                     message.serialized_data))
         else:
             logger.warn('Manager.handle_server_connection unknown msg:' +
@@ -763,15 +763,15 @@ class Manager(object):
         pass
 
     _MSG_HANDLERS = {
-        'publisher_add': (_handle_publisher_add, msg.publish_pb2.Publish),
-        'publisher_del': (_handle_publisher_del, msg.publish_pb2.Publish),
-        'namespace_add': (_handle_namespace_add, msg.gz_string_pb2.GzString),
+        'publisher_add': (_handle_publisher_add, msg.v11.publish_pb2.Publish),
+        'publisher_del': (_handle_publisher_del, msg.v11.publish_pb2.Publish),
+        'namespace_add': (_handle_namespace_add, msg.v11.gz_string_pb2.GzString),
         'publisher_subscribe': (_handle_publisher_subscribe,
-                                msg.publish_pb2.Publish),
+                                msg.v11.publish_pb2.Publish),
         'publisher_advertise': (_handle_publisher_subscribe,
-                                msg.publish_pb2.Publish),
-        'unsubscribe': (_handle_unsubscribe, msg.subscribe_pb2.Subscribe),
-        'unadvertise': (_handle_unadvertise, msg.publish_pb2.Publish),
+                                msg.v11.publish_pb2.Publish),
+        'unsubscribe': (_handle_unsubscribe, msg.v11.subscribe_pb2.Subscribe),
+        'unadvertise': (_handle_unadvertise, msg.v11.publish_pb2.Publish),
         }
 
 
