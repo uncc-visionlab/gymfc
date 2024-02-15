@@ -203,7 +203,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser("Synthesize a neuro-flight controller.")
     parser.add_argument('--model_dir', default="models",
                         help="Directory where models are saved to.")
-    parser.add_argument('--twin', default="./gymfc_nf/twins/nf1/model.sdf",
+    parser.add_argument('--model', default="../gazebo/models/nf1/model.sdf",
                         help="File path of the aircraft digitial twin/model SDF.")
     parser.add_argument('--seed', type=int, default=np.random.randint(0, 1e6),
                         help="Seed for RNG.")
@@ -244,7 +244,7 @@ if __name__ == '__main__':
 
 
     env.sample_noise = sample_noise
-    env.set_aircraft_model(args.twin)
+    env.set_aircraft_model(args.model)
 
     cb = StepCallback(timesteps)
     env.step_callback = cb.callback

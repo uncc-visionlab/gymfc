@@ -10,7 +10,7 @@ from gymfc.tools.plot import plot_rates
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser("Evaluate each algorithm")
-    parser.add_argument('--twin', default="./gymfc_nf/twins/nf1/model.sdf",
+    parser.add_argument('--model', default="../gazebo/models/nf1/model.sdf",
                         help="File path of the NF1 twin/model SDF.")
     parser.add_argument('--gym-id', default="gymfc_nf-step-v1")
     parser.add_argument('--seed', help='RNG seed', type=int, default=0)
@@ -19,7 +19,7 @@ if __name__ == "__main__":
     env = gym.make(args.gym_id)
     # Need to set the aircraft model after we create the environment because 
     # the model is unique and can't be hardcoded in the gym init.
-    env.set_aircraft_model(args.twin)
+    env.set_aircraft_model(args.model)
     env.seed(args.seed)
     env.verbose = True
     render = True
