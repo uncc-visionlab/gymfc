@@ -36,119 +36,121 @@ namespace gazebo {
 //typedef const boost::shared_ptr<const sensor_msgs::msgs::Imu> ImuPtr;
 
 // Default values for use with ADIS16448 IMU
-static constexpr double kDefaultAdisGyroscopeNoiseDensity =
-    2.0 * 35.0 / 3600.0 / 180.0 * M_PI;
-static constexpr double kDefaultAdisGyroscopeRandomWalk =
-    2.0 * 4.0 / 3600.0 / 180.0 * M_PI;
-static constexpr double kDefaultAdisGyroscopeBiasCorrelationTime =
-    1.0e+3;
-static constexpr double kDefaultAdisGyroscopeTurnOnBiasSigma =
-    0.5 / 180.0 * M_PI;
-static constexpr double kDefaultAdisAccelerometerNoiseDensity =
-    2.0 * 2.0e-3;
-static constexpr double kDefaultAdisAccelerometerRandomWalk =
-    2.0 * 3.0e-3;
-static constexpr double kDefaultAdisAccelerometerBiasCorrelationTime =
-    300.0;
-static constexpr double kDefaultAdisAccelerometerTurnOnBiasSigma =
-    20.0e-3 * 9.8;
+    static constexpr double kDefaultAdisGyroscopeNoiseDensity =
+            2.0 * 35.0 / 3600.0 / 180.0 * M_PI;
+    static constexpr double kDefaultAdisGyroscopeRandomWalk =
+            2.0 * 4.0 / 3600.0 / 180.0 * M_PI;
+    static constexpr double kDefaultAdisGyroscopeBiasCorrelationTime =
+            1.0e+3;
+    static constexpr double kDefaultAdisGyroscopeTurnOnBiasSigma =
+            0.5 / 180.0 * M_PI;
+    static constexpr double kDefaultAdisAccelerometerNoiseDensity =
+            2.0 * 2.0e-3;
+    static constexpr double kDefaultAdisAccelerometerRandomWalk =
+            2.0 * 3.0e-3;
+    static constexpr double kDefaultAdisAccelerometerBiasCorrelationTime =
+            300.0;
+    static constexpr double kDefaultAdisAccelerometerTurnOnBiasSigma =
+            20.0e-3 * 9.8;
 // Earth's gravity in Zurich (lat=+47.3667degN, lon=+8.5500degE, h=+500m, WGS84)
-static constexpr double kDefaultGravityMagnitude = 9.8068;
+    static constexpr double kDefaultGravityMagnitude = 9.8068;
 
-static const std::string kDefaultImuTopic = "imu";
+    static const std::string kDefaultImuTopic = "imu";
 
 // A description of the parameters:
 // https://github.com/ethz-asl/kalibr/wiki/IMU-Noise-Model-and-Intrinsics
 // TODO(burrimi): Should I have a minimalistic description of the params here?
-struct ImuParameters {
-  /// Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)]
-  double gyroscope_noise_density;
-  /// Gyroscope bias random walk [rad/s/s/sqrt(Hz)]
-  double gyroscope_random_walk;
-  /// Gyroscope bias correlation time constant [s]
-  double gyroscope_bias_correlation_time;
-  /// Gyroscope turn on bias standard deviation [rad/s]
-  double gyroscope_turn_on_bias_sigma;
-  /// Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)]
-  double accelerometer_noise_density;
-  /// Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)]
-  double accelerometer_random_walk;
-  /// Accelerometer bias correlation time constant [s]
-  double accelerometer_bias_correlation_time;
-  /// Accelerometer turn on bias standard deviation [m/s^2]
-  double accelerometer_turn_on_bias_sigma;
-  /// Norm of the gravitational acceleration [m/s^2]
-  double gravity_magnitude;
+    struct ImuParameters {
+        /// Gyroscope noise density (two-sided spectrum) [rad/s/sqrt(Hz)]
+        double gyroscope_noise_density;
+        /// Gyroscope bias random walk [rad/s/s/sqrt(Hz)]
+        double gyroscope_random_walk;
+        /// Gyroscope bias correlation time constant [s]
+        double gyroscope_bias_correlation_time;
+        /// Gyroscope turn on bias standard deviation [rad/s]
+        double gyroscope_turn_on_bias_sigma;
+        /// Accelerometer noise density (two-sided spectrum) [m/s^2/sqrt(Hz)]
+        double accelerometer_noise_density;
+        /// Accelerometer bias random walk. [m/s^2/s/sqrt(Hz)]
+        double accelerometer_random_walk;
+        /// Accelerometer bias correlation time constant [s]
+        double accelerometer_bias_correlation_time;
+        /// Accelerometer turn on bias standard deviation [m/s^2]
+        double accelerometer_turn_on_bias_sigma;
+        /// Norm of the gravitational acceleration [m/s^2]
+        double gravity_magnitude;
 
-  ImuParameters()
-      : gyroscope_noise_density(kDefaultAdisGyroscopeNoiseDensity),
-        gyroscope_random_walk(kDefaultAdisGyroscopeRandomWalk),
-        gyroscope_bias_correlation_time(
-            kDefaultAdisGyroscopeBiasCorrelationTime),
-        gyroscope_turn_on_bias_sigma(kDefaultAdisGyroscopeTurnOnBiasSigma),
-        accelerometer_noise_density(kDefaultAdisAccelerometerNoiseDensity),
-        accelerometer_random_walk(kDefaultAdisAccelerometerRandomWalk),
-        accelerometer_bias_correlation_time(
-            kDefaultAdisAccelerometerBiasCorrelationTime),
-        accelerometer_turn_on_bias_sigma(
-            kDefaultAdisAccelerometerTurnOnBiasSigma),
-        gravity_magnitude(kDefaultGravityMagnitude) {}
-};
+        ImuParameters()
+                : gyroscope_noise_density(kDefaultAdisGyroscopeNoiseDensity),
+                  gyroscope_random_walk(kDefaultAdisGyroscopeRandomWalk),
+                  gyroscope_bias_correlation_time(
+                          kDefaultAdisGyroscopeBiasCorrelationTime),
+                  gyroscope_turn_on_bias_sigma(kDefaultAdisGyroscopeTurnOnBiasSigma),
+                  accelerometer_noise_density(kDefaultAdisAccelerometerNoiseDensity),
+                  accelerometer_random_walk(kDefaultAdisAccelerometerRandomWalk),
+                  accelerometer_bias_correlation_time(
+                          kDefaultAdisAccelerometerBiasCorrelationTime),
+                  accelerometer_turn_on_bias_sigma(
+                          kDefaultAdisAccelerometerTurnOnBiasSigma),
+                  gravity_magnitude(kDefaultGravityMagnitude) {}
+    };
 
-class GazeboImuPlugin : public ModelPlugin {
- public:
+    class GazeboImuPlugin : public ModelPlugin {
+    public:
 
-  GazeboImuPlugin();
-  ~GazeboImuPlugin();
+        GazeboImuPlugin();
 
-  void InitializeParams();
-  void Publish();
+        ~GazeboImuPlugin();
 
- protected:
-  void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        void InitializeParams();
 
-  void addNoise(
-      Eigen::Vector3d* linear_acceleration,
-      Eigen::Vector3d* angular_velocity,
-      const double dt);
+        void Publish();
 
-  void OnUpdate(const common::UpdateInfo&);
+    protected:
+        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
- private:
-  std::string namespace_;
-  std::string imu_topic_;
-  transport::NodePtr node_handle_;
-  transport::PublisherPtr imu_pub_;
-  std::string frame_id_;
-  std::string link_name_;
+        void addNoise(
+                Eigen::Vector3d *linear_acceleration,
+                Eigen::Vector3d *angular_velocity,
+                const double dt);
 
-  std::default_random_engine random_generator_;
-  std::normal_distribution<double> standard_normal_distribution_;
+        void OnUpdate(const common::UpdateInfo &);
 
-  // Pointer to the world
-  physics::WorldPtr world_;
-  // Pointer to the model
-  physics::ModelPtr model_;
-  // Pointer to the link
-  physics::LinkPtr link_;
-  // Pointer to the update event connection
-  event::ConnectionPtr updateConnection_;
+    private:
+        std::string namespace_;
+        std::string imu_topic_;
+        transport::NodePtr node_handle_;
+        transport::PublisherPtr imu_pub_;
+        std::string frame_id_;
+        std::string link_name_;
 
-  common::Time last_time_;
+        std::default_random_engine random_generator_;
+        std::normal_distribution<double> standard_normal_distribution_;
 
-  sensor_msgs::msgs::Imu imu_message_;
+        // Pointer to the world
+        physics::WorldPtr world_;
+        // Pointer to the model
+        physics::ModelPtr model_;
+        // Pointer to the link
+        physics::LinkPtr link_;
+        // Pointer to the update event connection
+        event::ConnectionPtr updateConnection_;
 
-  ignition::math::Vector3d gravity_W_;
-  ignition::math::Vector3d velocity_prev_W_;
+        common::Time last_time_;
 
-  Eigen::Vector3d gyroscope_bias_;
-  Eigen::Vector3d accelerometer_bias_;
+        sensor_msgs::msgs::Imu imu_message_;
 
-  Eigen::Vector3d gyroscope_turn_on_bias_;
-  Eigen::Vector3d accelerometer_turn_on_bias_;
+        ignition::math::Vector3d gravity_W_;
+        ignition::math::Vector3d velocity_prev_W_;
 
-  ImuParameters imu_parameters_;
+        Eigen::Vector3d gyroscope_bias_;
+        Eigen::Vector3d accelerometer_bias_;
 
-  uint64_t seq_ = 0;
-};
+        Eigen::Vector3d gyroscope_turn_on_bias_;
+        Eigen::Vector3d accelerometer_turn_on_bias_;
+
+        ImuParameters imu_parameters_;
+
+        uint64_t seq_ = 0;
+    };
 }

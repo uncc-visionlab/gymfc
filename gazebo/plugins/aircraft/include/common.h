@@ -36,85 +36,78 @@ namespace gazebo {
  * \param[in] default_value Default value, if the parameter not available.
  * \param[in] verbose If true, gzerror if the parameter is not available.
  */
-template<class T>
-bool getSdfParam(sdf::ElementPtr sdf, const std::string& name, T& param, const T& default_value, const bool& verbose =
-                     false) {
-  if (sdf->HasElement(name)) {
-    param = sdf->GetElement(name)->Get<T>();
-    return true;
-  }
-  else {
-    param = default_value;
-    if (verbose)
-      gzerr << "[rotors_gazebo_plugins] Please specify a value for parameter \"" << name << "\".\n";
-  }
-  return false;
-}
-
-template <typename T>
-void model_param(const std::string& world_name, const std::string& model_name, const std::string& param, T& param_value)
-{
-  TiXmlElement* e_param = nullptr;
-  TiXmlElement* e_param_tmp = nullptr;
-  std::string dbg_param;
-
-  TiXmlDocument doc(world_name + ".xml");
-  if (doc.LoadFile())
-  {
-    TiXmlHandle h_root(doc.RootElement());
-
-    TiXmlElement* e_model = h_root.FirstChild("model").Element();
-
-    for( e_model; e_model; e_model=e_model->NextSiblingElement("model") )
-    {
-      const char* attr_name = e_model->Attribute("name");
-      if (attr_name)
-      {
-        //specific
-        if (model_name.compare(attr_name) == 0)
-        {
-          e_param_tmp = e_model->FirstChildElement(param);
-          if (e_param_tmp)
-          {
-            e_param = e_param_tmp;
-            dbg_param = "";
-          }
-          break;
+    template<class T>
+    bool
+    getSdfParam(sdf::ElementPtr sdf, const std::string &name, T &param, const T &default_value, const bool &verbose =
+    false) {
+        if (sdf->HasElement(name)) {
+            param = sdf->GetElement(name)->Get<T>();
+            return true;
+        } else {
+            param = default_value;
+            if (verbose)
+                gzerr << "[rotors_gazebo_plugins] Please specify a value for parameter \"" << name << "\".\n";
         }
-      }
-      else
-      {
-        //common
-        e_param = e_model->FirstChildElement(param);
-        dbg_param = "common ";
-      }
+        return false;
     }
 
-    if (e_param)
-    {
-      std::istringstream iss(e_param->GetText());
-      iss >> param_value;
+    template<typename T>
+    void model_param(const std::string &world_name, const std::string &model_name, const std::string &param,
+                     T &param_value) {
+        TiXmlElement *e_param = nullptr;
+        TiXmlElement *e_param_tmp = nullptr;
+        std::string dbg_param;
 
-      gzdbg << model_name << " model: " << dbg_param << "parameter " << param << " = " << param_value << " from " << doc.Value() << "\n";
+        TiXmlDocument doc(world_name + ".xml");
+        if (doc.LoadFile()) {
+            TiXmlHandle h_root(doc.RootElement());
+
+            TiXmlElement *e_model = h_root.FirstChild("model").Element();
+
+            for (e_model; e_model; e_model = e_model->NextSiblingElement("model")) {
+                const char *attr_name = e_model->Attribute("name");
+                if (attr_name) {
+                    //specific
+                    if (model_name.compare(attr_name) == 0) {
+                        e_param_tmp = e_model->FirstChildElement(param);
+                        if (e_param_tmp) {
+                            e_param = e_param_tmp;
+                            dbg_param = "";
+                        }
+                        break;
+                    }
+                } else {
+                    //common
+                    e_param = e_model->FirstChildElement(param);
+                    dbg_param = "common ";
+                }
+            }
+
+            if (e_param) {
+                std::istringstream iss(e_param->GetText());
+                iss >> param_value;
+
+                gzdbg << model_name << " model: " << dbg_param << "parameter " << param << " = " << param_value
+                      << " from " << doc.Value() << "\n";
+            }
+        }
+
     }
-  }
-
-}
 
 /**
  * \brief Get a math::Angle as an angle from [0, 360)
  */
-double GetDegrees360(const ignition::math::Angle& angle) {
-  double degrees = angle.Degree();
-  while (degrees < 0.) degrees += 360.0;
-  while (degrees >= 360.0) degrees -= 360.0;
-  return degrees;
-}
+    double GetDegrees360(const ignition::math::Angle &angle) {
+        double degrees = angle.Degree();
+        while (degrees < 0.) degrees += 360.0;
+        while (degrees >= 360.0) degrees -= 360.0;
+        return degrees;
+    }
 
 
 }  // namespace gazebo
 
-template <typename T>
+template<typename T>
 class FirstOrderFilter {
 /*
 This class can be used to apply a first order filter on a signal.
@@ -129,77 +122,78 @@ discretized system (ZoH):
     x(k+1) = exp(samplingTime*(-1/tau))*x(k) + (1 - exp(samplingTime*(-1/tau))) * u(k)
 */
 
-  public:
-    FirstOrderFilter(double timeConstantUp, double timeConstantDown, T initialState):
-      timeConstantUp_(timeConstantUp),
-      timeConstantDown_(timeConstantDown),
-      previousState_(initialState) {}
+public:
+    FirstOrderFilter(double timeConstantUp, double timeConstantDown, T initialState) :
+            timeConstantUp_(timeConstantUp),
+            timeConstantDown_(timeConstantDown),
+            previousState_(initialState) {}
 
     T updateFilter(T inputState, double samplingTime) {
-      /*
-      This method will apply a first order filter on the inputState.
-      */
-      T outputState;
-      if(inputState > previousState_){
-        // Calcuate the outputState if accelerating.
-        double alphaUp = exp(- samplingTime / timeConstantUp_);
-        // x(k+1) = Ad*x(k) + Bd*u(k)
-        outputState = alphaUp * previousState_ + (1 - alphaUp) * inputState;
+        /*
+        This method will apply a first order filter on the inputState.
+        */
+        T outputState;
+        if (inputState > previousState_) {
+            // Calcuate the outputState if accelerating.
+            double alphaUp = exp(-samplingTime / timeConstantUp_);
+            // x(k+1) = Ad*x(k) + Bd*u(k)
+            outputState = alphaUp * previousState_ + (1 - alphaUp) * inputState;
 
-      }else{
-        // Calculate the outputState if decelerating.
-        double alphaDown = exp(- samplingTime / timeConstantDown_);
-        outputState = alphaDown * previousState_ + (1 - alphaDown) * inputState;
-      }
-      previousState_ = outputState;
-      return outputState;
+        } else {
+            // Calculate the outputState if decelerating.
+            double alphaDown = exp(-samplingTime / timeConstantDown_);
+            outputState = alphaDown * previousState_ + (1 - alphaDown) * inputState;
+        }
+        previousState_ = outputState;
+        return outputState;
 
     }
+
     ~FirstOrderFilter() {}
 
-  protected:
+protected:
     double timeConstantUp_;
     double timeConstantDown_;
     T previousState_;
 };
 
 
-
 /// Computes a quaternion from the 3-element small angle approximation theta.
 template<class Derived>
-Eigen::Quaternion<typename Derived::Scalar> QuaternionFromSmallAngle(const Eigen::MatrixBase<Derived> & theta) {
-  typedef typename Derived::Scalar Scalar;
-  EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived);
-  EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3);
-  const Scalar q_squared = theta.squaredNorm() / 4.0;
+Eigen::Quaternion<typename Derived::Scalar> QuaternionFromSmallAngle(const Eigen::MatrixBase <Derived> &theta) {
+    typedef typename Derived::Scalar Scalar;
+    EIGEN_STATIC_ASSERT_FIXED_SIZE(Derived);
+    EIGEN_STATIC_ASSERT_VECTOR_SPECIFIC_SIZE(Derived, 3);
+    const Scalar q_squared = theta.squaredNorm() / 4.0;
 
-  if (q_squared < 1) {
-    return Eigen::Quaternion<Scalar>(sqrt(1 - q_squared), theta[0] * 0.5, theta[1] * 0.5, theta[2] * 0.5);
-  }
-  else {
-    const Scalar w = 1.0 / sqrt(1 + q_squared);
-    const Scalar f = w * 0.5;
-    return Eigen::Quaternion<Scalar>(w, theta[0] * f, theta[1] * f, theta[2] * f);
-  }
+    if (q_squared < 1) {
+        return Eigen::Quaternion<Scalar>(sqrt(1 - q_squared), theta[0] * 0.5, theta[1] * 0.5, theta[2] * 0.5);
+    } else {
+        const Scalar w = 1.0 / sqrt(1 + q_squared);
+        const Scalar f = w * 0.5;
+        return Eigen::Quaternion<Scalar>(w, theta[0] * f, theta[1] * f, theta[2] * f);
+    }
 }
 
 template<class In, class Out>
-void copyPosition(const In& in, Out* out) {
-  out->x = in.x;
-  out->y = in.y;
-  out->z = in.z;
+void copyPosition(const In &in, Out *out) {
+    out->x = in.x;
+    out->y = in.y;
+    out->z = in.z;
 }
 
 #if GAZEBO_MAJOR_VERSION < 9
+
 inline ignition::math::Vector3d ignitionFromGazeboMath(const gazebo::math::Vector3 &vec_gz) {
-  return ignition::math::Vector3d(vec_gz.x, vec_gz.y, vec_gz.z);
+    return ignition::math::Vector3d(vec_gz.x, vec_gz.y, vec_gz.z);
 }
 
 inline ignition::math::Pose3d ignitionFromGazeboMath(const gazebo::math::Pose &pose_gz) {
 
-  return ignition::math::Pose3d(pose_gz.pos.x, pose_gz.pos.y, pose_gz.pos.z,
-                                pose_gz.rot.w, pose_gz.rot.x, pose_gz.rot.y, pose_gz.rot.z);
+    return ignition::math::Pose3d(pose_gz.pos.x, pose_gz.pos.y, pose_gz.pos.z,
+                                  pose_gz.rot.w, pose_gz.rot.x, pose_gz.rot.y, pose_gz.rot.z);
 }
+
 #endif
 
 /**

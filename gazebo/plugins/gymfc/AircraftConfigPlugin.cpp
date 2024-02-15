@@ -4,15 +4,14 @@
  * details about the aircraft model through the SDF.
  */
 
-namespace gazebo
-{
-  class AircraftConfigPlugin : public ModelPlugin
-  {
-    public: AircraftConfigPlugin() : ModelPlugin()
-            {}
+namespace gazebo {
+    class AircraftConfigPlugin : public ModelPlugin {
+    public:
+        AircraftConfigPlugin() : ModelPlugin() {}
 
-    public: void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf)
-            {}
-  };
-  GZ_REGISTER_MODEL_PLUGIN(AircraftConfigPlugin)
+    public:
+        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {}
+    };
+
+    GZ_REGISTER_MODEL_PLUGIN(AircraftConfigPlugin)
 }
