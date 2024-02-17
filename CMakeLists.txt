@@ -3,7 +3,7 @@ project(gymfc_plugins)
 
 add_subdirectory(gazebo/plugins/gymfc ${CMAKE_CURRENT_BINARY_DIR}/gymfc_plugins)
 #add_subdirectory(gazebo/plugins/gazebo_ros ${CMAKE_CURRENT_BINARY_DIR}/gazebo_ros)
-add_subdirectory(gazebo/plugins/aircraft ${CMAKE_CURRENT_BINARY_DIR}/aircraft_plugins)
+add_subdirectory(gazebo/plugins/gymfc_aircraft ${CMAKE_CURRENT_BINARY_DIR}/aircraft_plugins)
 
 set(CMAKE_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/gymfc/envs/assets/gazebo/plugins/build)
 

@@ -30,12 +30,8 @@
 #include "gazebo/transport/transport.hh"
 #include "gazebo/msgs/msgs.hh"
 
-#include "common.h"
+#include "gymfc_common.h"
 
-namespace angular_velocity_units {
-    static const std::string DEG_PER_SECOND = "deg/s";
-    static const std::string RAD_PER_SECOND = "rad/s";
-}
 namespace gazebo {
 //typedef const boost::shared_ptr<const sensor_msgs::msgs::Imu> ImuPtr;
 
@@ -102,12 +98,7 @@ namespace gazebo {
     class GazeboImuPlugin : public ModelPlugin {
     public:
 
-        GazeboImuPlugin()
-                : ModelPlugin(),
-                  velocity_prev_W_(0, 0, 0),
-                  angular_velocity_units_(angular_velocity_units::RAD_PER_SECOND) {
-            gzdbg << "GazeboImuPlugin()::constructed." << std::endl;
-        }
+        GazeboImuPlugin();
 
         ~GazeboImuPlugin();
 
@@ -125,8 +116,6 @@ namespace gazebo {
 
         void OnUpdate(const common::UpdateInfo &);
 
-        void OnTimeReset();
-
     private:
         std::string namespace_;
         std::string imu_topic_;
@@ -134,7 +123,6 @@ namespace gazebo {
         transport::PublisherPtr imu_pub_;
         std::string frame_id_;
         std::string link_name_;
-        std::string angular_velocity_units_;
 
         std::default_random_engine random_generator_;
         std::normal_distribution<double> standard_normal_distribution_;
@@ -147,7 +135,6 @@ namespace gazebo {
         physics::LinkPtr link_;
         // Pointer to the update event connection
         event::ConnectionPtr updateConnection_;
-        event::ConnectionPtr resetEvent_;
 
         common::Time last_time_;
 

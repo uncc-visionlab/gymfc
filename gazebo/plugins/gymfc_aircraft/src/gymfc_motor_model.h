@@ -28,29 +28,34 @@
 #include <gazebo/physics/physics.hh>
 #include <gazebo/common/common.hh>
 #include <gazebo/common/Plugin.hh>
-#include <rotors_model/motor_model.hpp>
-#include "CommandMotorSpeed.pb.h"
+#include <motor_model.hpp>
 #include "gazebo/transport/transport.hh"
 #include "gazebo/msgs/msgs.hh"
+#include "MotorCommand.pb.h"
+#include "EscSensor.pb.h"
 #include "MotorSpeed.pb.h"
 #include "Float.pb.h"
 
-#include "common.h"
+#include "gymfc_common.h"
 
 
 namespace turning_direction {
     const static int CCW = 1;
     const static int CW = -1;
 }
+namespace rotor_velocity_units {
+    const static std::string RPM = "rpm";
+    const static std::string RAD_PER_SECOND = "rad/s";
+}
 
 namespace gazebo {
 // Default values
     static const std::string kDefaultNamespace = "";
-    static const std::string kDefaultCommandSubTopic = "/gazebo/command/motor_speed";
+    static const std::string kDefaultCommandSubTopic = "/aircraft/command/motor";
     static const std::string kDefaultMotorFailureNumSubTopic = "/gazebo/motor_failure_num";
-    static const std::string kDefaultMotorVelocityPubTopic = "/motor_speed";
+    static const std::string kDefaultMotorVelocityPubTopic = "/aircraft/sensor/esc";
 
-    typedef const boost::shared_ptr<const cmd_msgs::msgs::CommandMotorSpeed> CommandMotorSpeedPtr;
+    typedef const boost::shared_ptr<const cmd_msgs::msgs::MotorCommand> MotorCommandPtr;
 
 /*
 // Protobuf test
@@ -90,7 +95,9 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
                   rotor_drag_coefficient_(kDefaultRotorDragCoefficient),
                   rotor_velocity_slowdown_sim_(kDefaultRotorVelocitySlowdownSim),
                   time_constant_down_(kDefaultTimeConstantDown),
-                  time_constant_up_(kDefaultTimeConstantUp) {
+                  time_constant_up_(kDefaultTimeConstantUp),
+                  rotor_velocity_units_(rotor_velocity_units::RAD_PER_SECOND) {
+            gzdbg << "GazeboMotorModel()::constructed." << std::endl;
         }
 
         virtual ~GazeboMotorModel();
@@ -110,6 +117,10 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
 
         virtual void OnUpdate(const common::UpdateInfo & /*_info*/);
 
+        virtual void Reset();
+
+        virtual double CommandTransferFunction(double x);
+
     private:
         std::string command_sub_topic_;
         std::string motor_failure_sub_topic_;
@@ -117,6 +128,7 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
         std::string link_name_;
         std::string motor_speed_pub_topic_;
         std::string namespace_;
+        std::string rotor_velocity_units_;
 
         int motor_number_;
         int turning_direction_;
@@ -136,9 +148,15 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
         double rotor_velocity_slowdown_sim_;
         double time_constant_down_;
         double time_constant_up_;
+        double current_force_ = 0;
+        double current_torque_ = 0;
+        double esc_transfer_function_coeff_[3]; // Max 3 terms
+
+
+        sensor_msgs::msgs::EscSensor sensor;
 
         transport::NodePtr node_handle_;
-        transport::PublisherPtr motor_velocity_pub_;
+        transport::PublisherPtr esc_sensor_pub_;
         transport::SubscriberPtr command_sub_;
         transport::SubscriberPtr motor_failure_sub_; /*!< Subscribing to motor_failure_sub_topic_; receiving motor number to fail, as an integer */
 
@@ -156,11 +174,11 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
 
         std_msgs::msgs::Float turning_velocity_msg_;
 
-        void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);
+        void VelocityCallback(MotorCommandPtr &_cmd);
 
         void MotorFailureCallback(
                 const boost::shared_ptr<const msgs::Int> &fail_msg);  /*!< Callback for the motor_failure_sub_ subscriber */
-        std::unique_ptr <FirstOrderFilter<double>> rotor_velocity_filter_;
+        std::unique_ptr<FirstOrderFilter<double>> rotor_velocity_filter_;
 /*
   // Protobuf test
   std::string motor_test_sub_topic_;

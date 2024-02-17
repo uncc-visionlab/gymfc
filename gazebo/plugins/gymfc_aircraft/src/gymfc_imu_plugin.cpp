@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "gazebo_imu_plugin.h"
+#include "gymfc_imu_plugin.h"
 
 #include <chrono>
 #include <cmath>

@@ -19,7 +19,7 @@
  */
 
 
-#include "gazebo_motor_model.h"
+#include "gymfc_motor_model.h"
 #include "EscSensor.pb.h"
 #include <ignition/math.hh>
 

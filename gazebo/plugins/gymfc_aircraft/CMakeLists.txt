@@ -88,12 +88,12 @@ add_library(gz_sensor_msgs SHARED ${SEN_PROTO_SRCS})
 
 link_libraries(control_msgs sensor_msgs)
 
-add_library(gazebo_motor_model SHARED src/gazebo_motor_model.cpp)
-add_library(gazebo_imu_plugin SHARED src/gazebo_imu_plugin.cpp)
+add_library(gymfc_motor_model SHARED src/gymfc_motor_model.cpp)
+add_library(gymfc_imu_plugin SHARED src/gymfc_imu_plugin.cpp)
 
 set(plugins
-    gazebo_motor_model
-    gazebo_imu_plugin
+    gymfc_motor_model
+    gymfc_imu_plugin
     )
 foreach(plugin ${plugins})
   target_link_libraries(${plugin} ${Boost_LIBRARIES} ${GAZEBO_LIBRARIES})
