@@ -1,6 +1,5 @@
 <?xml version='1.0'?>
 <sdf version='1.6'>
-  <!-- IMPORTANT: The model name must match the folder containing the model -->
   <model name='nf1'>
     <!-- a plugin with this filename is required -->
     <plugin name="config" filename="libAircraftConfigPlugin.so">
