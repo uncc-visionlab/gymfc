@@ -393,7 +393,7 @@ void FlightControllerPlugin::ParseDigitalTwinSDF() {
 
 void FlightControllerPlugin::LoadDigitalTwin() {
     gzdbg << "Inserting vehicle model from SDF file: " << this->digitalTwinSDF << ".\n";
-
+    this->ballJoint = nullptr;
     // XXX Better way to do this?
     // It appears the inserted model is not available in the world
     // right away, maybe due to the message passing that occurs?
@@ -457,8 +457,8 @@ void FlightControllerPlugin::LoadDigitalTwin() {
                 centerOfThrustReferenceLink);
 
         // Do all this just to get the dark joint
-        std::shared_ptr <dart::dynamics::Joint::Properties> jointProperties = dartJoint->DARTProperties();
-        std::pair < dart::dynamics::Joint * , dart::dynamics::BodyNode * > pair;
+        std::shared_ptr<dart::dynamics::Joint::Properties> jointProperties = dartJoint->DARTProperties();
+        std::pair<dart::dynamics::Joint *, dart::dynamics::BodyNode *> pair;
         dart::dynamics::BodyNode::AspectProperties properties("testbody");
         pair = aircraftSkeleton->createJointAndBodyNodePair<dart::dynamics::BallJoint, dart::dynamics::BodyNode>(
                 dartSupportModelPtr->DARTSkeleton()->getBodyNode("pivot"),
@@ -550,7 +550,9 @@ void FlightControllerPlugin::LoopThread() {
 
         /* XXX This is a way to get force applied to possibly use for reward   
 		 */
-//        this->ballJointForce = this->ballJoint->GetForceTorque(0).body1Force;
+        if (this->ballJoint != nullptr) {
+            this->ballJointForce = this->ballJoint->GetForceTorque(0).body1Force;
+        }
         //gzdbg << "Force X=" << f.X() << " Y=" << f.Y() << " Z=" << f.Z() << std::endl;
         //ignition::math::Vector3d f2 = this->ballJoint->GetForceTorque(0).body2Force;
         //gzdbg << "Force Body 2 X=" << f2.X() << " Y=" << f2.Y() << " Z=" << f2.Z() << std::endl;
@@ -612,10 +614,11 @@ void FlightControllerPlugin::CalculateCallbackCount() {
 }
 
 void FlightControllerPlugin::WaitForSensorsThenSend() {
-//    this->state.set_force(0, this->ballJointForce.X());
-//    this->state.set_force(1, this->ballJointForce.Y());
-//    this->state.set_force(2, this->ballJointForce.Z());
-
+    if (this->ballJoint != nullptr) {
+        this->state.set_force(0, this->ballJointForce.X());
+        this->state.set_force(1, this->ballJointForce.Y());
+        this->state.set_force(2, this->ballJointForce.Z());
+    }
     this->state.set_sim_time(this->world->SimTime().Double());
     this->state.set_status_code(gymfc::msgs::State_StatusCode_OK);
 
