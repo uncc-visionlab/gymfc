@@ -47,7 +47,6 @@
               <izz>0.0002725710742660843</izz>
             </inertia>
         </inertial>
-        <!--
         <collision name='frame_collision'>
             <pose>0 0 0.0 0 0 0</pose>
             <geometry>
@@ -56,7 +55,6 @@
               </box>
             </geometry>
         </collision>
-        -->
         <visual name='frame_visual'>
             <geometry>
               <mesh>
@@ -89,7 +87,6 @@
           <izz>0.00010595633504345831</izz>
 		</inertia>
       </inertial>
-      <!--
       <collision name='battery_collision'>
         <pose>0 0 0.0185 0 -0 0</pose>
         <geometry>
@@ -98,7 +95,6 @@
             </box>
         </geometry>
       </collision>
-        -->
       <visual name='battery_visual'>
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -139,7 +135,6 @@
           <izz>1.7728840665083659e-06</izz>
         </inertia>
       </inertial>
-      <!--
       <collision name="motor_1_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -149,7 +144,6 @@
           </cylinder>
         </geometry>
       </collision>
--->
       <visual name="motor_1_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -192,7 +186,6 @@
           <izz>1.7728840665083659e-06</izz>
         </inertia>
       </inertial>
-      <!--
       <collision name="motor_2_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -202,7 +195,6 @@
           </cylinder>
         </geometry>
       </collision>
--->
       <visual name="motor_2_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -245,7 +237,6 @@
           <izz>1.7728840665083659e-06</izz>
         </inertia>
       </inertial>
-      <!--
       <collision name="motor_3_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -255,7 +246,6 @@
           </cylinder>
         </geometry>
       </collision>
--->
       <visual name="motor_3_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -296,7 +286,6 @@
           <izz>1.7728840665083659e-06</izz>
         </inertia>
       </inertial>
-      <!--
       <collision name="motor_4_collision">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -306,7 +295,6 @@
           </cylinder>
         </geometry>
       </collision>
--->
       <visual name="motor_4_visual">
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
@@ -350,7 +338,6 @@
           <izz>4.242412526026635e-06</izz>
         </inertia>
       </inertial>
-      <!--
       <collision name="prop_1_collision">
         <pose>0 0 0 1.57 -0 0</pose>
         <geometry>
@@ -368,7 +355,6 @@
           </friction>
         </surface>
       </collision>
--->
       <visual name="prop_1_visual">
         <pose>0 0 0 1.5708 -0 3.1415</pose>
         <geometry>
