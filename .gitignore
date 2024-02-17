@@ -14,3 +14,4 @@ gymfc.json
 env/
 /data/
 /venv/
+/cmake-build-debug/

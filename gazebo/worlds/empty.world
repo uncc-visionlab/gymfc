@@ -1,23 +1,23 @@
 <?xml version="1.0" ?>
 <sdf version="1.5">
-  <world name="default">
+  <world name="empty">
     <!-- A global light source -->
     <include>
       <uri>model://sun</uri>
     </include>
     <!-- A ground plane -->
-    <include>
+    <!--<include>
       <uri>model://ground_plane</uri>
       <name>ground_plane</name>
-      <pose>0 0 0 0 0 0</pose>
+      <pose>0 -1 -1 0 0 0</pose>
     </include>
     <include>
       <uri>model://asphalt_plane</uri>
-      <pose>0 0 0 0 0 0</pose>
-    </include>
-    <!-- <gravity>0 0 0</gravity> -->
+      <pose>0 -1 -1 0 0 0</pose>
+    </include> -->
+    <!--<gravity>0 0 0</gravity>-->
     <physics type="dart">
-      <real_time_update_rate>0</real_time_update_rate>
+      <real_time_update_rate>1</real_time_update_rate>
 	  <max_step_size>0.001</max_step_size>
     </physics>
     <!--
@@ -47,17 +47,26 @@
     <include>
       <uri>model://nf1</uri>
     </include>
-    <include>
+    -->
+    <!--<include>
       <uri>model://attitude_control_training_rig</uri>
       <pose>0 0 0 0 0 0</pose>
-    </include>
-    -->
-
-    <!-- <plugin name="gymfc_plugin" filename="libFlightControllerPlugin.so">
+    </include>-->
+     <model name="attitude_control_training_rig">
+        <enable_wind>true</enable_wind>
+        <pose>0 0 0 0 0 0</pose>
+        <link name="pivot"/>
+        <joint name="base_joint" type="fixed">
+            <parent>world</parent>
+            <child>pivot</child>
+            <pose>0 0 0 0 0 0</pose>
+        </joint>
+    </model>
+    <plugin name="gymfc_plugin" filename="libFlightControllerPlugin.so">
       <connectionTimeoutMaxCount>5</connectionTimeoutMaxCount>
       <loopRate>1000.0</loopRate>
       <robotNamespace>gymfc</robotNamespace>
-    </plugin> -->
+    </plugin>
 
   </world>
 </sdf>

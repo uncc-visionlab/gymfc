@@ -3,7 +3,7 @@ project(gymfc_flightcontroller_plugin)
 
 find_package(gazebo REQUIRED)
 #
-# Find Protobut
+# Find Protobuf
 #
 set(PROTOBUF_IMPORT_DIRS "")
 foreach(ITR ${GAZEBO_INCLUDE_DIRS})

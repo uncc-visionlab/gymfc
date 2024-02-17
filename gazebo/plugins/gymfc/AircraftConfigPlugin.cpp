@@ -7,7 +7,9 @@
 namespace gazebo {
     class AircraftConfigPlugin : public ModelPlugin {
     public:
-        AircraftConfigPlugin() : ModelPlugin() {}
+        AircraftConfigPlugin() : ModelPlugin() {
+            gzdbg << "AircraftConfigPlugin()::constructed." << std::endl;
+        }
 
     public:
         void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {}

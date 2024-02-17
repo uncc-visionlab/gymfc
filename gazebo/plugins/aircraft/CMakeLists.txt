@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.5)
-project(gymfc_digitaltwin)
+project(gymfc_aircraft_plugins)
 
 find_package(Boost 1.58 REQUIRED COMPONENTS system thread timer)
 find_package(gazebo REQUIRED)
 
 #
-# Find Protobut
+# Find Protobuf
 #
 set(PROTOBUF_IMPORT_DIRS "")
 foreach(ITR ${GAZEBO_INCLUDE_DIRS})
@@ -31,8 +31,6 @@ endif()
 #
 # End Find Protobuf
 #
-
-
 
 find_package(Eigen3 QUIET)
 if(NOT EIGEN3_FOUND)
@@ -62,9 +60,9 @@ link_directories(${GAZEBO_LIBRARY_DIRS})
 
 list(APPEND CMAKE_CXX_FLAGS ${GAZEBO_CXX_FLAGS})
 
-#--------------------#
+#--------------------------#
 # Begin Message Generation #
-#--------------------#
+#--------------------------#
 
 set(control_msgs
     msgs/MotorCommand.proto
@@ -84,9 +82,9 @@ PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
 add_library(gz_control_msgs SHARED ${CTRL_PROTO_SRCS})
 add_library(gz_sensor_msgs SHARED ${SEN_PROTO_SRCS})
 
-#--------------------#
+#------------------------#
 # End Message Generation #
-#--------------------#
+#------------------------#
 
 link_libraries(control_msgs sensor_msgs)
 

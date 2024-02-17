@@ -123,20 +123,14 @@ FlightControllerPlugin::FlightControllerPlugin() {
     fcntl(this->handle, F_SETFD, FD_CLOEXEC);
 #endif
     int one = 1;
-    setsockopt(this->handle, IPPROTO_TCP, TCP_NODELAY,
-               reinterpret_cast<const char *>(&one), sizeof(one));
-
-
-    setsockopt(this->handle, SOL_SOCKET, SO_REUSEADDR,
-               reinterpret_cast<const char *>(&one), sizeof(one));
+    setsockopt(this->handle, IPPROTO_TCP, TCP_NODELAY, reinterpret_cast<const char *>(&one), sizeof(one));
+    setsockopt(this->handle, SOL_SOCKET, SO_REUSEADDR, reinterpret_cast<const char *>(&one), sizeof(one));
 
 #ifdef _WIN32
     u_long on = 1;
-    ioctlsocket(this->handle, FIONBIO,
-                reinterpret_cast<u_long FAR *>(&on));
+    ioctlsocket(this->handle, FIONBIO, reinterpret_cast<u_long FAR *>(&on));
 #else
-    fcntl(this->handle, F_SETFL,
-          fcntl(this->handle, F_GETFL, 0) | O_NONBLOCK);
+    fcntl(this->handle, F_SETFL, fcntl(this->handle, F_GETFL, 0) | O_NONBLOCK);
 #endif
 
 }
@@ -160,7 +154,6 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
     this->ParseDigitalTwinSDF();
 
     this->CalculateCallbackCount();
-
     this->nodeHandle = transport::NodePtr(new transport::Node());
     this->nodeHandle->Init(this->robotNamespace);
 
@@ -191,8 +184,6 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
     this->cmdPub = this->nodeHandle->Advertise<cmd_msgs::msgs::MotorCommand>(this->cmdPubTopic);
     // Force pause because we drive the simulation steps
     this->world->SetPaused(true);
-
-
     this->callbackLoopThread = boost::thread(boost::bind(&FlightControllerPlugin::LoopThread, this));
 }
 
@@ -203,7 +194,6 @@ bool FlightControllerPlugin::SensorEnabled(Sensors _sensor) {
         }
     }
     return false;
-
 }
 
 void FlightControllerPlugin::LoadVars() {
@@ -222,15 +212,12 @@ void FlightControllerPlugin::LoadVars() {
         gzerr << "failed to bind with 127.0.0.1:" << port << ", aborting plugin.\n";
         return;
     }
-
     if (const char *env_p = std::getenv(ENV_DIGITAL_TWIN_SDF)) {
         this->digitalTwinSDF = env_p;
     } else {
         gzerr << "Could not load digital twin model from environment variable " << ENV_DIGITAL_TWIN_SDF << "\n";
         return;
     }
-
-
 }
 
 void FlightControllerPlugin::InitState() {
@@ -250,8 +237,6 @@ void FlightControllerPlugin::InitState() {
         // TODO
         this->state.add_imu_orientation_quat(0);
     }
-
-
     // ESC sensor
     for (unsigned int i = 0; i < this->numActuators; i++) {
         this->state.add_esc_motor_angular_velocity(100);
@@ -261,7 +246,6 @@ void FlightControllerPlugin::InitState() {
         this->state.add_esc_torque(0);
         this->state.add_esc_force(0);
     }
-
 }
 
 void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
@@ -315,14 +299,11 @@ void FlightControllerPlugin::ProcessSDF(sdf::ElementPtr _sdf) {
     if (_sdf->HasElement("escSubTopicPrefix")) {
         this->escSubTopic = _sdf->GetElement("escSubTopicPrefix")->Get<std::string>();
     }
-
-
-    if (_sdf->HasElement("robotNamespace"))
+    if (_sdf->HasElement("robotNamespace")) {
         this->robotNamespace = _sdf->GetElement("robotNamespace")->Get<std::string>();
-    else
+    } else {
         gzerr << "[gazebo_motor_model] Please specify a robotNamespace.\n";
-
-
+    }
 }
 
 void FlightControllerPlugin::SoftReset() {
@@ -339,16 +320,13 @@ physics::LinkPtr FlightControllerPlugin::FindLinkByName(physics::ModelPtr _model
         if (hasEnding(link->GetName(), _linkName)) {
             return link;
         }
-
     }
     return NULL;
-
 }
 
 void FlightControllerPlugin::ParseDigitalTwinSDF() {
     // Load the root digital twin sdf file
     const std::string sdfPath(this->digitalTwinSDF);
-
 
     this->sdfElement.reset(new sdf::SDF());
     sdf::init(this->sdfElement);
@@ -389,27 +367,32 @@ void FlightControllerPlugin::ParseDigitalTwinSDF() {
     gzdbg << "Num motors " << this->numActuators << std::endl;
 
     sdf::ElementPtr sensorsSDF = pluginPtr->GetElement("sensors");
-    if (!sensorsSDF) {
+    if (sensorsSDF == nullptr) {
         gzerr << "Could not find any sensors\n";
-    }
-    sdf::ElementPtr sensorSDF = sensorsSDF->GetElement("sensor");
-    while (sensorSDF) {
-        std::string type = sensorSDF->GetAttribute("type")->GetAsString();
-
-        if (boost::iequals(type, "imu")) {
-            this->supportedSensors.push_back(IMU);
-        } else if (boost::iequals(type, "esc")) {
-            this->supportedSensors.push_back(ESC);
-        } else if (boost::iequals(type, "battery")) {
-            this->supportedSensors.push_back(BATTERY);
+    } else {
+        sdf::ElementPtr sensorSDF = sensorsSDF->GetElement("sensor");
+        if (sensorSDF == nullptr) {
+            gzerr << "sensorSDF is null!" << std::endl << std::flush;
         }
-        sensorSDF = sensorSDF->GetNextElement("sensor");
+        while (sensorSDF != nullptr) {
+            std::string type = sensorSDF->GetAttribute("type")->GetAsString();
+            if (sensorSDF == nullptr) {
+                break;
+            }
+            if (boost::iequals(type, "imu")) {
+                this->supportedSensors.push_back(IMU);
+            } else if (boost::iequals(type, "esc")) {
+                this->supportedSensors.push_back(ESC);
+            } else if (boost::iequals(type, "battery")) {
+                this->supportedSensors.push_back(BATTERY);
+            }
+            sensorSDF = sensorSDF->GetNextElement("sensor");
+        }
     }
-
 }
 
 void FlightControllerPlugin::LoadDigitalTwin() {
-    gzdbg << "Inserting digital twin from SDF, " << this->digitalTwinSDF << ".\n";
+    gzdbg << "Inserting vehicle model from SDF file: " << this->digitalTwinSDF << ".\n";
 
     // XXX Better way to do this?
     // It appears the inserted model is not available in the world
@@ -429,7 +412,6 @@ void FlightControllerPlugin::LoadDigitalTwin() {
     // start parsing model
     const std::string modelName = this->modelElement->Get<std::string>("name");
     //gzdbg << "Found " << modelName << " model!" << std::endl;
-
     // Now get a pointer to the model
     physics::ModelPtr model = this->world->ModelByName(modelName);
     if (!model) {
@@ -462,7 +444,6 @@ void FlightControllerPlugin::LoadDigitalTwin() {
     joint->Attach(supportModel->GetLink("pivot"), centerOfThrustReferenceLink);
     this->ballJoint = joint;
 
-
     if (this->world->Physics()->GetType().compare("dart") == 0) {
         // Discussed here https://www.reddit.com/r/robotics/comments/5a7xrl/bullet_vs_ode_to_simulate_robotic_arm/
 
@@ -475,7 +456,7 @@ void FlightControllerPlugin::LoadDigitalTwin() {
         gazebo::physics::DARTLinkPtr dartLink = boost::dynamic_pointer_cast<gazebo::physics::DARTLink>(
                 centerOfThrustReferenceLink);
 
-        //Do all this just to get the dark joint
+        // Do all this just to get the dark joint
         std::shared_ptr <dart::dynamics::Joint::Properties> jointProperties = dartJoint->DARTProperties();
         std::pair < dart::dynamics::Joint * , dart::dynamics::BodyNode * > pair;
         dart::dynamics::BodyNode::AspectProperties properties("testbody");
@@ -489,7 +470,7 @@ void FlightControllerPlugin::LoadDigitalTwin() {
         dartJoint->SetDARTJoint(newJoint);
 
         // This is required to constrain the distance of the child link
-        // For some reason the Load implementation is is missing this
+        // For some reason the Load implementation is missing this
         Eigen::Vector3d location = Eigen::Vector3d(this->cot.X(), this->cot.Y(), this->cot.Z());
         dart::constraint::BallJointConstraintPtr mBallConstraint;
         gzdbg << "Setting link to center " << centerOfThrustReferenceLink->GetName() << std::endl;
@@ -499,7 +480,6 @@ void FlightControllerPlugin::LoadDigitalTwin() {
     } else {
         joint->Load(supportModel->GetLink("pivot"), centerOfThrustReferenceLink,
                     ignition::math::Pose3d(this->cot.X(), this->cot.Y(), this->cot.Z(), 0, 0, 0));
-
     }
 
     joint->Init();
@@ -525,7 +505,7 @@ void FlightControllerPlugin::FlushSensors() {
     */
 
 
-    //TODO this must be based on the units or come up with somehting generic
+    // TODO: this must be based on the units or come up with something generic
     double error = 0.017;// About 1 deg/s
     while (1) {
         // Pitch and Yaw are negative
@@ -557,7 +537,6 @@ void FlightControllerPlugin::FlushSensors() {
 
 void FlightControllerPlugin::LoopThread() {
 
-
     this->LoadDigitalTwin();
     while (1) {
 
@@ -571,15 +550,13 @@ void FlightControllerPlugin::LoopThread() {
 
         /* XXX This is a way to get force applied to possibly use for reward   
 		 */
-        this->ballJointForce = this->ballJoint->GetForceTorque(0).body1Force;
+//        this->ballJointForce = this->ballJoint->GetForceTorque(0).body1Force;
         //gzdbg << "Force X=" << f.X() << " Y=" << f.Y() << " Z=" << f.Z() << std::endl;
         //ignition::math::Vector3d f2 = this->ballJoint->GetForceTorque(0).body2Force;
         //gzdbg << "Force Body 2 X=" << f2.X() << " Y=" << f2.Y() << " Z=" << f2.Z() << std::endl;
 
-
-
         // Handle reset command
-//  if (this->world->Name().compare("default") == 0)
+        //  if (this->world->Name().compare("default") == 0)
         // {
         if (this->action.world_control() == gymfc::msgs::Action::RESET) {
             //gzdbg << " Flushing sensors..." << std::endl;
@@ -632,13 +609,12 @@ void FlightControllerPlugin::CalculateCallbackCount() {
                 break;
         }
     }
-
 }
 
 void FlightControllerPlugin::WaitForSensorsThenSend() {
-    this->state.set_force(0, this->ballJointForce.X());
-    this->state.set_force(1, this->ballJointForce.Y());
-    this->state.set_force(2, this->ballJointForce.Z());
+//    this->state.set_force(0, this->ballJointForce.X());
+//    this->state.set_force(1, this->ballJointForce.Y());
+//    this->state.set_force(2, this->ballJointForce.Z());
 
     this->state.set_sim_time(this->world->SimTime().Double());
     this->state.set_status_code(gymfc::msgs::State_StatusCode_OK);
@@ -690,7 +666,7 @@ void FlightControllerPlugin::MakeSockAddr(const char *_address, const uint16_t _
 
 bool FlightControllerPlugin::ReceiveAction() {
 
-    //TODO What should the buf size be? How do we estimate the protobuf size?
+    // TODO: What should the buf size be? How do we estimate the protobuf size?
     unsigned int buf_size = 1024;
     char buf[buf_size];
 

@@ -409,6 +409,8 @@ class FlightControlEnv(ABC):
             }
         }
         sensors = plugin_el.find("sensors")
+        if sensors is None:
+            return
         for sensor in sensors.findall("sensor"):
             sensor_type = sensor.attrib["type"]
             if sensor_type in sdf_to_protobuf:
@@ -484,10 +486,14 @@ class FlightControlEnv(ABC):
 
         target_world = os.path.join(gz_assets_path, "worlds", self.world)
         p = None
-        if self.verbose:
+        # if self.verbose or True:
+        #     p = subprocess.Popen(["gzserver", "--verbose", "-s", "libGymfcGazeboRosPlugin.so", target_world], shell=False, env=container_env)
+        # else:
+        #     p = subprocess.Popen(["gzserver", "-s", "libGymfcGazeboRosPlugin.so", target_world], shell=False, env=container_env)
+        if self.verbose or True:
             p = subprocess.Popen(["gzserver", "--verbose", target_world], shell=False, env=container_env)
         else:
-            p = subprocess.Popen(["gzserver", target_world], shell=False, env=container_env)
+            p = subprocess.Popen(["gzserver", "--verbose", target_world], shell=False, env=container_env)
         self.env = container_env
         print("Starting gzserver with process ID=", p.pid)
         self.process_ids.append(p.pid)
