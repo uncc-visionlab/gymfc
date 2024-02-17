@@ -106,6 +106,7 @@ namespace gazebo {
                 : ModelPlugin(),
                   velocity_prev_W_(0, 0, 0),
                   angular_velocity_units_(angular_velocity_units::RAD_PER_SECOND) {
+            gzdbg << "GazeboImuPlugin()::constructed." << std::endl;
         }
 
         ~GazeboImuPlugin();

@@ -97,6 +97,7 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
                   time_constant_down_(kDefaultTimeConstantDown),
                   time_constant_up_(kDefaultTimeConstantUp),
                   rotor_velocity_units_(rotor_velocity_units::RAD_PER_SECOND) {
+            gzdbg << "GazeboMotorModel()::constructed." << std::endl;
         }
 
         virtual ~GazeboMotorModel();
@@ -177,7 +178,7 @@ static const std::string kDefaultMotorTestSubTopic = "motors";
 
         void MotorFailureCallback(
                 const boost::shared_ptr<const msgs::Int> &fail_msg);  /*!< Callback for the motor_failure_sub_ subscriber */
-        std::unique_ptr <FirstOrderFilter<double>> rotor_velocity_filter_;
+        std::unique_ptr<FirstOrderFilter<double>> rotor_velocity_filter_;
 /*
   // Protobuf test
   std::string motor_test_sub_topic_;

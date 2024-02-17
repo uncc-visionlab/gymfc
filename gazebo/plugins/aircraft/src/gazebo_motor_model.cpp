@@ -257,7 +257,7 @@ void GazeboMotorModel::testProto(MotorSpeedPtr &msg) {
         }
         double real_motor_velocity = motor_rot_vel_ * rotor_velocity_slowdown_sim_;
         double force = real_motor_velocity * real_motor_velocity * motor_constant_;
-        gzdbg << " Motor " << motor_number_ << " force=" << force << " vel=" << motor_rot_vel_ << std::endl;
+        //gzdbg << " Motor " << motor_number_ << " force=" << force << " vel=" << motor_rot_vel_ << std::endl;
         current_force_ = force;
 
         // scale down force linearly with forward speed
