@@ -64,10 +64,10 @@ list(APPEND CMAKE_CXX_FLAGS ${GAZEBO_CXX_FLAGS})
 # Begin Message Generation #
 #--------------------------#
 
-set(control_msgs
+set(gymfc_aircraft_control_msgs
     msgs/MotorCommand.proto
   )
-set(sensor_msgs
+set(gymfc_aircraft_sensor_msgs
   msgs/Float.proto
   msgs/Imu.proto
   msgs/MotorSpeed.proto
@@ -76,17 +76,17 @@ set(sensor_msgs
   ${PROTOBUF_IMPORT_DIRS}/quaternion.proto
   )
 
-PROTOBUF_GENERATE_CPP(CTRL_PROTO_SRCS CTRL_PROTO_HDRS ${control_msgs})
-PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
+PROTOBUF_GENERATE_CPP(GYMFC_AIR_CTRL_PROTO_SRCS CTRL_PROTO_HDRS ${gymfc_aircraft_control_msgs})
+PROTOBUF_GENERATE_CPP(GYMFC_AIR_SEN_PROTO_SRCS SEN_PROTO_HDRS ${gymfc_aircraft_sensor_msgs})
 
-add_library(gz_control_msgs SHARED ${CTRL_PROTO_SRCS})
-add_library(gz_sensor_msgs SHARED ${SEN_PROTO_SRCS})
+add_library(gymfc_aircraft_control_msgs SHARED ${GYMFC_AIR_CTRL_PROTO_SRCS})
+add_library(gymfc_aircraft_sensor_msgs SHARED ${GYMFC_AIR_SEN_PROTO_SRCS})
 
 #------------------------#
 # End Message Generation #
 #------------------------#
 
-link_libraries(control_msgs sensor_msgs)
+link_libraries(gymfc_aircraft_control_msgs gymfc_aircraft_sensor_msgs)
 
 add_library(gymfc_motor_model SHARED src/gymfc_motor_model.cpp)
 add_library(gymfc_imu_plugin SHARED src/gymfc_imu_plugin.cpp)

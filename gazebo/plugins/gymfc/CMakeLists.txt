@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(gymfc_flightcontroller_plugin)
+project(gymfc_plugins)
 
 find_package(gazebo REQUIRED)
 #
@@ -62,14 +62,14 @@ set(sensor_msgs
 PROTOBUF_GENERATE_CPP(CTRL_PROTO_SRCS CTRL_PROTO_HDRS ${control_msgs})
 PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
 
-add_library(control_msgs SHARED ${CTRL_PROTO_SRCS})
-add_library(sensor_msgs SHARED ${SEN_PROTO_SRCS})
+add_library(gymfc_control_msgs SHARED ${CTRL_PROTO_SRCS})
+add_library(gymfc_sensor_msgs SHARED ${SEN_PROTO_SRCS})
 
 #------------------------#
 # End Message Generation #
 #------------------------#
 
-link_libraries(control_msgs sensor_msgs)
+link_libraries(gymfc_control_msgs gymfc_sensor_msgs)
 
 add_library(FlightControllerPlugin SHARED FlightControllerPlugin.cpp)
 add_library(AircraftConfigPlugin SHARED AircraftConfigPlugin.cpp)
