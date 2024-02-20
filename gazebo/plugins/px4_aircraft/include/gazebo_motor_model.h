@@ -18,8 +18,6 @@
  * limitations under the License.
  */
 
-#ifndef GAZEBO_MOTOR_MODEL_H
-#define GAZEBO_MOTOR_MODEL_H
 
 
 #include <stdio.h>
@@ -165,4 +163,3 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
 */
 };
 }
-#endif //  GAZEBO_MOTOR_MODEL_H
