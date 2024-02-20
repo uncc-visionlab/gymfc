@@ -18,6 +18,8 @@
  * limitations under the License.
  */
 
+#ifndef GAZEBO_MOTOR_MODEL_H
+#define GAZEBO_MOTOR_MODEL_H
 
 
 #include <stdio.h>
@@ -50,8 +52,9 @@ static const std::string kDefaultNamespace = "";
 static const std::string kDefaultCommandSubTopic = "/gazebo/command/motor_speed";
 static const std::string kDefaultMotorFailureNumSubTopic = "/gazebo/motor_failure_num";
 static const std::string kDefaultMotorVelocityPubTopic = "/motor_speed";
+#ifndef GYMFC_PLUGINS_GYMFC_GAZEBO_MOTOR_MODEL_H
 std::string wind_sub_topic_ = "/world_wind";
-
+#endif
 typedef const boost::shared_ptr<const mav_msgs::msgs::CommandMotorSpeed> CommandMotorSpeedPtr;
 typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
 
@@ -92,15 +95,25 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
   virtual void OnUpdate(const common::UpdateInfo & /*_info*/);
 
- private:
   std::string command_sub_topic_{kDefaultCommandSubTopic};
+  std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};
+  int motor_number_{0};
+  physics::JointPtr joint_;
+  double ref_motor_rot_vel_{0.0};
+  double time_constant_down_{kDefaultTimeConstantDown};
+  double time_constant_up_{kDefaultTimeConstantUp};
+  common::PID pid_;
+  std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
+
+ private:
+//  std::string command_sub_topic_{kDefaultCommandSubTopic};
   std::string motor_failure_sub_topic_{kDefaultMotorFailureNumSubTopic};
   std::string joint_name_;
   std::string link_name_;
-  std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};
+//  std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};
   std::string namespace_;
 
-  int motor_number_{0};
+//  int motor_number_{0};
   int turning_direction_{turning_direction::CW};
 
   int motor_Failure_Number_{0}; /*!< motor_Failure_Number is (motor_number_ + 1) as (0) is considered no_fail. Publish accordingly */
@@ -112,12 +125,12 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   double max_rot_velocity_{kDefaulMaxRotVelocity};
   double moment_constant_{kDefaultMomentConstant};
   double motor_constant_{kDefaultMotorConstant};
-  double ref_motor_rot_vel_{0.0};
+//  double ref_motor_rot_vel_{0.0};
   double rolling_moment_coefficient_{kDefaultRollingMomentCoefficient};
   double rotor_drag_coefficient_{kDefaultRotorDragCoefficient};
   double rotor_velocity_slowdown_sim_{kDefaultRotorVelocitySlowdownSim};
-  double time_constant_down_{kDefaultTimeConstantDown};
-  double time_constant_up_{kDefaultTimeConstantUp};
+//  double time_constant_down_{kDefaultTimeConstantDown};
+//  double time_constant_up_{kDefaultTimeConstantUp};
 
   bool reversible_{false};
 
@@ -130,8 +143,8 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   ignition::math::Vector3d wind_vel_;
 
   physics::ModelPtr model_;
-  physics::JointPtr joint_;
-  common::PID pid_;
+//  physics::JointPtr joint_;
+//  common::PID pid_;
   bool use_pid_;
   physics::LinkPtr link_;
   /// \brief Pointer to the update event connection.
@@ -144,7 +157,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg);  /*!< Callback for the motor_failure_sub_ subscriber */
   void WindVelocityCallback(const boost::shared_ptr<const physics_msgs::msgs::Wind> &msg);
 
-  std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
+//  std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
 /*
   // Protobuf test
   std::string motor_test_sub_topic_;
@@ -152,3 +165,4 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
 */
 };
 }
+#endif //  GAZEBO_MOTOR_MODEL_H

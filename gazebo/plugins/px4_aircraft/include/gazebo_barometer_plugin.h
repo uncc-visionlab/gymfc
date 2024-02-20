@@ -85,10 +85,13 @@ namespace gazebo {
     virtual void OnUpdate(const common::UpdateInfo&);
     void getSdfParams(sdf::ElementPtr sdf);
 
+    physics::WorldPtr world_;
+    common::Time last_time_;
+
   private:
     std::string namespace_;
     physics::ModelPtr model_;
-    physics::WorldPtr world_;
+//    physics::WorldPtr world_;
     event::ConnectionPtr update_connection_;
     std::string baro_topic_;
 
@@ -102,7 +105,7 @@ namespace gazebo {
     std::normal_distribution<double> standard_normal_distribution_;
 
     common::Time last_pub_time_;
-    common::Time last_time_;
+//    common::Time last_time_;
 
     ignition::math::Pose3d pose_model_start_;
     ignition::math::Vector3d gravity_in_world_; // [m/s^2]

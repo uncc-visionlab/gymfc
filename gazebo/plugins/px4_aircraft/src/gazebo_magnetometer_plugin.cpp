@@ -42,7 +42,7 @@
 
 namespace gazebo
 {
-GZ_REGISTER_MODEL_PLUGIN(MagnetometerPlugin)
+//GZ_REGISTER_MODEL_PLUGIN(MagnetometerPlugin)
 
 MagnetometerPlugin::MagnetometerPlugin() : ModelPlugin(),
       groundtruth_lat_rad_(0.0),

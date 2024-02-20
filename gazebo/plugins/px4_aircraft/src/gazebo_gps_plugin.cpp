@@ -31,7 +31,7 @@
 using namespace std;
 
 namespace gazebo {
-GZ_REGISTER_SENSOR_PLUGIN(GpsPlugin)
+//GZ_REGISTER_SENSOR_PLUGIN(GpsPlugin)
 
 GpsPlugin::GpsPlugin() : SensorPlugin()
 { }

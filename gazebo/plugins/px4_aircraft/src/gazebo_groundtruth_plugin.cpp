@@ -42,7 +42,7 @@
 
 namespace gazebo
 {
-GZ_REGISTER_MODEL_PLUGIN(GroundtruthPlugin)
+//GZ_REGISTER_MODEL_PLUGIN(GroundtruthPlugin)
 
 GroundtruthPlugin::GroundtruthPlugin() : ModelPlugin()
 { }

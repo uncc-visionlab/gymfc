@@ -70,6 +70,9 @@ protected:
   virtual void OnSensorUpdate();
   virtual void OnWorldUpdate(const common::UpdateInfo& /*_info*/);
 
+  physics::WorldPtr world_;
+  common::Time last_time_;
+
 private:
   std::string namespace_;
   std::string gps_id_;
@@ -82,7 +85,7 @@ private:
 
   sensors::GpsSensorPtr parentSensor_;
   physics::ModelPtr model_;
-  physics::WorldPtr world_;
+//  physics::WorldPtr world_;
   event::ConnectionPtr updateWorldConnection_;
   event::ConnectionPtr updateSensorConnection_;
 
@@ -93,7 +96,7 @@ private:
   double update_rate_;
 
   common::Time last_gps_time_;
-  common::Time last_time_;
+//  common::Time last_time_;
   common::Time current_time_;
   common::Time start_time_;
 

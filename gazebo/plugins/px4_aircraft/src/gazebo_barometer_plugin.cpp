@@ -44,7 +44,7 @@
 
 namespace gazebo
 {
-GZ_REGISTER_MODEL_PLUGIN(BarometerPlugin)
+//GZ_REGISTER_MODEL_PLUGIN(BarometerPlugin)
 
 BarometerPlugin::BarometerPlugin() : ModelPlugin(),
     alt_home_(DEFAULT_HOME_ALT_AMSL),

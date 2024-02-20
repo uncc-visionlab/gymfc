@@ -304,5 +304,5 @@ void GazeboMotorModel::WindVelocityCallback(WindPtr& msg) {
             msg->velocity().z());
 }
 
-GZ_REGISTER_MODEL_PLUGIN(GazeboMotorModel);
+//GZ_REGISTER_MODEL_PLUGIN(GazeboMotorModel);
 }

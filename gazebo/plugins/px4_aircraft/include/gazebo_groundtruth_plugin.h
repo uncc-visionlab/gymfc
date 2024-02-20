@@ -73,10 +73,15 @@ protected:
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
   virtual void OnUpdate(const common::UpdateInfo& /*_info*/);
 
+  physics::WorldPtr world_;
+  double world_latitude_ = 0.0;
+  double world_longitude_ = 0.0;
+  double world_altitude_ = 0.0;
+
 private:
   std::string namespace_;
   physics::ModelPtr model_;
-  physics::WorldPtr world_;
+//  physics::WorldPtr world_;
   event::ConnectionPtr updateConnection_;
 
   transport::NodePtr node_handle_;
@@ -88,9 +93,9 @@ private:
   double lat_home_ = kDefaultHomeLatitude;
   double lon_home_ = kDefaultHomeLongitude;
   double alt_home_ = kDefaultHomeAltitude;
-  double world_latitude_ = 0.0;
-  double world_longitude_ = 0.0;
-  double world_altitude_ = 0.0;
+//  double world_latitude_ = 0.0;
+//  double world_longitude_ = 0.0;
+//  double world_altitude_ = 0.0;
 
 };     // class GAZEBO_VISIBLE GroundtruthPlugin
 }      // namespace gazebo

@@ -325,6 +325,5 @@ void GazeboImuPlugin::OnUpdate(const common::UpdateInfo& _info) {
   imu_pub_->Publish(imu_message_);
 }
 
-
-GZ_REGISTER_MODEL_PLUGIN(GazeboImuPlugin);
+//GZ_REGISTER_MODEL_PLUGIN(GazeboImuPlugin);
 }

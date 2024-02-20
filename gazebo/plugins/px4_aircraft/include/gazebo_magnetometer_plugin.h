@@ -86,10 +86,13 @@ protected:
   void GroundtruthCallback(GtPtr&);
   void getSdfParams(sdf::ElementPtr sdf);
 
+  physics::WorldPtr world_;
+  common::Time last_time_;
+
 private:
   std::string namespace_;
   physics::ModelPtr model_;
-  physics::WorldPtr world_;
+//  physics::WorldPtr world_;
   std::string mag_topic_;
   transport::NodePtr node_handle_;
   transport::PublisherPtr pub_mag_;
@@ -102,7 +105,7 @@ private:
   event::ConnectionPtr update_connection_;
   sensor_msgs::msgs::MagneticField mag_message_;
 
-  common::Time last_time_;
+//  common::Time last_time_;
   common::Time last_pub_time_;
   unsigned int pub_rate_;
   double noise_density_;

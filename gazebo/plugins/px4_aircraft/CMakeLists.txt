@@ -307,26 +307,63 @@ add_library(px4_sensor_msgs SHARED ${SEN_PROTO_SRCS})
 #---------#
 
 link_libraries(px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_std_msgs)
-
-
-add_library(gazebo_barometer_plugin SHARED src/gazebo_barometer_plugin.cpp)
-add_library(gazebo_gps_plugin SHARED src/gazebo_gps_plugin.cpp)
-add_library(gazebo_groundtruth_plugin SHARED src/gazebo_groundtruth_plugin.cpp)
-add_library(gazebo_imu_plugin SHARED src/gazebo_imu_plugin.cpp)
-add_library(gazebo_magnetometer_plugin SHARED src/gazebo_magnetometer_plugin.cpp src/geo_mag_declination.cpp)
+##############################################################
+# PX4 Multirotor Plugins
+##############################################################
+#add_library(gazebo_barometer_plugin SHARED include/common.h
+#        include/gazebo_barometer_plugin.h src/gazebo_barometer_plugin.cpp)
+#add_library(gazebo_gps_plugin SHARED include/common.h
+#        include/gazebo_gps_plugin.h src/gazebo_gps_plugin.cpp)
+#add_library(gazebo_groundtruth_plugin SHARED include/common.h
+#        include/gazebo_groundtruth_plugin.h src/gazebo_groundtruth_plugin.cpp)
+#add_library(gazebo_imu_plugin SHARED include/common.h
+#        include/gazebo_imu_plugin.h src/gazebo_imu_plugin.cpp)
+#add_library(gazebo_magnetometer_plugin SHARED include/common.h
+#        include/gazebo_magnetometer_plugin.h
+#        src/gazebo_magnetometer_plugin.cpp src/geo_mag_declination.cpp)
 #add_library(gazebo_mavlink_interface SHARED src/gazebo_mavlink_interface.cpp src/mavlink_interface.cpp)
-add_library(gazebo_motor_model SHARED src/gazebo_motor_model.cpp)
-add_library(gazebo_multirotor_base_plugin SHARED src/gazebo_multirotor_base_plugin.cpp)
+#add_library(gazebo_motor_model SHARED include/common.h
+#        include/gazebo_motor_model.h src/gazebo_motor_model.cpp)
+add_library(gazebo_multirotor_base_plugin SHARED include/common.h
+        include/gazebo_multirotor_base_plugin.h src/gazebo_multirotor_base_plugin.cpp)
+##############################################################
+# GymFC versions of the PX4 Multirotor Plugins
+##############################################################
+add_library(gymfc_gazebo_barometer_plugin SHARED include/common.h
+        include/gymfc_gazebo_barometer_plugin.h include/gazebo_barometer_plugin.h
+        src/gymfc_gazebo_barometer_plugin.cpp src/gazebo_barometer_plugin.cpp)
+add_library(gymfc_gazebo_gps_plugin SHARED include/common.h
+        include/gymfc_gazebo_gps_plugin.h include/gazebo_gps_plugin.h
+        src/gymfc_gazebo_gps_plugin.cpp src/gazebo_gps_plugin.cpp)
+add_library(gymfc_gazebo_groundtruth_plugin SHARED include/common.h
+        include/gymfc_gazebo_groundtruth_plugin.h include/gazebo_groundtruth_plugin.h
+        src/gymfc_gazebo_groundtruth_plugin.cpp src/gazebo_groundtruth_plugin.cpp)
+add_library(gymfc_gazebo_imu_plugin SHARED include/common.h
+        include/gymfc_gazebo_imu_plugin.h include/gazebo_imu_plugin.h
+        src/gymfc_gazebo_imu_plugin.cpp src/gazebo_imu_plugin.cpp)
+add_library(gymfc_gazebo_magnetometer_plugin SHARED include/common.h  src/geo_mag_declination.cpp
+        include/gymfc_gazebo_magnetometer_plugin.h include/gazebo_magnetometer_plugin.h
+        src/gymfc_gazebo_magnetometer_plugin.cpp src/gazebo_magnetometer_plugin.cpp)
+add_library(gymfc_gazebo_motor_model SHARED include/common.h
+        include/gymfc_gazebo_motor_model.h include/gazebo_motor_model.h
+        src/gymfc_gazebo_motor_model.cpp src/gazebo_motor_model.cpp)
 
 set(plugins
-        gazebo_barometer_plugin
-        gazebo_gps_plugin
-        gazebo_groundtruth_plugin
-        gazebo_imu_plugin
-        gazebo_magnetometer_plugin
-        # gazebo_mavlink_interface
-        gazebo_motor_model
-        gazebo_multirotor_base_plugin
+#        gazebo_barometer_plugin
+#        gazebo_gps_plugin
+#        gazebo_groundtruth_plugin
+#        gazebo_imu_plugin
+#        gazebo_magnetometer_plugin
+##        gazebo_mavlink_interface
+#        gazebo_motor_model
+##        gazebo_multirotor_base_plugin
+
+        gymfc_gazebo_barometer_plugin
+        gymfc_gazebo_gps_plugin
+        gymfc_gazebo_groundtruth_plugin
+        gymfc_gazebo_imu_plugin
+        gymfc_gazebo_magnetometer_plugin
+        gymfc_gazebo_motor_model
 )
 
 foreach(plugin ${plugins})

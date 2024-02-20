@@ -114,11 +114,15 @@ class GazeboImuPlugin : public ModelPlugin {
 
   void OnUpdate(const common::UpdateInfo&);
 
+  transport::NodePtr node_handle_;
+  transport::PublisherPtr imu_pub_;
+  physics::WorldPtr world_;
+  common::Time last_time_;
  private:
   std::string namespace_;
   std::string imu_topic_;
-  transport::NodePtr node_handle_;
-  transport::PublisherPtr imu_pub_;
+//  transport::NodePtr node_handle_;
+//  transport::PublisherPtr imu_pub_;
   std::string frame_id_;
   std::string link_name_;
 
@@ -126,7 +130,7 @@ class GazeboImuPlugin : public ModelPlugin {
   std::normal_distribution<double> standard_normal_distribution_;
 
   // Pointer to the world
-  physics::WorldPtr world_;
+//  physics::WorldPtr world_;
   // Pointer to the model
   physics::ModelPtr model_;
   // Pointer to the link
@@ -134,7 +138,7 @@ class GazeboImuPlugin : public ModelPlugin {
   // Pointer to the update event connection
   event::ConnectionPtr updateConnection_;
 
-  common::Time last_time_;
+//  common::Time last_time_;
 
   sensor_msgs::msgs::Imu imu_message_;
 
