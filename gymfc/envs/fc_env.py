@@ -379,7 +379,7 @@ class FlightControlEnv(ABC):
         if len(els) != 1:
             raise SystemExit(
                 "Could not find plugin with filename {} from SDF file {} required to load the aircraft model.".format(
-                    "libAircraftConfigPlugin.so", model_sdf))
+                    "libAircraftConfigPlugin.so", self.aircraft_sdf_filepath))
         plugin_el = els[0]
 
         self.motor_count = int(plugin_el.find("motorCount").text)
