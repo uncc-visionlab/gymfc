@@ -151,7 +151,7 @@ def step_sim(env, logger):
     logger.step_size = step_size
     logger.sim_step_size = step_size
     sim_steps = env.max_sim_time * (1 / step_size)
-    motor_inc = 1 / sim_steps
+    motor_inc = 40 / sim_steps
     # Try each axis doing a ramp
     num_motor_steps = 1000.0
 
@@ -173,6 +173,9 @@ def step_sim(env, logger):
         np.array([1, 1, 0, 1]),  # Yaw CW
         np.array([1, 1, 1, 0])  # Yaw CW
     ]
+    rpm = 1200
+    motor_commands_rpm = [motor_command * rpm for motor_command in motor_commands]
+    motor_commands = motor_commands_rpm
 
     for m in motor_commands:
 
