@@ -48,6 +48,7 @@ list(APPEND CMAKE_CXX_FLAGS ${GAZEBO_CXX_FLAGS})
 
 set(control_msgs
   msgs/MotorCommand.proto
+  msgs/CommandMotorSpeed.proto
   )
 set(sensor_msgs
   msgs/Float.proto

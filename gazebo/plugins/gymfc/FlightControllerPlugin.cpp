@@ -181,7 +181,8 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
     }
     this->InitState();
 
-    this->cmdPub = this->nodeHandle->Advertise<cmd_msgs::msgs::MotorCommand>(this->cmdPubTopic);
+//    this->cmdPub = this->nodeHandle->Advertise<cmd_msgs::msgs::MotorCommand>(this->cmdPubTopic);
+    this->cmdPub = this->nodeHandle->Advertise<mav_msgs::msgs::CommandMotorSpeed>(this->cmdPubTopic);
     // Force pause because we drive the simulation steps
     this->world->SetPaused(true);
     this->callbackLoopThread = boost::thread(boost::bind(&FlightControllerPlugin::LoopThread, this));
@@ -249,6 +250,7 @@ void FlightControllerPlugin::InitState() {
 }
 
 void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
+    //gzdbg << "Received ESC msg " << sensorCallbackCount << std::endl;
     uint32_t id = _escSensor->id();
     boost::mutex::scoped_lock lock(g_CallbackMutex);
 
@@ -265,7 +267,7 @@ void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
 }
 
 void FlightControllerPlugin::ImuCallback(ImuPtr &_imu) {
-    //gzdbg << "Received IMU" << std::endl;
+    //gzdbg << "Received IMU msg " << sensorCallbackCount << std::endl;
     boost::mutex::scoped_lock lock(g_CallbackMutex);
 
     this->state.set_imu_angular_velocity_rpy(0, _imu->angular_velocity().x());
@@ -575,11 +577,13 @@ void FlightControllerPlugin::LoopThread() {
         this->ResetCallbackCount();
         //gzdbg << "Callback count " << this->sensorCallbackCount << std::endl;
         //Forward the motor commands from the agent to each motor
-        cmd_msgs::msgs::MotorCommand cmd;
+        //cmd_msgs::msgs::MotorCommand cmd;
+        mav_msgs::msgs::CommandMotorSpeed cmd;
         //gzdbg << "Sending motor commands to digital twin" << std::endl;
         for (unsigned int i = 0; i < this->numActuators; i++) {
             //gzdbg << i << "=" << this->action.motor(i) << std::endl;
-            cmd.add_motor(this->action.motor(i));
+            //cmd.add_motor(this->action.motor(i));
+            cmd.add_motor_speed(this->action.motor(i));
         }
         //gzdbg << "Publishing motor command\n";
         this->cmdPub->Publish(cmd);

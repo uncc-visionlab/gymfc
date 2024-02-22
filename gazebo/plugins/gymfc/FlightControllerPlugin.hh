@@ -28,7 +28,8 @@
 #include <gazebo/physics/Base.hh>
 #include "gazebo/transport/transport.hh"
 
-#include "MotorCommand.pb.h"
+//#include "MotorCommand.pb.h"
+#include "CommandMotorSpeed.pb.h"
 #include "EscSensor.pb.h"
 #include "Imu.pb.h"
 #include "State.pb.h"
@@ -68,11 +69,9 @@ namespace gazebo {
         FlightControllerPlugin();
 
         /// \brief Destructor.
-    public:
         ~FlightControllerPlugin();
 
         /// \brief The function called when the plugin in loaded
-    public:
         void Load(physics::WorldPtr _world, sdf::ElementPtr _sdf);
 
     private:
@@ -87,7 +86,6 @@ namespace gazebo {
     private:
         void LoadDigitalTwin();
 
-    private:
         void ParseDigitalTwinSDF();
 
         /// \brief Main loop thread waiting for incoming UDP packets
@@ -95,11 +93,9 @@ namespace gazebo {
         void LoopThread();
 
         /// \brief Bind to the specified port to receive UDP packets
-    public:
         bool Bind(const char *_address, const uint16_t _port);
 
         /// \brief Helper to make a socket
-    public:
         void MakeSockAddr(const char *_address, const uint16_t _port, struct sockaddr_in &_sockaddr);
 
         /// \brief Receive action including motor commands
@@ -108,82 +104,64 @@ namespace gazebo {
 
         /// \brief Initialize a single protobuf state that is
         // reused throughout the simulation.
-    private:
         void InitState();
 
         /// \brief Send current state
-    private:
         void SendState() const;
 
         /// \brief Reset the world time and model, differs from
         // world reset such that the random number generator is not
         // reset.
-    private:
         void SoftReset();
 
 
         /// \brief Callback from the digital twin to recieve ESC sensor values
         // where each ESC/motor will be a separate message
-    private:
         void EscSensorCallback(EscSensorPtr &_escSensor);
 
         /// \brief Callback from the digital twin to recieve IMU values
-    private:
         void ImuCallback(ImuPtr &_imu);
 
-    private:
         void CalculateCallbackCount();
 
-    private:
         void ResetCallbackCount();
 
         // \brief Calling GetLink from a model will not traverse nested models
         // until found, this function will find a link name from the
         // entire model
-    private:
         physics::LinkPtr FindLinkByName(physics::ModelPtr _model, std::string _linkName);
 
         /// \brief Block until the sensors are within a certain threshold. Useful for
         // flushing remote sensors at the beinning of a new task.
-    private:
         void FlushSensors();
 
         /// \brief Block until all the callbacks for the supported sneors
         // are recieved.
-    private:
         void WaitForSensorsThenSend();
 
-    private:
         bool SensorEnabled(Sensors _sensor);
 
-    private:
         std::string robotNamespace;
 
         /// \brief Main loop thread for the server
-    private:
         boost::thread callbackLoopThread;
 
-        /// \brief Pointer to the world
     public:
+        /// \brief Pointer to the world
         physics::WorldPtr world;
 
         /// \brief Pointer to the update event connection.
-    public:
         event::ConnectionPtr updateConnection;
 
         /// \brief keep track of controller update sim-time.
-    public:
         gazebo::common::Time lastControllerUpdateTime;
 
         /// \brief Controller update mutex.
-    public:
         std::mutex mutex;
 
         /// \brief Socket handle
-    public:
         int handle;
 
-    public:
         struct sockaddr_in remaddr;
 
     public:
@@ -202,60 +180,40 @@ namespace gazebo {
     private:
         std::string digitalTwinSDF;
 
-    private:
         std::string cmdPubTopic;
-    private:
         std::string imuSubTopic;
-    private:
         std::string escSubTopic;
-    private:
         transport::NodePtr nodeHandle;
         // Now define the communication channels with the digital twin
         // The architecure treats this world plugin as the flight controller
         // while all other aircraft components are now external and communicated
         // over protobufs
-    private:
         transport::PublisherPtr cmdPub;
 
         // Subscribe to all possible sensors
-    private:
         transport::SubscriberPtr imuSub;
-    private:
         std::vector <transport::SubscriberPtr> escSub;
-    private:
-        cmd_msgs::msgs::MotorCommand cmdMsg;
+//        cmd_msgs::msgs::MotorCommand cmdMsg;
+//        mav_msgs::msgs::CommandMotorSpeed newCmdMsg;
 
         /// \brief Current callback count incremented as sensors are pbulished
-    private:
         int sensorCallbackCount;
-    private:
         int numSensorCallbacks;
 
-    private:
         boost::condition_variable callbackCondition;
 
-    private:
         gymfc::msgs::State state;
-    private:
         gymfc::msgs::Action action;
-    private:
         std::vector <Sensors> supportedSensors;
 
-    private:
         int numActuators;
-    private:
         sdf::SDFPtr sdfElement;
-    private:
         std::string centerOfThrustReferenceLinkName;
-    private:
         ignition::math::Vector3d cot;
-    private:
         sdf::ElementPtr modelElement;
 
 
-    private:
         gazebo::physics::JointPtr ballJoint;
-    private:
         ignition::math::Vector3d ballJointForce;
     };
 }
