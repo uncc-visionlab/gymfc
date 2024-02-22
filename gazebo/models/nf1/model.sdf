@@ -391,37 +391,6 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <plugin name="prop_1_motor_model" filename='libgymfc_motor_model.so'>
-      <robotNamespace></robotNamespace>
-      <jointName>prop_1_joint</jointName>
-      <linkName>prop_1</linkName>
-      <turningDirection>cw</turningDirection>
-      <timeConstantUp>0.187</timeConstantUp>
-      <timeConstantDown>0.1</timeConstantDown>
-      <maxRotVelocity>2622</maxRotVelocity>
-      <motorConstant>9.375e-7</motorConstant>
-      <momentConstant>0.0086</momentConstant>
-      <motorNumber>0</motorNumber>
-      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
-      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>1</rotorVelocitySlowdownSim>
-      <rotorVelocityUnits>rpm</rotorVelocityUnits>
-      <escTransferFunction>
-          <term1Coefficient>-14229.32</term1Coefficient>
-          <term2Coefficient>39125.59</term2Coefficient>
-          <term3Coefficient>86.67</term3Coefficient>
-      </escTransferFunction>
-      <joint_control_pid>
-          <p>0.0001</p>
-          <i>0</i>
-          <d>0</d>
-          <iMin>0</iMin>
-          <iMax>0</iMax>
-          <cmdMin>-0.05</cmdMin>
-          <cmdMax>0.1</cmdMax>
-      </joint_control_pid>
-    </plugin>
-    
     <link name="prop_2">
     <pose>0.0805 -0.07 0.058 0 -0 0</pose>
       <inertial>
@@ -492,37 +461,6 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <plugin name="prop_2_motor_model" filename='libgymfc_motor_model.so'>
-      <robotNamespace></robotNamespace>
-      <jointName>prop_2_joint</jointName>
-      <linkName>prop_2</linkName>
-      <turningDirection>ccw</turningDirection>
-      <timeConstantUp>0.187</timeConstantUp>
-      <timeConstantDown>0.1</timeConstantDown>
-      <maxRotVelocity>2622</maxRotVelocity>
-      <motorConstant>9.375e-7</motorConstant>
-      <momentConstant>0.0086</momentConstant>
-      <motorNumber>1</motorNumber>
-      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
-      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>1</rotorVelocitySlowdownSim>
-      <rotorVelocityUnits>rpm</rotorVelocityUnits>
-      <escTransferFunction>
-          <term1Coefficient>-14229.32</term1Coefficient>
-          <term2Coefficient>39125.59</term2Coefficient>
-          <term3Coefficient>86.67</term3Coefficient>
-      </escTransferFunction>
-      <joint_control_pid>
-          <p>0.0001</p>
-          <i>0</i>
-          <d>0</d>
-          <iMin>0</iMin>
-          <iMax>0</iMax>
-          <cmdMin>-0.1</cmdMin>
-          <cmdMax>0.05</cmdMax>
-      </joint_control_pid>
-    </plugin>
-    
     <link name="prop_3">
     <pose>-0.0805 0.07  0.058 0 -0 0</pose>
       <inertial>
@@ -593,37 +531,6 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <plugin name="prop_3_motor_model" filename='libgymfc_motor_model.so'>
-      <robotNamespace></robotNamespace>
-      <jointName>prop_3_joint</jointName>
-      <linkName>prop_3</linkName>
-      <turningDirection>ccw</turningDirection>
-      <timeConstantUp>0.187</timeConstantUp>
-      <timeConstantDown>0.1</timeConstantDown>
-      <maxRotVelocity>2622</maxRotVelocity>
-      <motorConstant>9.375e-7</motorConstant>
-      <momentConstant>0.0086</momentConstant>
-      <motorNumber>2</motorNumber>
-      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
-      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>1</rotorVelocitySlowdownSim>
-      <rotorVelocityUnits>rpm</rotorVelocityUnits>
-      <escTransferFunction>
-          <term1Coefficient>-14229.32</term1Coefficient>
-          <term2Coefficient>39125.59</term2Coefficient>
-          <term3Coefficient>86.67</term3Coefficient>
-      </escTransferFunction>
-      <joint_control_pid>
-          <p>0.0001</p>
-          <i>0</i>
-          <d>0</d>
-          <iMin>0</iMin>
-          <iMax>0</iMax>
-          <cmdMin>-0.1</cmdMin>
-          <cmdMax>0.05</cmdMax>
-      </joint_control_pid>
-    </plugin>
-    
     <link name="prop_4">
     <pose>0.0805 0.07 0.058 0 -0 0</pose>
       <inertial>
@@ -694,7 +601,58 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <plugin name="prop_4_motor_model" filename='libgymfc_motor_model.so'>
+    <plugin name='front_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
+      <robotNamespace></robotNamespace>
+      <jointName>prop_1_joint</jointName>
+      <linkName>prop_1</linkName>
+      <turningDirection>cw</turningDirection>
+      <timeConstantUp>0.187</timeConstantUp>
+      <timeConstantDown>0.1</timeConstantDown>
+      <maxRotVelocity>2622</maxRotVelocity>
+      <motorConstant>9.375e-7</motorConstant>
+      <momentConstant>0.0086</momentConstant>
+      <motorNumber>0</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/0</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='back_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
+      <robotNamespace></robotNamespace>
+      <jointName>prop_2_joint</jointName>
+      <linkName>prop_2</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.187</timeConstantUp>
+      <timeConstantDown>0.1</timeConstantDown>
+      <maxRotVelocity>2622</maxRotVelocity>
+      <motorConstant>9.375e-7</motorConstant>
+      <momentConstant>0.0086</momentConstant>
+      <motorNumber>1</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/1</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='front_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
+      <robotNamespace></robotNamespace>
+      <jointName>prop_3_joint</jointName>
+      <linkName>prop_3</linkName>
+      <turningDirection>ccw</turningDirection>
+      <timeConstantUp>0.187</timeConstantUp>
+      <timeConstantDown>0.1</timeConstantDown>
+      <maxRotVelocity>2622</maxRotVelocity>
+      <motorConstant>9.375e-7</motorConstant>
+      <momentConstant>0.0086</momentConstant>
+      <motorNumber>2</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
+      <rotorDragCoefficient>8e-5</rotorDragCoefficient>
+      <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
+      <motorSpeedPubTopic>/motor_speed/2</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
+    </plugin>
+    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>prop_4_joint</jointName>
       <linkName>prop_4</linkName>
@@ -705,26 +663,12 @@
       <motorConstant>9.375e-7</motorConstant>
       <momentConstant>0.0086</momentConstant>
       <motorNumber>3</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <rotorDragCoefficient>8e-5</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>1</rotorVelocitySlowdownSim>
-      <rotorVelocityUnits>rpm</rotorVelocityUnits>
-      <escTransferFunction>
-          <term1Coefficient>-14229.32</term1Coefficient>
-          <term2Coefficient>39125.59</term2Coefficient>
-          <term3Coefficient>86.67</term3Coefficient>
-      </escTransferFunction>
-      <joint_control_pid>
-          <p>0.0001</p>
-          <i>0</i>
-          <d>0</d>
-          <iMin>0</iMin>
-          <iMax>0</iMax>
-          <cmdMin>-0.05</cmdMin>
-          <cmdMax>0.1</cmdMax>
-      </joint_control_pid>
+      <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    
     <!--
     <link name='camera'>
       <pose>0 -0.0365 0.057 -0.61 -0 0</pose>
@@ -833,7 +777,7 @@
         <child>fc_stack</child>
         <parent>frame</parent>
     </joint>
-    <plugin name='gazebo_imu_plugin' filename='libgymfc_imu_plugin.so'>
+    <plugin name='rotors_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
       <robotNamespace></robotNamespace>
       <linkName>fc_stack</linkName>
       <imuTopic>/imu</imuTopic>
@@ -845,7 +789,6 @@
       <accelerometerRandomWalk>0.006</accelerometerRandomWalk>
       <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
       <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
-      <angularVelocityUnits>deg/s</angularVelocityUnits>
     </plugin>
     <static>0</static>
   </model>

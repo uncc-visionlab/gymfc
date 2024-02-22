@@ -1,5 +1,31 @@
 <sdf version='1.5'>
   <model name='solo'>
+     <plugin name="config" filename="libAircraftConfigPlugin.so">
+        <motorCount>4</motorCount>
+        <!-- Where is the center of thrust in relation to this specified link -->
+        <centerOfThrust>
+            <link>imu_link</link>
+            <offset>0 0 0.058</offset>
+        </centerOfThrust>
+        <sensors>
+          <sensor type="imu">
+              <enable_angular_velocity>true</enable_angular_velocity>
+              <enable_linear_acceleration>true</enable_linear_acceleration>
+              <enable_orientation>true</enable_orientation>
+          </sensor>
+          <sensor type="esc">
+                <enable_angular_velocity>true</enable_angular_velocity>
+                <enable_temperature>false</enable_temperature>
+                <enable_current>false</enable_current>
+          </sensor>
+          <!--
+          <sensor type="battery">
+              <enable_voltage>true</enable_voltage>
+              <enable_current>true</enable_current>
+          </sensor>
+          -->
+      </sensors>
+    </plugin>
     <!-- Solo body -->
     <link name='base_link'>
       <pose>0 0 0 0 0 0</pose>
@@ -350,7 +376,7 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
-    <plugin name='front_right_motor_model' filename='libgymfc_motor_model.so'>
+    <plugin name='front_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>rotor_0_joint</jointName>
       <linkName>rotor_0</linkName>
@@ -360,12 +386,14 @@
       <maxRotVelocity>1500</maxRotVelocity>
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
-      <motorNumber>1</motorNumber>
+      <motorNumber>0</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>100</rotorVelocitySlowdownSim>
+      <motorSpeedPubTopic>/motor_speed/0</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    <plugin name='back_left_motor_model' filename='libgymfc_motor_model.so'>
+    <plugin name='back_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>rotor_1_joint</jointName>
       <linkName>rotor_1</linkName>
@@ -375,12 +403,14 @@
       <maxRotVelocity>1500</maxRotVelocity>
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
-      <motorNumber>2</motorNumber>
+      <motorNumber>1</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>100</rotorVelocitySlowdownSim>
+      <motorSpeedPubTopic>/motor_speed/1</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    <plugin name='front_left_motor_model' filename='libgymfc_motor_model.so'>
+    <plugin name='front_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>rotor_2_joint</jointName>
       <linkName>rotor_2</linkName>
@@ -390,12 +420,14 @@
       <maxRotVelocity>1500</maxRotVelocity>
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
-      <motorNumber>3</motorNumber>
+      <motorNumber>2</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>100</rotorVelocitySlowdownSim>
+      <motorSpeedPubTopic>/motor_speed/2</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    <plugin name='back_right_motor_model' filename='libgymfc_motor_model.so'>
+    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace></robotNamespace>
       <jointName>rotor_3_joint</jointName>
       <linkName>rotor_3</linkName>
@@ -405,13 +437,14 @@
       <maxRotVelocity>1500</maxRotVelocity>
       <motorConstant>8.54858e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
-      <motorNumber>0</motorNumber>
+      <motorNumber>3</motorNumber>
+      <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
       <rotorDragCoefficient>0.000806428</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
-      <rotorVelocitySlowdownSim>100</rotorVelocitySlowdownSim>
+      <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
+      <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    <static>0</static>
-    <plugin name='gazebo_imu_plugin' filename='libgymfc_imu_plugin.so'>
+    <plugin name='rotors_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
       <robotNamespace></robotNamespace>
       <linkName>imu_link</linkName>
       <imuTopic>/imu</imuTopic>
@@ -424,31 +457,6 @@
       <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
       <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
     </plugin>
-     <plugin name="config" filename="libAircraftConfigPlugin.so">
-        <motorCount>4</motorCount>
-        <!-- Where is the center of thrust in relation to this specified link -->
-        <centerOfThrust>
-            <link>imu_link</link>
-            <offset>0 0 0.058</offset>
-        </centerOfThrust>
-      <sensors>
-        <!--  <sensor type="imu">
-              <enable_angular_velocity>true</enable_angular_velocity>
-              <enable_linear_acceleration>true</enable_linear_acceleration>
-              <enable_orientation>true</enable_orientation>
-          </sensor>
-          <sensor type="esc">
-                <enable_angular_velocity>true</enable_angular_velocity>
-                <enable_temperature>false</enable_temperature>
-                <enable_current>false</enable_current>
-          </sensor>-->
-		  <!--
-          <sensor type="battery">
-              <enable_voltage>true</enable_voltage>
-              <enable_current>true</enable_current>
-          </sensor>
-            -->
-      </sensors>
-    </plugin>
+    <static>0</static>
   </model>
 </sdf>
