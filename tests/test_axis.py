@@ -14,6 +14,9 @@ def step_sim(env, delay=0, scale=1):
         np.array([1, 0, 0, 1]),  # Yaw CCW
         np.array([0, 1, 1, 0])  # Yaw CW
     ]
+    rpm = 600
+    motor_commands_rpm = [motor_command * rpm for motor_command in motor_commands]
+    motor_commands = motor_commands_rpm
     motor_command_strings = ["Roll Left",
                              "Roll Right",
                              "Pitch Forward",
@@ -29,7 +32,8 @@ def step_sim(env, delay=0, scale=1):
         print("-----------------------------------")
         ob = env.reset()
         while True:
-            ob = env.step_sim(m * scale)
+            print("m={}".format(m))
+            ob = env.step_sim(m)
             print("Roll={:.4f} Pitch={:.4f} Yaw={:.4f}".format(*env.imu_angular_velocity_rpy.tolist()))
             print("X={:.4f} Y={:.4f} Z={:.4f}".format(*env.imu_linear_acceleration_xyz))
             print("X={:.4f} Y={:.4f} Z={:.4f} W={:.4f}".format(*env.imu_orientation_quat))

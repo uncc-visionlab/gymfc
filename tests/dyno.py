@@ -22,20 +22,21 @@ def step_input(env, output_file, max_command, max_sim_time, input_type="step"):
     command_step = 1 / ramp_steps
     current_step = 0
     while True:
-        ob = env.step_sim(command)
-        if current_step % 100000:
-            print("command = {} angular vel = {}".format(command, env.esc_motor_angular_velocity))
-        data.append([env.sim_time, command[0],
-                     *env.esc_motor_angular_velocity,
-                     *env.force, env.motor_count])
         if input_type == "step":
             if env.sim_time > peak_time:
                 command = np.zeros(env.motor_count, dtype=float)
         else:
             if env.sim_time < peak_time:
-                command += command_step
+                command = max_command * env.sim_time / peak_time
             else:
-                command -= command_step
+                command = max_command - max_command * (env.sim_time - peak_time) / (2 * peak_time)
+        ob = env.step_sim(command)
+        if current_step % 100 == 0:
+            print("step={} command = {} angular vel = {}".format(current_step, command,
+                                                                 env.esc_motor_angular_velocity))
+        data.append([env.sim_time, command[0],
+                     *env.esc_motor_angular_velocity,
+                     *env.force, env.motor_count])
         current_step += 1
         if env.sim_time > max_sim_time:
             break
