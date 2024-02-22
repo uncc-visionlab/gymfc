@@ -21,7 +21,7 @@ def generate_inputs(num_trials, max_rate, seed):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("Monitor and evaluate Tensorflow checkpoints.")
     parser.add_argument('ckpt_dir', help="Directory where checkpoints are saved") 
-    parser.add_argument('--twin', default="./gymfc_nf/twins/nf1/model.sdf",
+    parser.add_argument('--model', default="./gymfc_nf/twins/nf1/model.sdf",
                         help="File path of the aircraft digitial twin/model SDF.")
     parser.add_argument('--eval-dir', 
                         help="Directory where evaluation logs are saved, if different than default.")

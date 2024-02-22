@@ -9,8 +9,7 @@ from .rewards import RewardEnv
 
 
 class StepEnv(RewardEnv):
-    def __init__(self, pulse_width=1, max_rate=100, state_fn=None,
-                 max_sim_time=1):
+    def __init__(self, pulse_width=1, max_rate=100, state_fn=None, max_sim_time=1):
         """Create a reinforcement learning environment that generates step input
         setpoints. Technically this is a multi-axis singlet input, the
         terminology in this package needs to be updated to reflect flight test

@@ -8,8 +8,8 @@ register(
     entry_point='gymfc_nf.envs.step:StepEnv',
     kwargs={
         "max_rate": 100,
-        "state_fn":state_degrees_error_deltaerror,
-        "pulse_width":2.048,
+        "state_fn": state_degrees_error_deltaerror,
+        "pulse_width": 2.048,
         "max_sim_time": 4.608
     }
 )
@@ -18,8 +18,8 @@ register(
     entry_point='gymfc_nf.envs.continuous:ContinuousEnv',
     kwargs={
         "max_rate": 300,
-        "state_fn":state_degrees_error_deltaerror,
+        "state_fn": state_degrees_error_deltaerror,
         "max_sim_time": 5.12,
-        "pulse_width":1.024,
+        "pulse_width": 1.024,
     }
 )

@@ -49,8 +49,7 @@ if __name__ == "__main__":
     if render:
         env.render()
     while True:
-        ac = pi.action(ob, env.sim_time, env.angular_rate_sp,
-                       env.imu_angular_velocity_rpy)
+        ac = pi.action(ob, env.sim_time, env.angular_rate_sp, env.imu_angular_velocity_rpy)
         ob, reward, done, _ = env.step(ac)
 
         if done:
