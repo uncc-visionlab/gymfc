@@ -32,8 +32,8 @@ def step_input(env, output_file, max_command, max_sim_time, input_type="step"):
                 command = max_command - max_command * (env.sim_time - peak_time) / (2 * peak_time)
         ob = env.step_sim(command)
         if current_step % 100 == 0:
-            print("step={} command = {} angular vel = {}".format(current_step, command,
-                                                                 env.esc_motor_angular_velocity))
+            print("step={} command = {} rpm/rotorVelocitySlowdownSim = {}".format(current_step, command,
+                                                                                  env.esc_motor_angular_velocity))
         data.append([env.sim_time, command[0],
                      *env.esc_motor_angular_velocity,
                      *env.force, env.motor_count])
