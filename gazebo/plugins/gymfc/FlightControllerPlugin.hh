@@ -197,8 +197,8 @@ namespace gazebo {
 //        mav_msgs::msgs::CommandMotorSpeed newCmdMsg;
 
         /// \brief Current callback count incremented as sensors are pbulished
-        int sensorCallbackCount;
-        int numSensorCallbacks;
+        int sensorCallbackCount{0};
+        int numSensorCallbacks{0};
 
         boost::condition_variable callbackCondition;
 
