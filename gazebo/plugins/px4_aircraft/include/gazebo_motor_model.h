@@ -93,18 +93,20 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
   virtual void OnUpdate(const common::UpdateInfo & /*_info*/);
 
-  std::string command_sub_topic_{kDefaultCommandSubTopic};
   std::string motor_speed_pub_topic_{kDefaultMotorVelocityPubTopic};
   int motor_number_{0};
+  physics::ModelPtr model_;
   physics::JointPtr joint_;
   double ref_motor_rot_vel_{0.0};
   double time_constant_down_{kDefaultTimeConstantDown};
   double time_constant_up_{kDefaultTimeConstantUp};
+  transport::NodePtr node_handle_;
   common::PID pid_;
+  void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);
   std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
 
  private:
-//  std::string command_sub_topic_{kDefaultCommandSubTopic};
+  std::string command_sub_topic_{kDefaultCommandSubTopic};
   std::string motor_failure_sub_topic_{kDefaultMotorFailureNumSubTopic};
   std::string joint_name_;
   std::string link_name_;
@@ -132,7 +134,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
 
   bool reversible_{false};
 
-  transport::NodePtr node_handle_;
+//  transport::NodePtr node_handle_;
   transport::PublisherPtr motor_velocity_pub_;
   transport::SubscriberPtr command_sub_;
   transport::SubscriberPtr motor_failure_sub_; /*!< Subscribing to motor_failure_sub_topic_; receiving motor number to fail, as an integer */
@@ -140,7 +142,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
 
   ignition::math::Vector3d wind_vel_;
 
-  physics::ModelPtr model_;
+//  physics::ModelPtr model_;
 //  physics::JointPtr joint_;
 //  common::PID pid_;
   bool use_pid_;
@@ -151,7 +153,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   boost::thread callback_queue_thread_;
   void QueueThread();
   std_msgs::msgs::Float turning_velocity_msg_;
-  void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);
+//  void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);
   void MotorFailureCallback(const boost::shared_ptr<const msgs::Int> &fail_msg);  /*!< Callback for the motor_failure_sub_ subscriber */
   void WindVelocityCallback(const boost::shared_ptr<const physics_msgs::msgs::Wind> &msg);
 

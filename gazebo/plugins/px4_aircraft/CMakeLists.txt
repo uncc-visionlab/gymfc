@@ -249,20 +249,15 @@ set(sensor_msgs
         msgs/MagneticField.proto
         msgs/Pressure.proto
 )
-set(wind3d_msgs
-        msgs/ConnectGazeboToRosTopic.proto
-        msgs/ConnectRosToGazeboTopic.proto
-        msgs/Header.proto
-        msgs/Anemometer.proto
-        msgs/WindSpeed.proto
-        msgs/WindServerRegistration.proto
+set(gymfc_msgs
+        msgs/EscSensor.proto
 )
 PROTOBUF_GENERATE_CPP(MAV_PROTO_SRCS MAV_PROTO_HDRS ${mav_msgs})
 PROTOBUF_GENERATE_CPP(NAV_PROTO_SRCS NAV_PROTO_HDRS ${nav_msgs})
 PROTOBUF_GENERATE_CPP(PHY_PROTO_SRCS PHY_PROTO_HDRS ${physics_msgs})
 PROTOBUF_GENERATE_CPP(STD_PROTO_SRCS STD_PROTO_HDRS ${std_msgs})
 PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
-#PROTOBUF_GENERATE_CPP(WIND3D_PROTO_SRCS WIND3D_PROTO_HDRS ${wind3d_msgs})
+PROTOBUF_GENERATE_CPP(GYMFC_PROTO_SRCS GYMFC_PROTO_HDRS ${gymfc_msgs})
 
 
 # ============================================== #
@@ -301,12 +296,13 @@ add_library(px4_nav_msgs SHARED ${NAV_PROTO_SRCS})
 add_library(px4_physics_msgs SHARED ${PHY_PROTO_SRCS})
 add_library(px4_std_msgs SHARED ${STD_PROTO_SRCS})
 add_library(px4_sensor_msgs SHARED ${SEN_PROTO_SRCS})
+add_library(gymfc_msgs SHARED ${GYMFC_PROTO_SRCS})
 
 #---------#
 # Plugins #
 #---------#
 
-link_libraries(px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_std_msgs)
+link_libraries(px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_std_msgs gymfc_msgs)
 ##############################################################
 # PX4 Multirotor Plugins
 ##############################################################
@@ -371,7 +367,7 @@ foreach(plugin ${plugins})
 endforeach()
 
 foreach(plugin ${plugins})
-    add_dependencies(${plugin} px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_std_msgs)
+    add_dependencies(${plugin} px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_std_msgs gymfc_msgs)
 endforeach()
 
 # Configure the setup script

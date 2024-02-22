@@ -88,8 +88,8 @@ add_library(gymfc_aircraft_sensor_msgs SHARED ${GYMFC_AIR_SEN_PROTO_SRCS})
 
 link_libraries(gymfc_aircraft_control_msgs gymfc_aircraft_sensor_msgs)
 
-add_library(gymfc_motor_model SHARED src/gymfc_motor_model.cpp)
-add_library(gymfc_imu_plugin SHARED src/gymfc_imu_plugin.cpp)
+add_library(gymfc_motor_model SHARED src/gymfc_motor_model.h src/gymfc_motor_model.cpp)
+add_library(gymfc_imu_plugin SHARED src/gymfc_motor_model.h src/gymfc_imu_plugin.cpp)
 
 set(plugins
     gymfc_motor_model
