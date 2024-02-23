@@ -9,7 +9,7 @@ def step_sim(env, ac, delay=0):
     """ Evaluate an environment with the given policy """
     ob = env.reset()
     while True:
-        ob = env.step_sim(ac)
+        ob, msg = env.step_sim(ac)
         print("F=", env.force)
         s = input("[enter] = Step, q = Quit")
         if s == 'q' or env.is_done():

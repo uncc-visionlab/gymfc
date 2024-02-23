@@ -183,18 +183,16 @@ def step_sim(env, logger):
         motor_signals = np.zeros(4)
         ob = env.reset()
         while True:
-            # print (motor_signals)
             ob = env.step_sim(motor_signals)
-            # print ("RPY", env.imu_angular_velocity_rpy, " M=", motor_signals)
+            print ("RPY", ob.imu_angular_velocity_rpy, " M=", motor_signals)
             # if delay > 0:
-            # XXX Measured the publish rate at 60Hz to be on the safe size
-            # send commands at 10Hz
+            # XXX Measure the publishing rate at 60Hz to be on the safe size send commands at 10Hz
             time.sleep(0.1)
             if env.is_done():
                 break
             motor_signals = motor_signals + (m * np.array([motor_inc] * 4))
 
-            logger.add_aircraft_io([env.sim_time] + env.imu_angular_velocity_rpy.tolist())
+            logger.add_aircraft_io([env.sim_time] + ob.imu_angular_velocity_rpy[:])
 
         logger.trial_index += 1
 

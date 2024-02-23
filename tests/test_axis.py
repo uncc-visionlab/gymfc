@@ -34,11 +34,11 @@ def step_sim(env, delay=0, scale=1):
         while True:
             print("m={}".format(m))
             ob = env.step_sim(m)
-            print("Roll={:.4f} Pitch={:.4f} Yaw={:.4f}".format(*env.imu_angular_velocity_rpy.tolist()))
-            print("X={:.4f} Y={:.4f} Z={:.4f}".format(*env.imu_linear_acceleration_xyz))
-            print("X={:.4f} Y={:.4f} Z={:.4f} W={:.4f}".format(*env.imu_orientation_quat))
+            print("Roll={:.4f} Pitch={:.4f} Yaw={:.4f}".format(*ob.imu_angular_velocity_rpy))
+            print("X={:.4f} Y={:.4f} Z={:.4f}".format(*ob.imu_linear_acceleration_xyz))
+            print("X={:.4f} Y={:.4f} Z={:.4f} W={:.4f}".format(*ob.imu_orientation_quat))
             if hasattr(env, "esc_motor_angular_velocity"):
-                print("M1={:.4f} M2={:.4f} M3={:.4f} M4={:.4f}".format(*env.esc_motor_angular_velocity))
+                print("M1={:.4f} M2={:.4f} M3={:.4f} M4={:.4f}".format(*ob.esc_motor_angular_velocity))
             s = input("[enter] = Step, n = Next Command, q = Quit")
             if s == 'n' or env.is_done():
                 break
