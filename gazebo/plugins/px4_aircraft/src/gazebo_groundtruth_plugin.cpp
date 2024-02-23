@@ -151,7 +151,7 @@ void GroundtruthPlugin::OnUpdate(const common::UpdateInfo&)
   velocity_current_W_xy.Z() = 0;
 
   // fill Groundtruth msg
-  sensor_msgs::msgs::Groundtruth groundtruth_msg;
+  //sensor_msgs::msgs::Groundtruth groundtruth_msg;
 
   groundtruth_msg.set_time_usec(current_time.Double() * 1e6);
   groundtruth_msg.set_latitude_rad(latlon_gt.first);

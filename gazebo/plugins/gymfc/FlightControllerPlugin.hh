@@ -31,7 +31,12 @@
 //#include "MotorCommand.pb.h"
 #include "CommandMotorSpeed.pb.h"
 #include "EscSensor.pb.h"
+#include "Groundtruth.pb.h"
 #include "Imu.pb.h"
+#include "MagneticField.pb.h"
+#include "Pressure.pb.h"
+#include "SITLGps.pb.h"
+
 #include "State.pb.h"
 #include "Action.pb.h"
 
@@ -41,26 +46,40 @@
 #define ENV_SUPPORTED_SENSORS "GYMFC_SUPPORTED_SENSORS"
 
 namespace gazebo {
-    static const std::string kDefaultCmdPubTopic = "/aircraft/command/motor";
-    static const std::string kDefaultImuSubTopic = "/aircraft/sensor/imu";
-    static const std::string kDefaultEscSubTopic = "/aircraft/sensor/esc";
+    static const std::string kGymFCDefaultCommandPubTopic = "/aircraft/command/motor";
+    static const std::string kGymFCDefaultMotorVelocitySubTopic = "/aircraft/sensor/esc";
+    static const std::string kGymFCDefaultImuSubTopic = "/aircraft/sensor/imu";
+    static const std::string kGymFCDefaultBarometerSubTopic = "/aircraft/sensor/baro";
+    static const std::string kGymFCDefaultMagnetometerSubTopic = "/aircraft/sensor/magneto";
+    static const std::string kGymFCDefaultGPSSubTopic = "/aircraft/sensor/gps";
+    static const std::string kGymFCDefaultGroundtruthSubTopic = "/aircraft/sensor/groundtruth";
+
     // TODO Change link name to CoM
     const std::string DIGITAL_TWIN_ATTACH_LINK = "base_link";
     const std::string kTrainingRigModelName = "attitude_control_training_rig";
 
     const std::string kAircraftConfigFileName = "libAircraftConfigPlugin.so";
 
-    typedef const boost::shared_ptr<const sensor_msgs::msgs::Imu> ImuPtr;
     typedef const boost::shared_ptr<const sensor_msgs::msgs::EscSensor> EscSensorPtr;
+    typedef const boost::shared_ptr<const sensor_msgs::msgs::SITLGps> GpsPtr;
+    typedef const boost::shared_ptr<const sensor_msgs::msgs::Groundtruth> GroundtruthPtr;
+    typedef const boost::shared_ptr<const sensor_msgs::msgs::Imu> ImuPtr;
+    typedef const boost::shared_ptr<const sensor_msgs::msgs::Pressure> PressurePtr;
+    typedef const boost::shared_ptr<const sensor_msgs::msgs::MagneticField> MagneticFieldPtr;
 
     /// \brief List of all supported sensors. The client must
     // tell us which ones it will use. The client must be aware of the
     // digitial twin they are using and that it supports the corresponding
     // sensors.
     enum Sensors {
-        IMU,
+        NONE,
+        BAROMETER,
+        BATTERY,
         ESC,
-        BATTERY
+        GPS,
+        GROUND_TRUTH,
+        IMU,
+        MAGNETOMETER
     };
 
     class FlightControllerPlugin : public WorldPlugin {
@@ -88,8 +107,8 @@ namespace gazebo {
 
         void ParseDigitalTwinSDF();
 
-        /// \brief Main loop thread waiting for incoming UDP packets
     public:
+        /// \brief Main loop thread waiting for incoming UDP packets
         void LoopThread();
 
         /// \brief Bind to the specified port to receive UDP packets
@@ -117,10 +136,18 @@ namespace gazebo {
 
         /// \brief Callback from the digital twin to recieve ESC sensor values
         // where each ESC/motor will be a separate message
+        void BarometerCallback(PressurePtr &_pressure);
+
         void EscSensorCallback(EscSensorPtr &_escSensor);
+
+        void GpsCallback(GpsPtr &_gt);
+
+        void GroundtruthCallback(GroundtruthPtr &_gt);
 
         /// \brief Callback from the digital twin to recieve IMU values
         void ImuCallback(ImuPtr &_imu);
+
+        void MagnetometerCallback(MagneticFieldPtr &_magneto);
 
         void CalculateCallbackCount();
 
@@ -149,50 +176,57 @@ namespace gazebo {
     public:
         /// \brief Pointer to the world
         physics::WorldPtr world;
-
         /// \brief Pointer to the update event connection.
         event::ConnectionPtr updateConnection;
-
         /// \brief keep track of controller update sim-time.
         gazebo::common::Time lastControllerUpdateTime;
-
         /// \brief Controller update mutex.
         std::mutex mutex;
-
         /// \brief Socket handle
         int handle;
 
         struct sockaddr_in remaddr;
 
-    public:
         socklen_t remaddrlen;
 
         /// \brief number of times ArduCotper skips update
-    public:
         int connectionTimeoutCount;
-
         /// \brief number of times ArduCotper skips update
         /// before marking Quadcopter offline
-    public:
         int connectionTimeoutMaxCount;
-
-        /// \brief File path to the digital twin SDF
     private:
+        /// \brief File path to the digital twin SDF
         std::string digitalTwinSDF;
 
-        std::string cmdPubTopic;
-        std::string imuSubTopic;
-        std::string escSubTopic;
+        std::string cmdPubTopic{kGymFCDefaultCommandPubTopic};
+
+        std::string escSubTopic{kGymFCDefaultMotorVelocitySubTopic};
+        std::string gpsSubTopic{kGymFCDefaultGPSSubTopic};
+        std::string ground_truthSubTopic{kGymFCDefaultGroundtruthSubTopic};
+        std::string imuSubTopic{kGymFCDefaultImuSubTopic};
+        std::string magnetoSubTopic{kGymFCDefaultMagnetometerSubTopic};
+        std::string baroSubTopic{kGymFCDefaultBarometerSubTopic};
+
+        //sensor_msgs::msgs::SITLGps last_gps_msg;
+        //sensor_msgs::msgs::Pressure last_barometer_msg;
+        //sensor_msgs::msgs::MagneticField last_magnetometer_msg;
+
         transport::NodePtr nodeHandle;
+
         // Now define the communication channels with the digital twin
-        // The architecure treats this world plugin as the flight controller
+        // The architecture treats this world plugin as the flight controller
         // while all other aircraft components are now external and communicated
         // over protobufs
         transport::PublisherPtr cmdPub;
 
         // Subscribe to all possible sensors
+        transport::SubscriberPtr baroSub;
+        std::vector<transport::SubscriberPtr> escSub;
+        transport::SubscriberPtr gpsSub;
+        transport::SubscriberPtr ground_truthSub;
         transport::SubscriberPtr imuSub;
-        std::vector <transport::SubscriberPtr> escSub;
+        transport::SubscriberPtr magnetoSub;
+
 //        cmd_msgs::msgs::MotorCommand cmdMsg;
 //        mav_msgs::msgs::CommandMotorSpeed newCmdMsg;
 
@@ -204,7 +238,7 @@ namespace gazebo {
 
         gymfc::msgs::State state;
         gymfc::msgs::Action action;
-        std::vector <Sensors> supportedSensors;
+        std::vector<Sensors> supportedSensors;
 
         int numActuators;
         sdf::SDFPtr sdfElement;

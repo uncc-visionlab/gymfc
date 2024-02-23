@@ -333,7 +333,7 @@ void GpsPlugin::OnSensorUpdate()
   // protect shared variables
   std::lock_guard<std::mutex> lock(data_mutex_);
 
-  sensor_msgs::msgs::SITLGps gps_msg;
+//  sensor_msgs::msgs::SITLGps gps_msg;
   // apply GPS delay
   if ((current_time_ - last_gps_time_).Double() > 1 / parentSensor_->UpdateRate()) {
     last_gps_time_ = current_time_;
@@ -367,6 +367,7 @@ void GpsPlugin::OnSensorUpdate()
     }
     // publish SITLGps msg at the defined update rate
     gps_pub_->Publish(gps_msg);
+    new_msg_published = true;
   }
 }
 } // namespace gazebo

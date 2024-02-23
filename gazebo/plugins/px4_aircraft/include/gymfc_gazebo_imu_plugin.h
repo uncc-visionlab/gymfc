@@ -8,6 +8,8 @@
 #include "gazebo_imu_plugin.h"
 
 namespace gazebo {
+    static const std::string kGymFCDefaultImuPubTopic = "/aircraft/sensor/imu";
+
     class GymFCGazeboImuPlugin : public GazeboImuPlugin {
     public:
         GymFCGazeboImuPlugin() {
@@ -17,15 +19,15 @@ namespace gazebo {
         ~GymFCGazeboImuPlugin() {
 
         }
+        void Publish();
     protected:
-        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-        void OnTimeReset();
+        virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        virtual void OnUpdate(const common::UpdateInfo& /*_info*/);
+        virtual void OnTimeReset();
     private:
-        //physics::WorldPtr world_;
-        //transport::PublisherPtr imu_pub_;
         event::ConnectionPtr resetEvent_;
-
-        //common::Time last_time_;
+        std::string gymfc_imu_pub_topic_{kGymFCDefaultImuPubTopic};
+        transport::PublisherPtr gymfc_imu_pub_;
     };
 }
 

@@ -74,9 +74,8 @@ protected:
   virtual void OnUpdate(const common::UpdateInfo& /*_info*/);
 
   physics::WorldPtr world_;
-  double world_latitude_ = 0.0;
-  double world_longitude_ = 0.0;
-  double world_altitude_ = 0.0;
+  sensor_msgs::msgs::Groundtruth groundtruth_msg;
+  transport::NodePtr node_handle_;
 
 private:
   std::string namespace_;
@@ -84,7 +83,7 @@ private:
 //  physics::WorldPtr world_;
   event::ConnectionPtr updateConnection_;
 
-  transport::NodePtr node_handle_;
+//  transport::NodePtr node_handle_;
   transport::PublisherPtr gt_pub_;
 
   // Home defaults to Zurich Irchel Park
@@ -93,9 +92,9 @@ private:
   double lat_home_ = kDefaultHomeLatitude;
   double lon_home_ = kDefaultHomeLongitude;
   double alt_home_ = kDefaultHomeAltitude;
-//  double world_latitude_ = 0.0;
-//  double world_longitude_ = 0.0;
-//  double world_altitude_ = 0.0;
+  double world_latitude_ = 0.0;
+  double world_longitude_ = 0.0;
+  double world_altitude_ = 0.0;
 
 };     // class GAZEBO_VISIBLE GroundtruthPlugin
 }      // namespace gazebo

@@ -85,8 +85,14 @@ namespace gazebo {
     virtual void OnUpdate(const common::UpdateInfo&);
     void getSdfParams(sdf::ElementPtr sdf);
 
+    bool new_msg_published{false};
+
     physics::WorldPtr world_;
+    transport::NodePtr node_handle_;
+    common::Time last_pub_time_;
     common::Time last_time_;
+    sensor_msgs::msgs::Pressure baro_msg_;
+    unsigned int pub_rate_;
 
   private:
     std::string namespace_;
@@ -95,16 +101,16 @@ namespace gazebo {
     event::ConnectionPtr update_connection_;
     std::string baro_topic_;
 
-    transport::NodePtr node_handle_;
+//    transport::NodePtr node_handle_;
     transport::PublisherPtr pub_baro_;
 
-    sensor_msgs::msgs::Pressure baro_msg_;
-    unsigned int pub_rate_;
+//    sensor_msgs::msgs::Pressure baro_msg_;
+//    unsigned int pub_rate_;
 
     std::default_random_engine random_generator_;
     std::normal_distribution<double> standard_normal_distribution_;
 
-    common::Time last_pub_time_;
+//    common::Time last_pub_time_;
 //    common::Time last_time_;
 
     ignition::math::Pose3d pose_model_start_;

@@ -7,7 +7,6 @@ from google.protobuf import descriptor as _descriptor
 from google.protobuf import message as _message
 from google.protobuf import reflection as _reflection
 from google.protobuf import symbol_database as _symbol_database
-from google.protobuf import descriptor_pb2
 # @@protoc_insertion_point(imports)
 
 _sym_db = _symbol_database.Default()
@@ -19,9 +18,9 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='State.proto',
   package='gymfc.msgs',
   syntax='proto2',
-  serialized_pb=_b('\n\x0bState.proto\x12\ngymfc.msgs\"\xc3\x03\n\x05State\x12\x10\n\x08sim_time\x18\x01 \x02(\x02\x12$\n\x18imu_angular_velocity_rpy\x18\x02 \x03(\x02\x42\x02\x10\x01\x12\'\n\x1bimu_linear_acceleration_xyz\x18\x03 \x03(\x02\x42\x02\x10\x01\x12 \n\x14imu_orientation_quat\x18\x04 \x03(\x02\x42\x02\x10\x01\x12&\n\x1a\x65sc_motor_angular_velocity\x18\x05 \x03(\x02\x42\x02\x10\x01\x12\x1b\n\x0f\x65sc_temperature\x18\x06 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_current\x18\x07 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_voltage\x18\x08 \x03(\x02\x42\x02\x10\x01\x12\x15\n\tesc_force\x18\t \x03(\x02\x42\x02\x10\x01\x12\x16\n\nesc_torque\x18\n \x03(\x02\x42\x02\x10\x01\x12\x14\n\x0cvbat_voltage\x18\x0b \x01(\x02\x12\x14\n\x0cvbat_current\x18\x0c \x01(\x02\x12\x31\n\x0bstatus_code\x18\r \x02(\x0e\x32\x1c.gymfc.msgs.State.StatusCode\x12\x11\n\x05\x66orce\x18\x0e \x03(\x02\x42\x02\x10\x01\"\x1f\n\nStatusCode\x12\x06\n\x02OK\x10\x00\x12\t\n\x05\x45RROR\x10\x01')
+  serialized_options=None,
+  serialized_pb=_b('\n\x0bState.proto\x12\ngymfc.msgs\"\xff\x05\n\x05State\x12\x10\n\x08sim_time\x18\x01 \x02(\x02\x12$\n\x18imu_angular_velocity_rpy\x18\x02 \x03(\x02\x42\x02\x10\x01\x12\'\n\x1bimu_linear_acceleration_xyz\x18\x03 \x03(\x02\x42\x02\x10\x01\x12 \n\x14imu_orientation_quat\x18\x04 \x03(\x02\x42\x02\x10\x01\x12&\n\x1a\x65sc_motor_angular_velocity\x18\x05 \x03(\x02\x42\x02\x10\x01\x12\x1b\n\x0f\x65sc_temperature\x18\x06 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_current\x18\x07 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_voltage\x18\x08 \x03(\x02\x42\x02\x10\x01\x12\x15\n\tesc_force\x18\t \x03(\x02\x42\x02\x10\x01\x12\x16\n\nesc_torque\x18\n \x03(\x02\x42\x02\x10\x01\x12\x14\n\x0cvbat_voltage\x18\x0b \x01(\x02\x12\x14\n\x0cvbat_current\x18\x0c \x01(\x02\x12\x31\n\x0bstatus_code\x18\r \x02(\x0e\x32\x1c.gymfc.msgs.State.StatusCode\x12\x11\n\x05\x66orce\x18\x0e \x03(\x02\x42\x02\x10\x01\x12\x19\n\rgps_wgs84_pos\x18\x0f \x03(\x01\x42\x02\x10\x01\x12\x0f\n\x07gps_eph\x18\x10 \x01(\x02\x12\x0f\n\x07gps_epv\x18\x11 \x01(\x02\x12\x16\n\x0egps_ground_vel\x18\x12 \x01(\x02\x12\x17\n\x0bgps_enu_vel\x18\x13 \x03(\x02\x42\x02\x10\x01\x12\x18\n\x10\x62\x61ro_temperature\x18\x14 \x01(\x02\x12\x1e\n\x16\x62\x61ro_absolute_pressure\x18\x15 \x01(\x02\x12\x1e\n\x16\x62\x61ro_pressure_altitude\x18\x16 \x01(\x02\x12\"\n\x16magneto_magnetic_field\x18\x17 \x03(\x01\x42\x02\x10\x01\x12\x18\n\x0cgt_wgs84_pos\x18\x18 \x03(\x01\x42\x02\x10\x01\x12\x16\n\ngt_enu_vel\x18\x19 \x03(\x02\x42\x02\x10\x01\x12\x1c\n\x10gt_attitude_quat\x18\x1a \x03(\x02\x42\x02\x10\x01\"\x1f\n\nStatusCode\x12\x06\n\x02OK\x10\x00\x12\t\n\x05\x45RROR\x10\x01')
 )
-_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
 
@@ -33,17 +32,17 @@ _STATE_STATUSCODE = _descriptor.EnumDescriptor(
   values=[
     _descriptor.EnumValueDescriptor(
       name='OK', index=0, number=0,
-      options=None,
+      serialized_options=None,
       type=None),
     _descriptor.EnumValueDescriptor(
       name='ERROR', index=1, number=1,
-      options=None,
+      serialized_options=None,
       type=None),
   ],
   containing_type=None,
-  options=None,
-  serialized_start=448,
-  serialized_end=479,
+  serialized_options=None,
+  serialized_start=764,
+  serialized_end=795,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_STATUSCODE)
 
@@ -61,98 +60,182 @@ _STATE = _descriptor.Descriptor(
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='imu_angular_velocity_rpy', full_name='gymfc.msgs.State.imu_angular_velocity_rpy', index=1,
       number=2, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='imu_linear_acceleration_xyz', full_name='gymfc.msgs.State.imu_linear_acceleration_xyz', index=2,
       number=3, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='imu_orientation_quat', full_name='gymfc.msgs.State.imu_orientation_quat', index=3,
       number=4, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_motor_angular_velocity', full_name='gymfc.msgs.State.esc_motor_angular_velocity', index=4,
       number=5, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_temperature', full_name='gymfc.msgs.State.esc_temperature', index=5,
       number=6, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_current', full_name='gymfc.msgs.State.esc_current', index=6,
       number=7, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_voltage', full_name='gymfc.msgs.State.esc_voltage', index=7,
       number=8, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_force', full_name='gymfc.msgs.State.esc_force', index=8,
       number=9, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='esc_torque', full_name='gymfc.msgs.State.esc_torque', index=9,
       number=10, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='vbat_voltage', full_name='gymfc.msgs.State.vbat_voltage', index=10,
       number=11, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='vbat_current', full_name='gymfc.msgs.State.vbat_current', index=11,
       number=12, type=2, cpp_type=6, label=1,
       has_default_value=False, default_value=float(0),
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='status_code', full_name='gymfc.msgs.State.status_code', index=12,
       number=13, type=14, cpp_type=8, label=2,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=None),
+      serialized_options=None, file=DESCRIPTOR),
     _descriptor.FieldDescriptor(
       name='force', full_name='gymfc.msgs.State.force', index=13,
       number=14, type=2, cpp_type=6, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
-      options=_descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))),
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gps_wgs84_pos', full_name='gymfc.msgs.State.gps_wgs84_pos', index=14,
+      number=15, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gps_eph', full_name='gymfc.msgs.State.gps_eph', index=15,
+      number=16, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gps_epv', full_name='gymfc.msgs.State.gps_epv', index=16,
+      number=17, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gps_ground_vel', full_name='gymfc.msgs.State.gps_ground_vel', index=17,
+      number=18, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gps_enu_vel', full_name='gymfc.msgs.State.gps_enu_vel', index=18,
+      number=19, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='baro_temperature', full_name='gymfc.msgs.State.baro_temperature', index=19,
+      number=20, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='baro_absolute_pressure', full_name='gymfc.msgs.State.baro_absolute_pressure', index=20,
+      number=21, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='baro_pressure_altitude', full_name='gymfc.msgs.State.baro_pressure_altitude', index=21,
+      number=22, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='magneto_magnetic_field', full_name='gymfc.msgs.State.magneto_magnetic_field', index=22,
+      number=23, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gt_wgs84_pos', full_name='gymfc.msgs.State.gt_wgs84_pos', index=23,
+      number=24, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gt_enu_vel', full_name='gymfc.msgs.State.gt_enu_vel', index=24,
+      number=25, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='gt_attitude_quat', full_name='gymfc.msgs.State.gt_attitude_quat', index=25,
+      number=26, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -160,19 +243,20 @@ _STATE = _descriptor.Descriptor(
   enum_types=[
     _STATE_STATUSCODE,
   ],
-  options=None,
+  serialized_options=None,
   is_extendable=False,
   syntax='proto2',
   extension_ranges=[],
   oneofs=[
   ],
   serialized_start=28,
-  serialized_end=479,
+  serialized_end=795,
 )
 
 _STATE.fields_by_name['status_code'].enum_type = _STATE_STATUSCODE
 _STATE_STATUSCODE.containing_type = _STATE
 DESCRIPTOR.message_types_by_name['State'] = _STATE
+_sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 State = _reflection.GeneratedProtocolMessageType('State', (_message.Message,), dict(
   DESCRIPTOR = _STATE,
@@ -182,24 +266,20 @@ State = _reflection.GeneratedProtocolMessageType('State', (_message.Message,), d
 _sym_db.RegisterMessage(State)
 
 
-_STATE.fields_by_name['imu_angular_velocity_rpy'].has_options = True
-_STATE.fields_by_name['imu_angular_velocity_rpy']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['imu_linear_acceleration_xyz'].has_options = True
-_STATE.fields_by_name['imu_linear_acceleration_xyz']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['imu_orientation_quat'].has_options = True
-_STATE.fields_by_name['imu_orientation_quat']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_motor_angular_velocity'].has_options = True
-_STATE.fields_by_name['esc_motor_angular_velocity']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_temperature'].has_options = True
-_STATE.fields_by_name['esc_temperature']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_current'].has_options = True
-_STATE.fields_by_name['esc_current']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_voltage'].has_options = True
-_STATE.fields_by_name['esc_voltage']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_force'].has_options = True
-_STATE.fields_by_name['esc_force']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['esc_torque'].has_options = True
-_STATE.fields_by_name['esc_torque']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
-_STATE.fields_by_name['force'].has_options = True
-_STATE.fields_by_name['force']._options = _descriptor._ParseOptions(descriptor_pb2.FieldOptions(), _b('\020\001'))
+_STATE.fields_by_name['imu_angular_velocity_rpy']._options = None
+_STATE.fields_by_name['imu_linear_acceleration_xyz']._options = None
+_STATE.fields_by_name['imu_orientation_quat']._options = None
+_STATE.fields_by_name['esc_motor_angular_velocity']._options = None
+_STATE.fields_by_name['esc_temperature']._options = None
+_STATE.fields_by_name['esc_current']._options = None
+_STATE.fields_by_name['esc_voltage']._options = None
+_STATE.fields_by_name['esc_force']._options = None
+_STATE.fields_by_name['esc_torque']._options = None
+_STATE.fields_by_name['force']._options = None
+_STATE.fields_by_name['gps_wgs84_pos']._options = None
+_STATE.fields_by_name['gps_enu_vel']._options = None
+_STATE.fields_by_name['magneto_magnetic_field']._options = None
+_STATE.fields_by_name['gt_wgs84_pos']._options = None
+_STATE.fields_by_name['gt_enu_vel']._options = None
+_STATE.fields_by_name['gt_attitude_quat']._options = None
 # @@protoc_insertion_point(module_scope)

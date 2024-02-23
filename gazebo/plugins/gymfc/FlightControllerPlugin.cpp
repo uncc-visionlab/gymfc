@@ -105,9 +105,7 @@ bool hasEnding(std::string const &fullString, std::string const &ending) {
     }
 }
 
-
 using namespace gazebo;
-
 
 GZ_REGISTER_WORLD_PLUGIN(FlightControllerPlugin)
 
@@ -157,14 +155,12 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
     this->nodeHandle = transport::NodePtr(new transport::Node());
     this->nodeHandle->Init(this->robotNamespace);
 
-    //Subscribe to all the sensors that are
-    //enabled
+    //Subscribe to all the sensors that are enabled
     for (auto sensor: this->supportedSensors) {
         switch (sensor) {
-            case IMU:
-                this->imuSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::Imu>(this->imuSubTopic,
-                                                                                   &FlightControllerPlugin::ImuCallback,
-                                                                                   this);
+            case BAROMETER:
+                this->baroSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::Pressure>(
+                        this->baroSubTopic, &FlightControllerPlugin::BarometerCallback, this);
                 break;
             case ESC:
                 //Each defined motor will have a unique index, since they are independent they must come in
@@ -176,6 +172,22 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
                             this->escSubTopic + "/" + std::to_string(i), &FlightControllerPlugin::EscSensorCallback,
                             this));
                 }
+                break;
+            case GPS:
+                this->gpsSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::SITLGps>(
+                        this->gpsSubTopic, &FlightControllerPlugin::GpsCallback, this);
+                break;
+            case GROUND_TRUTH:
+                this->ground_truthSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::Groundtruth>(
+                        this->ground_truthSubTopic, &FlightControllerPlugin::GroundtruthCallback, this);
+                break;
+            case IMU:
+                this->imuSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::Imu>(
+                        this->imuSubTopic, &FlightControllerPlugin::ImuCallback, this);
+                break;
+            case MAGNETOMETER:
+                this->magnetoSub = this->nodeHandle->Subscribe<sensor_msgs::msgs::MagneticField>(
+                        this->magnetoSubTopic, &FlightControllerPlugin::MagnetometerCallback, this);
                 break;
         }
     }
@@ -226,8 +238,7 @@ void FlightControllerPlugin::InitState() {
         this->state.add_force(0);
     }
 
-    //XXX Initialize the state of the senors to a value
-    // that reflect the aircraft in an active state thus
+    // Initialize the state of the sensors to a value that reflect the aircraft in an active state thus
     // forcing the sensors to be flushed.
     for (unsigned int i = 0; i < 3; i++) {
         this->state.add_imu_angular_velocity_rpy(1);
@@ -247,13 +258,22 @@ void FlightControllerPlugin::InitState() {
         this->state.add_esc_torque(0);
         this->state.add_esc_force(0);
     }
+    for (unsigned int i = 0; i < 3; i++) {
+        this->state.add_gps_wgs84_pos(0);
+        this->state.add_gps_enu_vel(0);
+        this->state.add_magneto_magnetic_field(0);
+        this->state.add_gt_wgs84_pos(0);
+        this->state.add_gt_enu_vel(0);
+    }
+    for (unsigned int i = 0; i < 4; i++) {
+        this->state.add_gt_attitude_quat(0);
+    }
 }
 
 void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
     //gzdbg << "Received ESC msg " << sensorCallbackCount << std::endl;
     uint32_t id = _escSensor->id();
     boost::mutex::scoped_lock lock(g_CallbackMutex);
-
     //gzdbg << "\nReceived ESC " << id << " speed=" <<  _escSensor->motor_speed() << std::endl;
     this->state.set_esc_motor_angular_velocity(id, _escSensor->motor_speed());
     this->state.set_esc_temperature(id, _escSensor->temperature());
@@ -263,7 +283,62 @@ void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
     this->state.set_esc_torque(id, _escSensor->torque());
     this->sensorCallbackCount++;
     this->callbackCondition.notify_all();
+}
 
+void FlightControllerPlugin::GroundtruthCallback(GroundtruthPtr &_gt) {
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    //gzdbg << "Got ground truth msg." << std::endl;
+    this->state.set_gt_wgs84_pos(0, _gt->latitude_rad() * 180.0 / M_PI);
+    this->state.set_gt_wgs84_pos(1, _gt->longitude_rad() * 180.0 / M_PI);
+    this->state.set_gt_wgs84_pos(2, _gt->altitude());
+    this->state.set_gt_enu_vel(0, _gt->velocity_east());
+    this->state.set_gt_enu_vel(1, _gt->velocity_north());
+    this->state.set_gt_enu_vel(2, _gt->velocity_up());
+    this->state.set_gt_attitude_quat(0, _gt->attitude_q_x());
+    this->state.set_gt_attitude_quat(1, _gt->attitude_q_y());
+    this->state.set_gt_attitude_quat(2, _gt->attitude_q_z());
+    this->state.set_gt_attitude_quat(3, _gt->attitude_q_w());
+    this->sensorCallbackCount++;
+    this->callbackCondition.notify_all();
+}
+
+void FlightControllerPlugin::GpsCallback(GpsPtr &_gps) {
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    //last_gps_msg = *_gps;
+    //gzdbg << "Got GPS msg." << std::endl;
+    this->state.set_gps_wgs84_pos(0, _gps->latitude_deg());
+    this->state.set_gps_wgs84_pos(1, _gps->longitude_deg());
+    this->state.set_gps_wgs84_pos(2, _gps->altitude());
+    this->state.set_gps_eph(_gps->eph());
+    this->state.set_gps_epv(_gps->epv());
+    this->state.set_gps_ground_vel(_gps->velocity());
+    this->state.set_gps_enu_vel(0, _gps->has_velocity_east());
+    this->state.set_gps_enu_vel(1, _gps->has_velocity_north());
+    this->state.set_gps_enu_vel(2, _gps->has_velocity_up());
+    this->sensorCallbackCount++;
+    this->callbackCondition.notify_all();
+}
+
+void FlightControllerPlugin::BarometerCallback(PressurePtr &_pressure) {
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    //last_barometer_msg = *_pressure;
+    //gzdbg << "Got pressure msg." << std::endl;
+    this->state.set_baro_temperature(_pressure->temperature());
+    this->state.set_baro_absolute_pressure(_pressure->absolute_pressure());
+    this->state.set_baro_pressure_altitude(_pressure->pressure_altitude());
+    //this->sensorCallbackCount++;
+    this->callbackCondition.notify_all();
+}
+
+void FlightControllerPlugin::MagnetometerCallback(MagneticFieldPtr &_magneto) {
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    //last_magnetometer_msg = *_magneto;
+    //gzdbg << "Got magnetic field msg." << std::endl;
+    this->state.set_magneto_magnetic_field(0, _magneto->magnetic_field().x());
+    this->state.set_magneto_magnetic_field(1, _magneto->magnetic_field().y());
+    this->state.set_magneto_magnetic_field(2, _magneto->magnetic_field().z());
+    //this->sensorCallbackCount++;
+    this->callbackCondition.notify_all();
 }
 
 void FlightControllerPlugin::ImuCallback(ImuPtr &_imu) {
@@ -285,19 +360,15 @@ void FlightControllerPlugin::ImuCallback(ImuPtr &_imu) {
 
     this->sensorCallbackCount++;
     this->callbackCondition.notify_all();
-
 }
 
 void FlightControllerPlugin::ProcessSDF(sdf::ElementPtr _sdf) {
-    this->cmdPubTopic = kDefaultCmdPubTopic;
     if (_sdf->HasElement("commandPubTopic")) {
         this->cmdPubTopic = _sdf->GetElement("commandPubTopic")->Get<std::string>();
     }
-    this->imuSubTopic = kDefaultImuSubTopic;
     if (_sdf->HasElement("imuSubTopic")) {
         this->imuSubTopic = _sdf->GetElement("imuSubTopic")->Get<std::string>();
     }
-    this->escSubTopic = kDefaultEscSubTopic;
     if (_sdf->HasElement("escSubTopicPrefix")) {
         this->escSubTopic = _sdf->GetElement("escSubTopicPrefix")->Get<std::string>();
     }
@@ -387,6 +458,14 @@ void FlightControllerPlugin::ParseDigitalTwinSDF() {
                 this->supportedSensors.push_back(ESC);
             } else if (boost::iequals(type, "battery")) {
                 this->supportedSensors.push_back(BATTERY);
+            } else if (boost::iequals(type, "barometer")) {
+                this->supportedSensors.push_back(BAROMETER);
+            } else if (boost::iequals(type, "magnetometer")) {
+                this->supportedSensors.push_back(MAGNETOMETER);
+            } else if (boost::iequals(type, "gps")) {
+                this->supportedSensors.push_back(GPS);
+            } else if (boost::iequals(type, "groundtruth")) {
+                this->supportedSensors.push_back(GROUND_TRUTH);
             }
             sensorSDF = sensorSDF->GetNextElement("sensor");
         }
@@ -518,7 +597,9 @@ void FlightControllerPlugin::FlushSensors() {
                     std::abs(this->state.imu_angular_velocity_rpy(0)) > error ||
                     std::abs(this->state.imu_angular_velocity_rpy(1)) > error ||
                     std::abs(this->state.imu_angular_velocity_rpy(2)) > error)) {
-            //gzdbg << "Gyro r=" << this->state.imu_angular_velocity_rpy(0) << " p=" << this->state.imu_angular_velocity_rpy(1) << " y=" << this->state.imu_angular_velocity_rpy(2) << "\n";
+            gzdbg << "Gyro r=" << this->state.imu_angular_velocity_rpy(0) << " p="
+                  << this->state.imu_angular_velocity_rpy(1) << " y=" << this->state.imu_angular_velocity_rpy(2)
+                  << "\n";
             //gzdbg << "Error too great" << std::endl;
             //
             // Trigger all plugins to publish their values
@@ -541,7 +622,6 @@ void FlightControllerPlugin::LoopThread() {
 
     this->LoadDigitalTwin();
     while (1) {
-
         bool ac_received = this->ReceiveAction();
         //ignition::math::Vector3d f = this->world->ModelByName(kTrainingRigModelName)->GetLink("pivot")->RelativeForce();
 
@@ -563,10 +643,10 @@ void FlightControllerPlugin::LoopThread() {
         //  if (this->world->Name().compare("default") == 0)
         // {
         if (this->action.world_control() == gymfc::msgs::Action::RESET) {
-            //gzdbg << " Flushing sensors..." << std::endl;
+            gzdbg << " Flushing sensors..." << std::endl;
             // Block until we get respone from sensors
             this->FlushSensors();
-            //gzdbg << " Sensors flushed." << std::endl;
+            gzdbg << " Sensors flushed." << std::endl;
             this->state.set_sim_time(this->world->SimTime().Double());
             this->state.set_status_code(gymfc::msgs::State_StatusCode_OK);
             this->SendState();
@@ -606,7 +686,13 @@ void FlightControllerPlugin::CalculateCallbackCount() {
 
     for (auto sensor: this->supportedSensors) {
         switch (sensor) {
+            // These sensors may not provide an output after an OnUpdate() call
+            case BAROMETER:
+            case MAGNETOMETER:
+            case GPS:
+                break;
             case BATTERY:
+            case GROUND_TRUTH:
             case IMU:
                 this->numSensorCallbacks += 1;
                 break;

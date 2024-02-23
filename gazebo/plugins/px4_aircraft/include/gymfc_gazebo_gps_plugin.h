@@ -8,6 +8,8 @@
 #include "gazebo_gps_plugin.h"
 
 namespace gazebo {
+    static const std::string kGymFCDefaultGPSPubTopic = "/aircraft/sensor/gps";
+
     class GymFCGazeboGpsPlugin : public GpsPlugin {
     public:
         GymFCGazeboGpsPlugin() {
@@ -18,14 +20,14 @@ namespace gazebo {
 
         }
     protected:
-        void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
-        void OnTimeReset();
+        virtual void Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf);
+        virtual void OnWorldUpdate(const common::UpdateInfo& /*_info*/);
+        virtual void OnSensorUpdate();
+        virtual void OnTimeReset();
     private:
-        //physics::WorldPtr world_;
-        //transport::PublisherPtr imu_pub_;
         event::ConnectionPtr resetEvent_;
-
-        //common::Time last_time_;
+        std::string gymfc_gps_pub_topic_{kGymFCDefaultGPSPubTopic};
+        transport::PublisherPtr gymfc_gps_pub_;
     };
 }
 #endif //GYMFC_PLUGINS_GYMFC_GAZEBO_GPS_PLUGIN_H

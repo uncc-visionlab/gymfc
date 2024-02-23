@@ -1,5 +1,7 @@
 syntax = "proto2";
 package gymfc.msgs;
+//import "quaternion.proto";
+//import "vector3d.proto";
 
 /* Reinforcement learning environment state represents the aircraft state */
 
@@ -7,10 +9,10 @@ message State
 {
   required float  sim_time = 1;
   
-  // IMU sensor values, units are defined by the users aircraft digital twin
+  // IMU gymfc_esc_sensor_msg_ values, units are defined by the users aircraft digital twin
   repeated float  imu_angular_velocity_rpy = 2 [packed=true];
   repeated float  imu_linear_acceleration_xyz = 3 [packed=true];
-  repeated float  imu_orientation_quat= 4 [packed=true];
+  repeated float  imu_orientation_quat = 4 [packed=true];
 
   // ESC Sensor values, units are defined by the users aircraft digital twin
   repeated float  esc_motor_angular_velocity = 5 [packed=true];
@@ -35,4 +37,23 @@ message State
   // Force applied to the ball joint
   repeated float force = 14 [packed=true];
 
+  // Gps
+  repeated double gps_wgs84_pos = 15 [packed=true];
+  optional float gps_eph = 16;
+  optional float gps_epv = 17;
+  optional float gps_ground_vel = 18;
+  repeated float gps_enu_vel = 19 [packed=true];
+
+  // Pressure
+  optional float baro_temperature = 20;
+  optional float baro_absolute_pressure	= 21;
+  optional float baro_pressure_altitude	= 22;
+
+  // Magnetic Field
+  repeated double magneto_magnetic_field = 23 [packed=true];
+
+  // Ground truth
+  repeated double gt_wgs84_pos = 24 [packed=true];
+  repeated float gt_enu_vel = 25 [packed=true];
+  repeated float gt_attitude_quat = 26 [packed=true];
 }

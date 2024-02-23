@@ -206,6 +206,7 @@ void BarometerPlugin::OnUpdate(const common::UpdateInfo&)
 
     // Publish baro msg
     pub_baro_->Publish(baro_msg_);
+    new_msg_published = true;
   }
 }
 }

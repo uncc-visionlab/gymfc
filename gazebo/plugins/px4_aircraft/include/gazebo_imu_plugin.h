@@ -118,7 +118,9 @@ class GazeboImuPlugin : public ModelPlugin {
   transport::PublisherPtr imu_pub_;
   physics::WorldPtr world_;
   common::Time last_time_;
- private:
+  sensor_msgs::msgs::Imu imu_message_;
+//private:
+protected:
   std::string namespace_;
   std::string imu_topic_;
 //  transport::NodePtr node_handle_;
@@ -140,7 +142,7 @@ class GazeboImuPlugin : public ModelPlugin {
 
 //  common::Time last_time_;
 
-  sensor_msgs::msgs::Imu imu_message_;
+//  sensor_msgs::msgs::Imu imu_message_;
 
   ignition::math::Vector3d gravity_W_;
   ignition::math::Vector3d velocity_prev_W_;

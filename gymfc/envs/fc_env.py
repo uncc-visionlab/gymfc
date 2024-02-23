@@ -131,8 +131,6 @@ class FlightControlEnv(ABC):
     with a 1 second timeout. """
     MAX_CONNECT_TRIES = 60
 
-    VALID_SENSORS = ["esc", "imu", "battery"]
-
     def __init__(self, aircraft_config, config_filepath=None, loop=None, verbose=False):
         """ Initialize the simulator
 
@@ -185,7 +183,8 @@ class FlightControlEnv(ABC):
         default_config_path = os.path.join(current_dir, "../gymfc.ini")
         if config_filepath:
             if not os.path.isfile(config_filepath):
-                message = "Error, provided configuration file at constructor but not found {}, aborting.".format(config_filepath)
+                message = "Error, provided configuration file at constructor but not found {}, aborting.".format(
+                    config_filepath)
                 raise ConfigLoadException(message)
             else:
                 config_filepath = config_filepath
@@ -258,7 +257,7 @@ class FlightControlEnv(ABC):
 
         # XXX Proto3 doesn't have HasField so we iterate on the enabled
         # sensor measurements from the SDF and maintain order so the agent
-        # can index the flatten array
+        # can index the flattened array
         for key in self.enabled_sensor_measurements:
             field = self.state_message.DESCRIPTOR.fields_by_name[key]
             value = getattr(self.state_message, key)
@@ -286,7 +285,7 @@ class FlightControlEnv(ABC):
             they are defined in the configuration file.
         """
 
-        # Packets are sent over UDP so they can be dropped, there is no
+        # Packets are sent over UDP which allows packets to be dropped, there is no
         # guarantee. First we try and send command. If an error occurs in transition
         # try again or for some reason something goes wrong in the simulator and
         # the packet wasn't processed correctly.
@@ -294,6 +293,8 @@ class FlightControlEnv(ABC):
             self.state_message, e = await self.ac_protocol.write(ac, world_control=world_control)
             if self.state_message:
                 break
+            else:
+                print("GymFC communication error: {}".format(str(e)))
             if i == self.MAX_CONNECT_TRIES - 1:
                 print("Timeout communicating with flight control plugin.")
                 self.shutdown()
@@ -317,7 +318,7 @@ class FlightControlEnv(ABC):
         self.last_sim_time = self.sim_time
         self.sim_stats["steps"] += 1
 
-        return self._flatten_ob()
+        return self.state_message
 
     def _signal_handler(self, signal, frame):
         print("Ctrl+C detected, shutting down gazebo and application")
@@ -325,7 +326,7 @@ class FlightControlEnv(ABC):
 
     def update_env_variables(self, source_file, env):
         """ Helper method to source the Gazebo source file to load in all 
-        of the environment variables used by Gazebo.
+        the environment variables used by Gazebo.
         
         Args:
             source_file (string): Path to the Gazebo source file.
@@ -404,8 +405,17 @@ class FlightControlEnv(ABC):
                 "enable_voltage": "vbat_voltage",
                 "enable_current": "vbat_current"
             },
-            "position": {
+            "barometer": {
+                "enable_barometer": "barometer"
+            },
+            "gps": {
                 "enable_gps": "gps"
+            },
+            "groundtruth": {
+                "enable_groundtruth": "groundtruth"
+            },
+            "magnetometer": {
+                "enable_magneto": "magneto"
             }
         }
         sensors = plugin_el.find("sensors")
@@ -554,7 +564,7 @@ class FlightControlEnv(ABC):
         this method and call super to reset any internal state used in the child 
         class. """
         # XXX Because we use asyncio if a sleep is done right after a command
-        # its possible well miss the recieve message
+        # its possible we'll miss the message
         self.last_sim_time = -self.stepsize
         # Motor values are ignored during a reset so just send whatever
         ob = self.loop.run_until_complete(

@@ -5,13 +5,11 @@
 
 namespace gazebo {
     void GymFCGazeboGpsPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf) {
-        gzdbg << "Loading GPS sensor\n";
+        //gzdbg << "Loading GPS sensor\n";
         GpsPlugin::Load(_parent, _sdf);
-        this->resetEvent_ = event::Events::ConnectTimeReset(
-                boost::bind(&GymFCGazeboGpsPlugin::OnTimeReset, this));
-        //imu_pub_->Fini();
-        // Specify queue limit and rate, make this configurable
-        //imu_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Imu>("/aircraft/sensor/imu");
+        this->resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboGpsPlugin::OnTimeReset, this));
+        gymfc_gps_pub_ = node_handle_->Advertise<sensor_msgs::msgs::SITLGps>(gymfc_gps_pub_topic_);
+        gzdbg << "GymFC GPS publishes to " << gymfc_gps_pub_topic_ << std::endl;
     }
 
     void GymFCGazeboGpsPlugin::OnTimeReset() {
@@ -20,6 +18,19 @@ namespace gazebo {
 #else
         last_time_ = world_->GetSimTime();
 #endif
+    }
+
+    void GymFCGazeboGpsPlugin::OnWorldUpdate(const common::UpdateInfo &_info) {
+        GpsPlugin::OnWorldUpdate(_info);
+    }
+
+    void GymFCGazeboGpsPlugin::OnSensorUpdate() {
+        GpsPlugin::OnSensorUpdate();
+        if (new_msg_published) {
+            //gzdbg << "published Gps message." << std::endl;
+            gymfc_gps_pub_->Publish(gps_msg);
+            new_msg_published = false;
+        }
     }
 
     GZ_REGISTER_SENSOR_PLUGIN(GymFCGazeboGpsPlugin);

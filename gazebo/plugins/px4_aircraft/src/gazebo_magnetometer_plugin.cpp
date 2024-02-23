@@ -221,6 +221,7 @@ void MagnetometerPlugin::OnUpdate(const common::UpdateInfo&)
 
     // publish mag msg
     pub_mag_->Publish(mag_message_);
+    new_msg_published = true;
   }
 }
 

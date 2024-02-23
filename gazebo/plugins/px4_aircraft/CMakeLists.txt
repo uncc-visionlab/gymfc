@@ -6,7 +6,6 @@ cmake_policy(SET CMP0042 NEW)
 cmake_policy(SET CMP0048 NEW)
 cmake_policy(SET CMP0054 NEW)
 
-#set(PX4_GAZEBO_CLASSIC_SITL_ROOT /home2/arwillis/uncc_wind_control/third_party/PX4-Autopilot/Tools/simulation/gazebo-classic/sitl_gazebo-classic/)
 set(NO_ROS ON)
 if(NOT DEFINED NO_ROS)
     message(STATUS "NO_ROS variable not provided, setting to FALSE.")
@@ -43,8 +42,7 @@ include(GNUInstallDirs)
 #######################
 
 ## System dependencies are found with CMake's conventions
-find_package(Boost 1.58 REQUIRED COMPONENTS system thread filesystem)
-#find_package(Eigen REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system thread filesystem)
 find_package(gazebo REQUIRED)
 find_package(PkgConfig REQUIRED)
 pkg_search_module(GLIB REQUIRED glib-2.0)
@@ -175,6 +173,7 @@ endforeach()
 
 include_directories(
         include
+        /usr/include
         ${Boost_INCLUDE_DIR}
         ${catkin_INCLUDE_DIRS}
         ${CMAKE_CURRENT_BINARY_DIR}

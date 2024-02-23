@@ -51,9 +51,13 @@ set(control_msgs
   msgs/CommandMotorSpeed.proto
   )
 set(sensor_msgs
-  msgs/Float.proto
-  msgs/Imu.proto
   msgs/EscSensor.proto
+  msgs/Float.proto
+  msgs/Groundtruth.proto
+  msgs/Imu.proto
+  msgs/MagneticField.proto
+  msgs/Pressure.proto
+  msgs/SITLGps.proto
   msgs/State.proto
   msgs/Action.proto
   ${PROTOBUF_IMPORT_DIRS}/vector3d.proto
@@ -63,8 +67,21 @@ set(sensor_msgs
 PROTOBUF_GENERATE_CPP(CTRL_PROTO_SRCS CTRL_PROTO_HDRS ${control_msgs})
 PROTOBUF_GENERATE_CPP(SEN_PROTO_SRCS SEN_PROTO_HDRS ${sensor_msgs})
 
+PROTOBUF_GENERATE_PYTHON(GYMFC_PROTO_PYTHON_SRC msgs/Action.proto msgs/State.proto)
+
+set(CMAKE_PYTHON_SRC_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/../../../gymfc/msgs)
+#add_custom_target(py_proto_targets ALL DEPENDS {GYMFC_PROTO_PYTHON_SRC})
+#add_custom_command(TARGET proto_targets
+#        COMMAND ${CMAKE_COMMAND} copy
+#        ${GYMFC_PROTO_PYTHON_SRC}
+#        ${CMAKE_PYTHON_SRC_INSTALL_PREFIX})
+foreach(TGT IN LISTS GYMFC_PROTO_PYTHON_SRC)
+  file(COPY ${TGT} DESTINATION ${CMAKE_PYTHON_SRC_INSTALL_PREFIX})
+  message("COPYING ${TGT} WILL COPY TO ${CMAKE_PYTHON_SRC_INSTALL_PREFIX}")
+endforeach ()
+
 add_library(gymfc_control_msgs SHARED ${CTRL_PROTO_SRCS})
-add_library(gymfc_sensor_msgs SHARED ${SEN_PROTO_SRCS})
+add_library(gymfc_sensor_msgs SHARED ${SEN_PROTO_SRCS} ${GYMFC_PROTO_PYTHON_SRC})
 
 #------------------------#
 # End Message Generation #
@@ -76,3 +93,9 @@ add_library(FlightControllerPlugin SHARED FlightControllerPlugin.hh FlightContro
 add_library(AircraftConfigPlugin SHARED AircraftConfigPlugin.cpp)
 target_link_libraries(FlightControllerPlugin ${GAZEBO_LIBRARIES})
 target_link_libraries(AircraftConfigPlugin ${GAZEBO_LIBRARIES})
+
+#set(CMAKE_PYTHON_SRC_INSTALL_PREFIX ${PROJECT_SOURCE_DIR}/gymfc/msgs)
+#foreach(TGT IN LISTS GYMFC_PROTO_PYTHON_SRC)
+  #install(TARGETS ${TGT} DESTINATION ${CMAKE_PYTHON_SRC_INSTALL_PREFIX})
+  #message("TARGET=${TGT} WILL INSTALL TO ${CMAKE_PYTHON_SRC_INSTALL_PREFIX}")
+#endforeach()

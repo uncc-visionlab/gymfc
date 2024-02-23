@@ -70,8 +70,16 @@ protected:
   virtual void OnSensorUpdate();
   virtual void OnWorldUpdate(const common::UpdateInfo& /*_info*/);
 
+  bool new_msg_published{false};
+
+  sensors::GpsSensorPtr parentSensor_;
   physics::WorldPtr world_;
+  transport::NodePtr node_handle_;
+  common::Time last_gps_time_;
   common::Time last_time_;
+  common::Time current_time_;
+  sensor_msgs::msgs::SITLGps gps_msg;
+  std::queue<sensor_msgs::msgs::SITLGps> gps_delay_buffer_;
 
 private:
   std::string namespace_;
@@ -83,21 +91,21 @@ private:
 
   std::string model_name_;
 
-  sensors::GpsSensorPtr parentSensor_;
+//  sensors::GpsSensorPtr parentSensor_;
   physics::ModelPtr model_;
 //  physics::WorldPtr world_;
   event::ConnectionPtr updateWorldConnection_;
   event::ConnectionPtr updateSensorConnection_;
 
-  transport::NodePtr node_handle_;
+//  transport::NodePtr node_handle_;
   transport::PublisherPtr gps_pub_;
 
   std::string gps_topic_;
   double update_rate_;
 
-  common::Time last_gps_time_;
+//  common::Time last_gps_time_;
 //  common::Time last_time_;
-  common::Time current_time_;
+//  common::Time current_time_;
   common::Time start_time_;
 
   std::mutex data_mutex_;
@@ -115,7 +123,7 @@ private:
   // gps delay related
   static constexpr double gps_delay_ = 0.12;           // 120 ms
   static constexpr int gps_buffer_size_max_ = 1000;
-  std::queue<sensor_msgs::msgs::SITLGps> gps_delay_buffer_;
+//  std::queue<sensor_msgs::msgs::SITLGps> gps_delay_buffer_;
 
   ignition::math::Vector3d gps_bias_;
   ignition::math::Vector3d noise_gps_pos_;

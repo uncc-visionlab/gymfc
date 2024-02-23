@@ -8,6 +8,8 @@
 #include "gazebo_magnetometer_plugin.h"
 
 namespace gazebo {
+    static const std::string kGymFCDefaultMagnetometerPubTopic = "/aircraft/sensor/magneto";
+
     class GymFCMagnetometerPlugin : public MagnetometerPlugin {
     public:
         GymFCMagnetometerPlugin() {
@@ -18,14 +20,13 @@ namespace gazebo {
 
         }
     protected:
-        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
-        void OnTimeReset();
+        virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        virtual void OnUpdate(const common::UpdateInfo& /*_info*/);
+        virtual void OnTimeReset();
     private:
-        //physics::WorldPtr world_;
-        //transport::PublisherPtr imu_pub_;
         event::ConnectionPtr resetEvent_;
-
-        //common::Time last_time_;
+        std::string gymfc_magneto_pub_topic_{kGymFCDefaultMagnetometerPubTopic};
+        transport::PublisherPtr gymfc_magneto_pub_;
     };
 }
 
