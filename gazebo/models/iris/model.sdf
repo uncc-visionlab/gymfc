@@ -352,6 +352,15 @@
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
     -->
+    <include>
+      <uri>model://gps</uri>
+      <pose>0.05 0 0.04 0 0 0</pose>
+      <name>gps0</name>
+    </include>
+    <joint name='gps0_joint' type='fixed'>
+      <child>gps0::link</child>
+      <parent>base_link</parent>
+    </joint>
     <plugin name='front_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace/>
       <jointName>rotor_0_joint</jointName>
@@ -363,7 +372,6 @@
       <motorConstant>5.84e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
-      <!--<commandSubTopic>/aircraft/command/motor</commandSubTopic>-->
       <motorNumber>0</motorNumber>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
@@ -381,7 +389,6 @@
       <motorConstant>5.84e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
-      <!--<commandSubTopic>/aircraft/command/motor</commandSubTopic>-->
       <motorNumber>1</motorNumber>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
@@ -399,7 +406,6 @@
       <motorConstant>5.84e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
-      <!--<commandSubTopic>/aircraft/command/motor</commandSubTopic>-->
       <motorNumber>2</motorNumber>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
@@ -417,29 +423,16 @@
       <motorConstant>5.84e-06</motorConstant>
       <momentConstant>0.06</momentConstant>
       <commandSubTopic>/gazebo/command/motor_speed</commandSubTopic>
-      <!--<commandSubTopic>/aircraft/command/motor</commandSubTopic>-->
       <motorNumber>3</motorNumber>
       <rotorDragCoefficient>0.000175</rotorDragCoefficient>
       <rollingMomentCoefficient>1e-06</rollingMomentCoefficient>
       <motorSpeedPubTopic>/motor_speed/3</motorSpeedPubTopic>
       <rotorVelocitySlowdownSim>10</rotorVelocitySlowdownSim>
     </plugin>
-    <!--<include>
-      <uri>model://gps</uri>
-      <pose>0.05 0 0.04 0 0 0</pose>
-      <name>gps0</name>
-    </include>
-    <joint name='gps0_joint' type='fixed'>
-      <child>gps0::link</child>
-      <parent>base_link</parent>
-    </joint>-->
-    <!--
-    <plugin name='groundtruth_plugin' filename='libgazebo_groundtruth_plugin.so'>
+    <plugin name='groundtruth_plugin' filename='libgymfc_gazebo_groundtruth_plugin.so'>
       <robotNamespace/>
     </plugin>
-    -->
-    <!--
-    <plugin name='magnetometer_plugin' filename='libgazebo_magnetometer_plugin.so'>
+    <plugin name='magnetometer_plugin' filename='libgymfc_gazebo_magnetometer_plugin.so'>
       <robotNamespace/>
       <pubRate>100</pubRate>
       <noiseDensity>0.0004</noiseDensity>
@@ -447,15 +440,12 @@
       <biasCorrelationTime>600</biasCorrelationTime>
       <magTopic>/mag</magTopic>
     </plugin>
-    -->
-    <!--
-    <plugin name='barometer_plugin' filename='libgazebo_barometer_plugin.so'>
+    <plugin name='barometer_plugin' filename='libgymfc_gazebo_barometer_plugin.so'>
       <robotNamespace/>
       <pubRate>50</pubRate>
       <baroTopic>/baro</baroTopic>
       <baroDriftPaPerSec>0</baroDriftPaPerSec>
     </plugin>
-    -->
     <!--
     <plugin name='mavlink_interface' filename='libgazebo_mavlink_interface.so'>
       <robotNamespace/>
@@ -608,12 +598,16 @@
                 <enable_temperature>false</enable_temperature>
                 <enable_current>false</enable_current>
          </sensor>
-          <!--
+         <sensor type="barometer"/>
+         <sensor type="groundtruth"/>
+         <sensor type="gps"/>
+         <sensor type="magnetometer"/>
+         <!--
           <sensor type="battery">
               <enable_voltage>true</enable_voltage>
               <enable_current>true</enable_current>
           </sensor>
-            -->
+          -->
         </sensors>
     </plugin>
     <static>0</static>
