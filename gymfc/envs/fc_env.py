@@ -245,31 +245,6 @@ class FlightControlEnv(ABC):
 
         return self.loop.run_until_complete(self._step_sim(ac))
 
-    def _flatten_ob(self):
-        """ Convert the state packet with observations returned from the digital twin to a single 
-        1D array that can be used as direct input to the agent. 
-        
-        Note: Subclass must handle any scaling or normalization
-        
-        Returns: 
-            Numpy array order maintained from aircraft configuration file."""
-        ob = []
-
-        # XXX Proto3 doesn't have HasField so we iterate on the enabled
-        # sensor measurements from the SDF and maintain order so the agent
-        # can index the flattened array
-        for key in self.enabled_sensor_measurements:
-            field = self.state_message.DESCRIPTOR.fields_by_name[key]
-            value = getattr(self.state_message, key)
-            if field.label == descriptor.FieldDescriptor.LABEL_REPEATED:
-                ob += list(value)
-                setattr(self, key, np.array(list(value)))
-            else:
-                ob += [value]
-                setattr(self, key, value)
-
-        return np.array(ob).flatten()
-
     async def _step_sim(self, ac, world_control=Action_pb2.Action.STEP):
         """Complete a single simulation step, return a tuple containing
         the simulation time and the state
@@ -368,7 +343,6 @@ class FlightControlEnv(ABC):
         env.update(gz_env)
 
     def _parse_model_sdf(self):
-
         # Digital twin
         if not os.path.isfile(self.aircraft_sdf_filepath):
             message = "Aircraft SDF file  at location '{}' does not exist.".format(self.aircraft_sdf_filepath)
@@ -384,51 +358,6 @@ class FlightControlEnv(ABC):
         plugin_el = els[0]
 
         self.motor_count = int(plugin_el.find("motorCount").text)
-        self._get_supported_sensors(plugin_el)
-
-    def _get_supported_sensors(self, plugin_el):
-        sdf_to_protobuf = {
-            "imu": {
-                "enable_angular_velocity": "imu_angular_velocity_rpy",
-                "enable_linear_acceleration": "imu_linear_acceleration_xyz",
-                "enable_orientation": "imu_orientation_quat",
-            },
-            "esc": {
-                "enable_angular_velocity": "esc_motor_angular_velocity",
-                "enable_temperature": "esc_temperature",
-                "enable_current": "esc_current",
-                "enable_voltage": "esc_voltage",
-                "enable_force": "esc_force",
-                "enable_torque": "esc_torque"
-            },
-            "battery": {
-                "enable_voltage": "vbat_voltage",
-                "enable_current": "vbat_current"
-            },
-            "barometer": {
-                "enable_barometer": "barometer"
-            },
-            "gps": {
-                "enable_gps": "gps"
-            },
-            "groundtruth": {
-                "enable_groundtruth": "groundtruth"
-            },
-            "magnetometer": {
-                "enable_magneto": "magneto"
-            }
-        }
-        sensors = plugin_el.find("sensors")
-        if sensors is None:
-            return
-        for sensor in sensors.findall("sensor"):
-            sensor_type = sensor.attrib["type"]
-            if sensor_type in sdf_to_protobuf:
-                for enabled in sensor:
-                    if enabled.text.lower() == "true":
-                        self.enabled_sensor_measurements.append(sdf_to_protobuf[sensor_type][enabled.tag])
-            else:
-                raise SystemExit("Unsupported sensor {} found in SDF file".format(sensor_type))
 
     def _plugins_exist(self, build_path):
         return (os.path.isfile(os.path.join(build_path, "libFlightControllerPlugin.so")) and
@@ -470,7 +399,7 @@ class FlightControlEnv(ABC):
                              "must be built manually." +
                              " Please refer to {} for manually building the plugins.".format(readme_path))
 
-        world_path = os.path.join(gz_assets_path, "worlds")
+        world_path = gz_assets_path
 
         # From the gazebo model directory structure the model directory is levels up
         aircraft_model_dir = os.path.abspath(os.path.join(self.aircraft_sdf_filepath, "../../"))
@@ -494,12 +423,8 @@ class FlightControlEnv(ABC):
         print("Gazebo Model Path =", container_env["GAZEBO_MODEL_PATH"])
         print("Gazebo Plugin Path =", container_env["GAZEBO_PLUGIN_PATH"])
 
-        target_world = os.path.join(gz_assets_path, "worlds", self.world)
+        target_world = os.path.join(gz_assets_path, self.world)
         p = None
-        # if self.verbose or True:
-        #     p = subprocess.Popen(["gzserver", "--verbose", "-s", "libGymfcGazeboRosPlugin.so", target_world], shell=False, env=container_env)
-        # else:
-        #     p = subprocess.Popen(["gzserver", "-s", "libGymfcGazeboRosPlugin.so", target_world], shell=False, env=container_env)
         if self.verbose or True:
             p = subprocess.Popen(["gzserver", "--verbose", target_world], shell=False, env=container_env)
         else:
@@ -511,7 +436,7 @@ class FlightControlEnv(ABC):
     def sdf_max_step_size(self):
         """ Return the max step size read and parsed from the world file"""
         gz_assets = os.path.join(os.path.dirname(__file__), "assets/gazebo/")
-        world_filepath = os.path.join(gz_assets, "worlds", self.world)
+        world_filepath = os.path.join(gz_assets, self.world)
 
         tree = ET.parse(world_filepath)
         root = tree.getroot()

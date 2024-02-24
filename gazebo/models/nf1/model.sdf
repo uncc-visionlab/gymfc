@@ -10,16 +10,8 @@
             <offset>0 0 0.058</offset>
         </centerOfThrust>
       <sensors>
-          <sensor type="imu">
-              <enable_angular_velocity>true</enable_angular_velocity>
-              <enable_linear_acceleration>true</enable_linear_acceleration>
-              <enable_orientation>true</enable_orientation>
-          </sensor>
-          <sensor type="esc">
-                <enable_angular_velocity>true</enable_angular_velocity>
-                <enable_temperature>false</enable_temperature>
-                <enable_current>false</enable_current>
-          </sensor>
+          <sensor type="imu"/>
+          <sensor type="esc"/>
 		  <!--
           <sensor type="battery">
               <enable_voltage>true</enable_voltage>

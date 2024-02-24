@@ -588,26 +588,13 @@
             <offset>0 0 0</offset>
         </centerOfThrust>
         <sensors>
-         <sensor type="imu">
-              <enable_angular_velocity>true</enable_angular_velocity>
-              <enable_linear_acceleration>true</enable_linear_acceleration>
-              <enable_orientation>true</enable_orientation>
-         </sensor>
-         <sensor type="esc">
-                <enable_angular_velocity>true</enable_angular_velocity>
-                <enable_temperature>false</enable_temperature>
-                <enable_current>false</enable_current>
-         </sensor>
+         <sensor type="imu"/>
+         <sensor type="esc"/>
          <sensor type="barometer"/>
          <sensor type="groundtruth"/>
          <sensor type="gps"/>
          <sensor type="magnetometer"/>
-         <!--
-          <sensor type="battery">
-              <enable_voltage>true</enable_voltage>
-              <enable_current>true</enable_current>
-          </sensor>
-          -->
+         <!-- <sensor type="battery"/> -->
         </sensors>
     </plugin>
     <static>0</static>
