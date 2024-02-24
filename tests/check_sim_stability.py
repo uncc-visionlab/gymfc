@@ -384,7 +384,7 @@ class DataLogger:
 
 def get_physics_type_from_world():
     """ Return the max step size read and parsed from the world file"""
-    gz_assets = os.path.join(os.path.dirname(__file__), "../gymfc/envs/assets/gazebo/")
+    gz_assets = os.path.join(os.path.dirname(__file__), "../gazebo/")
     world_filepath = os.path.abspath(os.path.join(gz_assets, "worlds", "attitude.world"))
     tree = ET.parse(world_filepath)
     root = tree.getroot()
