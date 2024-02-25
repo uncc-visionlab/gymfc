@@ -7,6 +7,14 @@ cmake_policy(SET CMP0048 NEW)
 cmake_policy(SET CMP0054 NEW)
 
 set(NO_ROS ON)
+# No cmake module for find_package(mavlink) and setup needed compile variables to make px4 mavlink plugin
+set(BUILD_MAVLINK_PLUGIN OFF)
+if(${BUILD_MAVLINK_PLUGIN})
+  # location of mavlink source headers, specifically the parent folder holding development/mavlink.h
+  # For a Noetic ROS install, the path to mavlink.h is /opt/ros/noetic/include/mavlink/v2.0/development/mavlink.h
+  set(mavlink_INCLUDE_DIRS /opt/ros/noetic/include/mavlink/v2.0)
+endif()
+
 if(NOT DEFINED NO_ROS)
     message(STATUS "NO_ROS variable not provided, setting to FALSE.")
     set(NO_ROS FALSE)
@@ -102,7 +110,6 @@ if (BUILD_ROS2_PLUGINS)
     find_package(sensor_msgs REQUIRED)
 endif()
 
-
 # see if catkin was invoked to build this
 if (CATKIN_DEVEL_PREFIX)
     message(STATUS "catkin ENABLED")
@@ -173,6 +180,7 @@ endforeach()
 
 include_directories(
         include
+        include/px4_sitl
         /usr/include
         ${Boost_INCLUDE_DIR}
         ${catkin_INCLUDE_DIRS}
@@ -181,6 +189,7 @@ include_directories(
         ${EIGEN3_INCLUDE_DIRS}/eigen3	# Workaround for Eigen3
         ${GAZEBO_INCLUDE_DIRS}
         ${GAZEBO_MSG_INCLUDE_DIRS}
+        ${mavlink_INCLUDE_DIRS}
 )
 
 link_libraries(
@@ -316,11 +325,14 @@ link_libraries(px4_mav_msgs px4_nav_msgs px4_physics_msgs px4_sensor_msgs px4_st
 #add_library(gazebo_magnetometer_plugin SHARED include/common.h
 #        include/gazebo_magnetometer_plugin.h
 #        src/gazebo_magnetometer_plugin.cpp src/geo_mag_declination.cpp)
-#add_library(gazebo_mavlink_interface SHARED src/gazebo_mavlink_interface.cpp src/mavlink_interface.cpp)
+if (${BUILD_MAVLINK_PLUGIN})
+    add_library(gazebo_mavlink_interface SHARED src/gazebo_mavlink_interface.cpp src/mavlink_interface.cpp)
+endif()
 #add_library(gazebo_motor_model SHARED include/common.h
 #        include/gazebo_motor_model.h src/gazebo_motor_model.cpp)
 add_library(gazebo_multirotor_base_plugin SHARED include/common.h
         include/gazebo_multirotor_base_plugin.h src/gazebo_multirotor_base_plugin.cpp)
+
 ##############################################################
 # GymFC versions of the PX4 Multirotor Plugins
 ##############################################################
@@ -344,13 +356,7 @@ add_library(gymfc_gazebo_motor_model SHARED include/common.h
         src/gymfc_gazebo_motor_model.cpp src/gazebo_motor_model.cpp)
 
 set(plugins
-#        gazebo_barometer_plugin
-#        gazebo_gps_plugin
-#        gazebo_groundtruth_plugin
-#        gazebo_imu_plugin
-#        gazebo_magnetometer_plugin
 ##        gazebo_mavlink_interface
-#        gazebo_motor_model
 ##        gazebo_multirotor_base_plugin
 
         gymfc_gazebo_barometer_plugin
