@@ -83,45 +83,14 @@ class BaseEnv(FlightControlEnv, gym.Env):
 
     def step_basic(self, action):
         """Step the simulator and apply the provided action.
-
         Args:
-            action: numpy array where each value in the array is the action
-                indexed by the acutuator index defined in the models SDF.
+            action: numpy array where each value in the array is a motor rpm.
         """
-        self.action = action.copy()
-
-        # Translate the agents output to the aircraft control signals. In this
-        # case our control signal is represented as a percentage. This
-        # function also needs to exist in the flight control firmware.
-        self.y = self.action_to_control_signal(self.action, 0, 1000, y_low=0, y_high=1000)
-
         # Interface with gymfc
-        self.obs = self.step_sim(self.y)
-
-        self.angular_rate = (self.imu_angular_velocity_rpy.copy() +
-                             self.sample_noise(self))
-        self.true_error = self.angular_rate_sp - self.imu_angular_velocity_rpy
-        self.measured_error = self.angular_rate_sp - self.angular_rate
-
-        done = self.sim_time >= self.max_sim_time
-
-        # reward = self.compute_reward()
-        reward = []
-
-        # Generate the next setpoint
-        self.update_setpoint()
-
-        # And the current state for the agent which will be usd as input to the
-        # neural network.
-        # state = self.state_fn(self)
+        self.obs = self.step_sim(np.array(action))
         state = self.obs
-
-        self.last_measured_error = self.measured_error.copy()
-        self.last_y = self.y.copy()
         self.step_counter += 1
-        if self.step_callback:
-            self.step_callback(self, state, reward, done)
-        return state, reward, done, {}
+        return state, None, False, {}
 
     def step(self, action):
         """Step the simulator and apply the provided action. 
@@ -200,7 +169,7 @@ class BaseEnv(FlightControlEnv, gym.Env):
         # occur in an episode.
         self.step_counter = 0
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         self._init()
         self.obs = super().reset()
 
