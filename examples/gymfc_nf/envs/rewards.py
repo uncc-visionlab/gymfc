@@ -105,7 +105,7 @@ class RewardEnv(BaseEnv):
     def _reset(self):
         self.prev_shaping = None
 
-    def reset(self):
+    def reset(self, seed=None, options=None):
         self._reset()
         return super().reset()
 
