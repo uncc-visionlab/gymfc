@@ -38,8 +38,7 @@ class BaseEnv(FlightControlEnv, gym.Env):
         self.action_space = spaces.Box(-np.ones(4), np.ones(4), dtype=np.float64)
         self.action = self.action_space.low
         num_inputs = len(self.state_fn(self))
-        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(num_inputs,),
-                                            dtype=np.float32)
+        self.observation_space = spaces.Box(-np.inf, np.inf, shape=(num_inputs,), dtype=np.float32)
 
         # IMU noise is aircraft specific and thus can not be included as
         # initial values for the registered environment. After the environment
@@ -65,7 +64,7 @@ class BaseEnv(FlightControlEnv, gym.Env):
         # digital twin at the same time.
         super().__init__(aircraft_config=model)
 
-    def setup(self, model, gymfc_config_file = None):
+    def setup(self, model, gymfc_config_file=None):
         """Set the aircraft's model.sdf and the GymFC configuration
 
         Args:
@@ -79,7 +78,6 @@ class BaseEnv(FlightControlEnv, gym.Env):
         # created. When gymfc is created it will dynamically load the
         # digital twin at the same time.
         super().__init__(aircraft_config=model, config_filepath=gymfc_config_file)
-
 
     def step_basic(self, action):
         """Step the simulator and apply the provided action.
@@ -172,8 +170,8 @@ class BaseEnv(FlightControlEnv, gym.Env):
     def reset(self, seed=None, options=None):
         self._init()
         self.obs = super().reset()
-
-        return self.state_fn(self)
+        return self.state_fn(self), {}
+        # return np.concatenate((self.obs.gt_wgs84_pos, *self.obs.gt_enu_vel, *self.obs.gt_attitude_quat)), {}
 
     def seed(self, seed=None):
         self.np_random, seed = seeding.np_random(seed)
