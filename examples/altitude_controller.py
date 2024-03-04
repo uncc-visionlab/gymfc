@@ -46,8 +46,8 @@ class Quadcopter():
         self.gravity = 9.8  # acceleration due to gravity, m/s^2
         # self.kt = 1e-7  # constant to convert motor rotational speed into thrust (T=kt*omega^2), N/(rpm)^2
         # self.kt = mass * self.gravity / (self.num_motors * 800)
-        self.kt = 5.84e-06
-        #self.b_prop = 1e-9  # constant to convert motor speed to torque (torque = b*omega^2), (N*m)/(rpm)^2
+        self.kt = 1e-06
+        # self.b_prop = 1e-9  # constant to convert motor speed to torque (torque = b*omega^2), (N*m)/(rpm)^2
         # self.b_prop = 0.06
         self.b_prop = 1e-6 * 0.000175  # motor constant * rotor drag coefficient
         # Air density at 25 deg C is about 1.1839 kg/m^3 At 20 °C and 101.325 kPa, dry air has density 1.2041 kg/m3
@@ -144,9 +144,27 @@ if __name__ == '__main__':
 
     SDF_SLOWDOWN_PARAM = 10
     SIM_DURATION = 60
-    YAW_SETPOINT = 0 # np.pi / 2
+    YAW_SET_POINT = 0  # + np.pi / 2
+    START_MOTOR_RPM = 790
+    USE_WAYPOINTS = True
 
     position_xyz_sp = np.array([10, 10, 1.7])
+
+    if USE_WAYPOINTS:
+        waypoint_list = np.array([[10, 0, 1.7], [10, 10, 2.7], [-10, -10, 0.7], [0, 0, 0.1]])
+        transition_times = np.arange(0, SIM_DURATION, SIM_DURATION / waypoint_list.shape[0])
+        current_waypoint_index = 0
+        position_xyz_sp = waypoint_list[current_waypoint_index, :]
+
+
+    def update_waypoint(td_env, td_transition_times, td_waypoint_list):
+        global SIM_DURATION, current_waypoint_index, position_xyz_sp
+        if (td_env.sim_time > td_transition_times[current_waypoint_index] and \
+                current_waypoint_index < td_waypoint_list.shape[0]):
+            position_xyz_sp = td_waypoint_list[current_waypoint_index, :]
+            print("New position set point assigned (x,y,z)_sp=({:.2f}, {:.2f}, {:.2f}) ".format(*position_xyz_sp))
+            current_waypoint_index += 1
+
 
     # Need to set the aircraft model after we create the environment because
     # the model is unique and can't be hardcoded in the gym init.
@@ -176,22 +194,23 @@ if __name__ == '__main__':
     Ki_sat_pos = np.tile(np.array([-1.1, 1.1]), (3, 1))  # saturation for integral controller (prevent windup) [x,y,z]
 
     # Gains for angle controller
-    Kp_ang = [4.0e-2, 4.0e-2, 12.0e-6]  # proportional [x,y,z]
+    Kp_ang = [4.0e-2, 4.0e-2, 4.0e-5]  # proportional [x,y,z]
     Kd_ang = [0, 0, 0]  # derivative [x,y,z]
-    Ki_ang = [12.0e-3, 12.0e-3, 0.0e-7]  # integral [x,y,z]
+    Ki_ang = [12.0e-3, 12.0e-3, 12.0e-6]  # integral [x,y,z]
     Ki_sat_ang = np.tile(np.array([[-0.1, 0.1]]), (3, 1))  # saturation for integral controller (prevent windup) [x,y,z]
 
     position_xyz_controller = SimplePID(Kp_pos, Kd_pos, Ki_pos, Ki_sat_pos)
     orientation_rpy_controller = SimplePID(Kp_ang, Kd_ang, Ki_ang, Ki_sat_ang)
 
-    motor_rpm_sp = [790] * 4
+    motor_rpm_sp = np.array([START_MOTOR_RPM] * 4)
     #  NF 1 Vehicle
     # pid = SimplePID(kp=1e-6, ki=0.000000, kd=1e-10)
-    # motor_rpm_sp = 850
 
-    # let the quad settle onto the ground
+    # let the quad settle onto the ground and spin up the motors
     while env.sim_time < 2:
         ob, reward, done, _ = env.step_basic(motor_rpm_sp)
+        if USE_WAYPOINTS:
+            update_waypoint(env, transition_times, waypoint_list)
 
     utm_zone = int((np.floor((ob.gt_wgs84_pos[1] + 180) / 6) % 60) + 1)
     proj_wgs842utm = pyproj.Proj("+proj=utm +zone={} +datum=WGS84 +units=m +no_defs".format(utm_zone))
@@ -201,8 +220,8 @@ if __name__ == '__main__':
 
     current_step = 0
 
-    orientation_rpy_initial = Rotation.from_quat(ob.gt_attitude_quat).as_euler("xyz")
-    orientation_rpy_ob = orientation_rpy_initial
+    orientation_rpy_ob = np.array([0, 0, 0])
+    orientation_rpy_ob = Rotation.from_quat(ob.gt_attitude_quat).as_euler("xyz", degrees=False)
     orientation_rpy_previous = orientation_rpy_ob
 
     position_xyz_initial = utm_current - utm_initial
@@ -211,21 +230,22 @@ if __name__ == '__main__':
 
     orientation_rpy_sp = np.array([0, 0, 0])
     velocity_xyz_sp = np.array([0, 0, 0])
-    velocity_rpy_sp = np.array([0, 0, 0])
+    # velocity_rpy_sp = np.array([0, 0, 0])
 
     Quadcopter = Quadcopter(mass=1.5)
 
-
-    # spin up the motors
+    # start of PID control loop
     while env.sim_time < SIM_DURATION:
         ob, reward, done, _ = env.step_basic(motor_rpm_sp)
+        if USE_WAYPOINTS:
+            update_waypoint(env, transition_times, waypoint_list)
 
         motor_rpm_ob = SDF_SLOWDOWN_PARAM * np.array(ob.esc_motor_angular_velocity[0:4])
 
         utm_current = np.array([*proj_wgs842utm(ob.gt_wgs84_pos[1], ob.gt_wgs84_pos[0]), ob.gt_wgs84_pos[2]])
         position_xyz_ob = utm_current - utm_initial
-        # zyx returns yaw, pitch, roll so assign the rpy vector in reverse order
-        orientation_rpy_ob[::-1] = Rotation.from_quat(ob.gt_attitude_quat).as_euler("zyx", degrees=False)
+        # xyz returns roll, pitch, yaw to assign the rpy vector
+        orientation_rpy_ob = Rotation.from_quat(ob.gt_attitude_quat).as_euler("xyz", degrees=False)
 
         velocity_xyz_ob = (position_xyz_ob - position_xyz_previous) / env.stepsize
         velocity_rpy_ob = (orientation_rpy_ob - orientation_rpy_previous) / env.stepsize
@@ -295,7 +315,7 @@ if __name__ == '__main__':
 
         # Modify z gain to include thrust required to hover
         # acceleration_xyz_sp[2] = (Quadcopter.gravity +
-        #                            acceleration_xyz_sp[2]) / (c(orientation_rpy_ob[0]) * c(orientation_rpy_ob[1]))
+        #                           acceleration_xyz_sp[2]) / (c(orientation_rpy_ob[0]) * c(orientation_rpy_ob[1]))
 
         # calculate thrust needed
         thrust_sp = Quadcopter.mass * acceleration_xyz_sp[2]
@@ -310,9 +330,9 @@ if __name__ == '__main__':
         sin_roll_angle_sp = -acceleration_xyz_sp[1] / acceleration_xyz_magnitude / np.cos(orientation_rpy_ob[1])
         if np.abs(sin_roll_angle_sp) > 1:
             sin_roll_angle_sp /= np.abs(sin_roll_angle_sp)
-        orientation_rpy_sp = [
+        orientation_rpy_sp = np.array([
             np.arcsin(sin_roll_angle_sp),
-            np.arcsin(acceleration_xyz_sp[0] / acceleration_xyz_magnitude), YAW_SETPOINT]
+            np.arcsin(acceleration_xyz_sp[0] / acceleration_xyz_magnitude), YAW_SET_POINT])
 
         # check if exceeds max angle
         orientation_rpy_magnitude = np.linalg.norm(orientation_rpy_sp[:2])
