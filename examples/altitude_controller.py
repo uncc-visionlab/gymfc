@@ -126,7 +126,8 @@ class SimplePID(object):
 
 
 if __name__ == '__main__':
-    default_model = "../gazebo/models/iris/iris_altitude.sdf"
+    # default_model = "../gazebo/models/iris/iris_altitude.sdf"
+    default_model = "../gazebo/models/iris/model.sdf"
     # default_model = "../gazebo/models/nf1/model.sdf"
     default_config = "iris_gymfc/gymfc.ini"
     parser = argparse.ArgumentParser("Evaluate each algorithm")
@@ -169,20 +170,13 @@ if __name__ == '__main__':
     # 3DR Iris Vehicle
 
     # Gains for position controller
-    # Kp_pos = [.95, .95, 15.]  # proportional [x,y,z]
-    # Kd_pos = [1.8, 1.8, 15.]  # derivative [x,y,z]
-    # Ki_pos = [0.2, 0.2, 1.0]  # integral [x,y,z]
     Kp_pos = [0.5, 0.5, 0.5]  # proportional [x,y,z]
     Kd_pos = [0, 0, 0]  # derivative [x,y,z]
     Ki_pos = [0.25, 0.25, 0.25]  # integral [x,y,z]
     Ki_sat_pos = np.tile(np.array([-1.1, 1.1]), (3, 1))  # saturation for integral controller (prevent windup) [x,y,z]
 
     # Gains for angle controller
-    # Kp_ang = [6.9, 6.9, 25.]  # proportional [x,y,z]
-    # Kd_ang = [3.7, 3.7, 9.]  # derivative [x,y,z]
-    # Ki_ang = [0.1, 0.1, 0.1]  # integral [x,y,z]
     Kp_ang = [4.0e-2, 4.0e-2, 12.0e-6]  # proportional [x,y,z]
-    # Kp_ang = [1.0, 1.0, 1.0]  # proportional [x,y,z]
     Kd_ang = [0, 0, 0]  # derivative [x,y,z]
     Ki_ang = [12.0e-3, 12.0e-3, 0.0e-7]  # integral [x,y,z]
     Ki_sat_ang = np.tile(np.array([[-0.1, 0.1]]), (3, 1))  # saturation for integral controller (prevent windup) [x,y,z]
@@ -224,10 +218,6 @@ if __name__ == '__main__':
 
     # spin up the motors
     while env.sim_time < SIM_DURATION:
-        # error = elevation_set_point - current_altitude
-        # delta_motor_rpm_sp = pid.update(env.sim_time, error)
-        # delta_motor_rpm_sp = pid(current_altitude, env.stepsize)
-        # motor_rpm_sp_list = [motor_rpm_sp + delta_motor_rpm_sp[0] for motor_rpm_sp in motor_rpm_sp_list]
         ob, reward, done, _ = env.step_basic(motor_rpm_sp)
 
         motor_rpm_ob = SDF_SLOWDOWN_PARAM * np.array(ob.esc_motor_angular_velocity[0:4])
