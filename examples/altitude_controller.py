@@ -159,8 +159,8 @@ if __name__ == '__main__':
 
     def update_waypoint(td_env, td_transition_times, td_waypoint_list):
         global SIM_DURATION, current_waypoint_index, position_xyz_sp
-        if (td_env.sim_time > td_transition_times[current_waypoint_index] and \
-                current_waypoint_index < td_waypoint_list.shape[0]):
+        if (current_waypoint_index < td_waypoint_list.shape[0] and
+                td_env.sim_time > td_transition_times[current_waypoint_index]):
             position_xyz_sp = td_waypoint_list[current_waypoint_index, :]
             print("New position set point assigned (x,y,z)_sp=({:.2f}, {:.2f}, {:.2f}) ".format(*position_xyz_sp))
             current_waypoint_index += 1
