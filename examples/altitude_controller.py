@@ -158,7 +158,7 @@ if __name__ == '__main__':
 
 
     def update_waypoint(td_env, td_transition_times, td_waypoint_list):
-        global SIM_DURATION, current_waypoint_index, position_xyz_sp
+        global current_waypoint_index, position_xyz_sp
         if (current_waypoint_index < td_waypoint_list.shape[0] and
                 td_env.sim_time > td_transition_times[current_waypoint_index]):
             position_xyz_sp = td_waypoint_list[current_waypoint_index, :]
@@ -310,14 +310,14 @@ if __name__ == '__main__':
         # if done:
         #     break
 
-        # Compute control
+        # Compute position control
         acceleration_xyz_sp = position_xyz_controller.update(env.stepsize, position_xyz_error)
 
         # Modify z gain to include thrust required to hover
         # acceleration_xyz_sp[2] = (Quadcopter.gravity +
         #                           acceleration_xyz_sp[2]) / (c(orientation_rpy_ob[0]) * c(orientation_rpy_ob[1]))
 
-        # calculate thrust needed
+        # Calculate thrust needed
         thrust_sp = Quadcopter.mass * acceleration_xyz_sp[2]
 
         # Check if needed acceleration is not zero. if zero, set to one to prevent divide by zero below
