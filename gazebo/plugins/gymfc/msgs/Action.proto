@@ -9,7 +9,7 @@ message Action
   repeated float  motor = 1 [packed = true];
 
   // By default everytime an action is sent to the environment the world is 
-  // incremented a single step. This behavior can be overriden to reset the 
+  // incremented a single step. This behavior can be overridden to reset the
   // world at the start of a task.
   enum WorldControl {
     STEP = 0;

@@ -160,10 +160,7 @@ class FlightControlEnv(ABC):
 
         # Set up some stats to report at the end, connection are over UDP
         # so it can be useful to see if anything is dropped
-        self.sim_stats = {}
-        self.sim_stats["steps"] = 0
-        self.sim_stats["packets_dropped"] = 0
-        self.sim_stats["time_start_seconds"] = time.time()
+        self.sim_stats = {"steps": 0, "packets_dropped": 0, "time_start_seconds": time.time()}
 
         print("Sending motor control signals to port ", self.aircraft_port)
         # Connect to the Aircraft plugin
@@ -495,7 +492,7 @@ class FlightControlEnv(ABC):
         ob = self.loop.run_until_complete(
             self._step_sim(np.zeros(self.motor_count), world_control=Action_pb2.Action.RESET))
         assert np.isclose(self.sim_time, 0.0, 1e-6), "sim time after reset is incorrect, {} ".format(self.sim_time)
-        return ob
+        return ob, {}
 
     def close(self):
         self.shutdown()

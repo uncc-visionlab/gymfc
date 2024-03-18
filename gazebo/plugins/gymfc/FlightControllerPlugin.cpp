@@ -658,19 +658,21 @@ void FlightControllerPlugin::LoopThread() {
         //gzdbg << "Callback count " << this->sensorCallbackCount << std::endl;
         //Forward the motor commands from the agent to each motor
         //cmd_msgs::msgs::MotorCommand cmd;
-        mav_msgs::msgs::CommandMotorSpeed cmd;
-        //gzdbg << "Sending motor commands to digital twin" << std::endl;
-        for (unsigned int i = 0; i < this->numActuators; i++) {
-            //gzdbg << i << "=" << this->action.motor(i) << std::endl;
-            //cmd.add_motor(this->action.motor(i));
-            cmd.add_motor_speed(this->action.motor(i));
+        if (numActuators > 0) {
+            //gzdbg << "Sending " << numActuators << " motor commands to digital twin." << std::endl;
+            mav_msgs::msgs::CommandMotorSpeed cmd;
+            for (unsigned int i = 0; i < this->numActuators; i++) {
+                // gzdbg << i << "=" << this->action.motor(i) << std::endl;
+                //cmd.add_motor(this->action.motor(i));
+                cmd.add_motor_speed(this->action.motor(i));
+            }
+            //gzdbg << "Publishing motor command\n";
+            this->cmdPub->Publish(cmd);
+            //gzdbg << "Done publishing motor command\n";
         }
-        //gzdbg << "Publishing motor command\n";
-        this->cmdPub->Publish(cmd);
-        //gzdbg << "Done publishing motor command\n";
         // Triggers other plugins to publish
         this->world->Step(1);
-        //gzdbg << "Waiting...\n";
+        // gzdbg << "Waiting..." << std::endl;
         this->WaitForSensorsThenSend();
     }
 }

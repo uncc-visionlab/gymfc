@@ -249,6 +249,8 @@ if __name__ == '__main__':
 
         velocity_xyz_ob = (position_xyz_ob - position_xyz_previous) / env.stepsize
         velocity_rpy_ob = (orientation_rpy_ob - orientation_rpy_previous) / env.stepsize
+        position_xyz_previous = position_xyz_ob
+        orientation_rpy_previous = orientation_rpy_ob
 
         position_xyz_error = position_xyz_sp - position_xyz_ob
         # velocity_xyz_error = velocity_xyz_sp - velocity_xyz_current

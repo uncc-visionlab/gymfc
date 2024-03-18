@@ -363,6 +363,7 @@
     </joint>
     <plugin name='front_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace/>
+      <reversible>False</reversible>
       <jointName>rotor_0_joint</jointName>
       <linkName>rotor_0</linkName>
       <turningDirection>ccw</turningDirection>
@@ -380,6 +381,7 @@
     </plugin>
     <plugin name='back_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace/>
+      <reversible>False</reversible>
       <jointName>rotor_1_joint</jointName>
       <linkName>rotor_1</linkName>
       <turningDirection>ccw</turningDirection>
@@ -397,6 +399,7 @@
     </plugin>
     <plugin name='front_left_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace/>
+      <reversible>False</reversible>
       <jointName>rotor_2_joint</jointName>
       <linkName>rotor_2</linkName>
       <turningDirection>cw</turningDirection>
@@ -414,6 +417,7 @@
     </plugin>
     <plugin name='back_right_motor_model' filename='libgymfc_gazebo_motor_model.so'>
       <robotNamespace/>
+      <reversible>False</reversible>
       <jointName>rotor_3_joint</jointName>
       <linkName>rotor_3</linkName>
       <turningDirection>cw</turningDirection>
