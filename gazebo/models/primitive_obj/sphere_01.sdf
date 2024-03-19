@@ -1,0 +1,90 @@
+<?xml version='1.0'?>
+<sdf version='1.6'>
+  <model name='primitive_object'>
+      <pose>0.013103 0.035528 1 0 0 0</pose>
+      <link name='base_link'>
+        <inertial>
+          <mass>0.1</mass>
+          <inertia>
+            <ixx>0.1</ixx>
+            <ixy>0</ixy>
+            <ixz>0</ixz>
+            <iyy>0.1</iyy>
+            <iyz>0</iyz>
+            <izz>0.1</izz>
+          </inertia>
+          <pose>0 0 0 0 -0 0</pose>
+        </inertial>
+        <collision name='collision'>
+          <geometry>
+            <sphere>
+              <radius>0.5</radius>
+            </sphere>
+          </geometry>
+          <max_contacts>10</max_contacts>
+          <surface>
+            <contact>
+              <ode/>
+            </contact>
+            <bounce/>
+            <friction>
+              <torsional>
+                <ode/>
+              </torsional>
+              <ode/>
+            </friction>
+          </surface>
+        </collision>
+        <visual name='visual'>
+          <geometry>
+            <sphere>
+              <radius>0.5</radius>
+            </sphere>
+          </geometry>
+          <material>
+            <script>
+              <name>Gazebo/Grey</name>
+              <uri>file://media/materials/scripts/gazebo.material</uri>
+            </script>
+          </material>
+        </visual>
+        <self_collide>0</self_collide>
+        <enable_gravity>1</enable_gravity>
+        <kinematic>0</kinematic>
+      </link>
+      <static>false</static>
+      <plugin name='basic_object_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
+        <robotNamespace></robotNamespace>
+        <linkName>base_link</linkName>
+        <imuTopic>/imu</imuTopic>
+        <gyroscopeNoiseDensity>0.00018665</gyroscopeNoiseDensity>
+        <gyroscopeRandomWalk>3.8785e-05</gyroscopeRandomWalk>
+        <gyroscopeBiasCorrelationTime>1000.0</gyroscopeBiasCorrelationTime>
+        <gyroscopeTurnOnBiasSigma>0.0087</gyroscopeTurnOnBiasSigma>
+        <accelerometerNoiseDensity>0.00186</accelerometerNoiseDensity>
+        <accelerometerRandomWalk>0.006</accelerometerRandomWalk>
+        <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
+        <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
+      </plugin>
+      <plugin name='basic_object_groundtruth_plugin' filename='libgymfc_gazebo_groundtruth_plugin.so'>
+        <robotNamespace/>
+      </plugin>
+        <plugin name="config" filename="libAircraftConfigPlugin.so">
+            <motorCount>0</motorCount>
+            <!-- Where is the center of thrust in relation to this specified link -->
+            <centerOfThrust>
+                <link>base_link</link>
+                <offset>0 0 0</offset>
+            </centerOfThrust>
+            <sensors>
+             <sensor type="imu"/>
+             <!--<sensor type="esc"/>-->
+             <!--<sensor type="barometer"/>-->
+             <sensor type="groundtruth"/>
+             <!--<sensor type="gps"/>
+             <sensor type="magnetometer"/>-->
+             <!-- <sensor type="battery"/> -->
+            </sensors>
+        </plugin>
+  </model>
+</sdf>

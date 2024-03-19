@@ -13,11 +13,11 @@
     </include>
     <include>
       <uri>model://asphalt_plane</uri>
-      <pose>0 0 0 0 0 0</pose>
+      <pose>0 0 0.001 0 0 0</pose>
     </include>
-    <!--<gravity>0 0 -9.8066</gravity>-->
     <physics type="dart">
       <gravity>0 0 0</gravity>
+      <!--<gravity>0 0 -9.8066</gravity>-->
       <real_time_update_rate>0</real_time_update_rate>
 	  <max_step_size>0.001</max_step_size>
     </physics>

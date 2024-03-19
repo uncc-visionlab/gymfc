@@ -71,7 +71,9 @@ class PhysicalModel:
 
 
 if __name__ == '__main__':
-    default_model = "../gazebo/models/primitive_obj/sphere.sdf"
+    # default_model = "../gazebo/models/primitive_obj/sphere_01.sdf"
+    # default_model = "../gazebo/models/primitive_obj/box_01.sdf"
+    default_model = "../gazebo/models/primitive_obj/box_02.sdf"
     # default_model = "sphere.sdf"
     default_config = "physics_testbench.ini"
     parser = argparse.ArgumentParser("Evaluate each algorithm")
@@ -156,15 +158,14 @@ if __name__ == '__main__':
         orientation_rpy_previous = orientation_rpy_ob
         velocity_rpy_previous = velocity_rpy_ob
 
-        if current_step % 1000 == 0:
+        if current_step % 1 == 0:
             print("step={} ".format(current_step) +
                   "(x,y,z)_ob=({:.2f}, {:.2f}, {:.2f}) ".format(*position_xyz_ob) +
                   "(x',y',z')_ob=({:.2f}, {:.2f}, {:.2f}) ".format(*velocity_xyz_ob) +
                   "(x'',y'',z'')_ob=({:.2f}, {:.2f}, {:.2f}) ".format(*acceleration_xyz_ob) +
                   "(r,p,y)_ob=({:.1f}, {:.1f}, {:.1f})".format(*[av * 180 / np.pi for av in orientation_rpy_ob]) +
                   "(r',p',y')_ob=({:.1f}, {:.1f}, {:.1f})".format(*[av * 180 / np.pi for av in velocity_rpy_ob]) +
-                  "(r'',p'',y'')_ob=({:.1f}, {:.1f}, {:.1f})".format(
-                      *[av * 180 / np.pi for av in acceleration_rpy_ob_rpy_ob]))
+                  "(r'',p'',y'')_ob=({:.1f}, {:.1f}, {:.1f})".format(*[av * 180 / np.pi for av in acceleration_rpy_ob]))
         # if done:
         #     break
 
