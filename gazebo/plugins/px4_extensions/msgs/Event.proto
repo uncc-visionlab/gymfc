@@ -1,0 +1,11 @@
+syntax = "proto2";
+package sensor_msgs.msgs;
+
+message Event
+{
+  required uint32 x                      = 1;
+  required uint32 y                      = 2;
+  required uint64 time                   = 3;
+  required bool   polarity               = 4;
+}
+
