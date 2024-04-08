@@ -7,7 +7,7 @@ namespace gazebo {
     void GymFCGazeboMotorModel::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
 //        gzdbg << "Loading motor model\n";
         GazeboMotorModel::Load(_model, _sdf);
-        this->resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboMotorModel::OnTimeReset, this));
+        resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboMotorModel::OnTimeReset, this));
         gymfc_command_sub_ = node_handle_->Subscribe<mav_msgs::msgs::CommandMotorSpeed>(
                 gymfc_command_sub_topic_, &GymFCGazeboMotorModel::VelocityCallback, this);
         std::string esc_pub_topic_ = gymfc_esc_pub_topic_ + "/" + std::to_string(motor_number_);

@@ -37,8 +37,12 @@
 #include "Pressure.pb.h"
 #include "SITLGps.pb.h"
 
+#include "Blast3d.pb.h"
+#include "Wind.pb.h"
+
 #include "State.pb.h"
 #include "Action.pb.h"
+#include "../../../cmake-build-debug/px4_extension_plugins/Blast3d.pb.h"
 
 #define ENV_SITL_PORT "GYMFC_SITL_PORT"
 #define ENV_DIGITAL_TWIN_SDF "GYMFC_DIGITAL_TWIN_SDF"
@@ -46,8 +50,10 @@
 #define ENV_SUPPORTED_SENSORS "GYMFC_SUPPORTED_SENSORS"
 
 namespace gazebo {
+    static const std::string kGymFCDefaultBlast3dPubTopic = "/aircraft/sensor/blast3d";
     static const std::string kGymFCDefaultCommandPubTopic = "/aircraft/command/motor";
     static const std::string kGymFCDefaultMotorVelocitySubTopic = "/aircraft/sensor/esc";
+    static const std::string kGymFCDefaultMotorWindPubTopic = "/aircraft/sensor/motor_wind";
     static const std::string kGymFCDefaultImuSubTopic = "/aircraft/sensor/imu";
     static const std::string kGymFCDefaultBarometerSubTopic = "/aircraft/sensor/baro";
     static const std::string kGymFCDefaultMagnetometerSubTopic = "/aircraft/sensor/magneto";
@@ -61,6 +67,8 @@ namespace gazebo {
     const std::string kAircraftConfigFileName = "libAircraftConfigPlugin.so";
 
     typedef const boost::shared_ptr<const sensor_msgs::msgs::EscSensor> EscSensorPtr;
+    typedef const boost::shared_ptr<const physics_msgs::msgs::Wind> WindPtr;
+    typedef const boost::shared_ptr<const blast3d_msgs::msgs::Blast3d> Blast3dPtr;
     typedef const boost::shared_ptr<const sensor_msgs::msgs::SITLGps> GpsPtr;
     typedef const boost::shared_ptr<const sensor_msgs::msgs::Groundtruth> GroundtruthPtr;
     typedef const boost::shared_ptr<const sensor_msgs::msgs::Imu> ImuPtr;
@@ -140,6 +148,10 @@ namespace gazebo {
 
         void EscSensorCallback(EscSensorPtr &_escSensor);
 
+        void MotorWindCallback(WindPtr &_motorWind);
+
+        void Blast3dCallback(Blast3dPtr &_blast3d);
+
         void GpsCallback(GpsPtr &_gt);
 
         void GroundtruthCallback(GroundtruthPtr &_gt);
@@ -200,7 +212,9 @@ namespace gazebo {
 
         std::string cmdPubTopic{kGymFCDefaultCommandPubTopic};
 
+        std::string blast3dSubTopic{kGymFCDefaultBlast3dPubTopic};
         std::string escSubTopic{kGymFCDefaultMotorVelocitySubTopic};
+        std::string motorWindSubTopic{kGymFCDefaultMotorWindPubTopic};
         std::string gpsSubTopic{kGymFCDefaultGPSSubTopic};
         std::string ground_truthSubTopic{kGymFCDefaultGroundtruthSubTopic};
         std::string imuSubTopic{kGymFCDefaultImuSubTopic};
@@ -221,7 +235,9 @@ namespace gazebo {
 
         // Subscribe to all possible sensors
         transport::SubscriberPtr baroSub;
+        transport::SubscriberPtr blast3dSub;
         std::vector<transport::SubscriberPtr> escSub;
+        std::vector<transport::SubscriberPtr> motorWindSub;
         transport::SubscriberPtr gpsSub;
         transport::SubscriberPtr ground_truthSub;
         transport::SubscriberPtr imuSub;

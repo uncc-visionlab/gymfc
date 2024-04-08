@@ -7,7 +7,7 @@ namespace gazebo {
     void GymFCGroundtruthPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
         //gzdbg << "Loading ground truth plugin\n";
         GroundtruthPlugin::Load(_model, _sdf);
-        this->resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGroundtruthPlugin::OnTimeReset, this));
+        resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGroundtruthPlugin::OnTimeReset, this));
         gymfc_gt_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Groundtruth>(gymfc_gt_pub_topic_);
         gzdbg << "GymFC groundtruth publishes to " << gymfc_gt_pub_topic_ << std::endl;
     }

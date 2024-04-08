@@ -155,6 +155,9 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
     this->nodeHandle = transport::NodePtr(new transport::Node());
     this->nodeHandle->Init(this->robotNamespace);
 
+    blast3dSub = nodeHandle->Subscribe<blast3d_msgs::msgs::Blast3d>(
+            blast3dSubTopic, &FlightControllerPlugin::Blast3dCallback, this);
+
     //Subscribe to all the sensors that are enabled
     for (auto sensor: this->supportedSensors) {
         switch (sensor) {
@@ -167,9 +170,13 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
                 //as separate messages
                 //XXX NOTE index starts at 1 to match that of beta flight mixer
                 //for (unsigned int i = 1; i <= this->numActuators; i++)
-                for (unsigned int i = 0; i < this->numActuators; i++) {
-                    this->escSub.push_back(this->nodeHandle->Subscribe<sensor_msgs::msgs::EscSensor>(
+                for (unsigned int i = 0; i < numActuators; i++) {
+                    escSub.push_back(nodeHandle->Subscribe<sensor_msgs::msgs::EscSensor>(
                             this->escSubTopic + "/" + std::to_string(i), &FlightControllerPlugin::EscSensorCallback,
+                            this));
+                    motorWindSub.push_back(nodeHandle->Subscribe<physics_msgs::msgs::Wind>(
+                            this->motorWindSubTopic + "/" + std::to_string(i),
+                            &FlightControllerPlugin::MotorWindCallback,
                             this));
                 }
                 break;
@@ -268,6 +275,12 @@ void FlightControllerPlugin::InitState() {
     for (unsigned int i = 0; i < 4; i++) {
         this->state.add_gt_attitude_quat(0);
     }
+    for (unsigned int i = 0; i < 12; i++) {
+        this->state.add_motor_wind3d_xyz(0);
+    }
+    for (unsigned int i = 0; i < 3; i++) {
+        this->state.add_blast3d_pos(0);
+    }
 }
 
 void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
@@ -283,6 +296,25 @@ void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
     this->state.set_esc_torque(id, _escSensor->torque());
     this->sensorCallbackCount++;
     this->callbackCondition.notify_all();
+}
+
+void FlightControllerPlugin::MotorWindCallback(WindPtr &_motorWind) {
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    gzdbg << __FUNCTION__ << "(): Received Wind3d message for motor " << _motorWind->frame_id() << std::endl;
+    int motor_number = std::stoi(_motorWind->frame_id());
+    this->state.set_motor_wind3d_xyz(3 * motor_number + 0, _motorWind->velocity().x());
+    this->state.set_motor_wind3d_xyz(3 * motor_number + 1, _motorWind->velocity().y());
+    this->state.set_motor_wind3d_xyz(3 * motor_number + 2, _motorWind->velocity().z());
+}
+
+void FlightControllerPlugin::Blast3dCallback(Blast3dPtr &_blast3d) {
+    gzdbg << __FUNCTION__ << "(): Received Blast3d message for time " << _blast3d->time() << std::endl;
+    boost::mutex::scoped_lock lock(g_CallbackMutex);
+    this->state.set_blast3d_time(_blast3d->time());
+    this->state.set_blast3d_weight_tnt(_blast3d->weight_tnt_kg());
+    this->state.set_blast3d_pos(0, _blast3d->x());
+    this->state.set_blast3d_pos(1, _blast3d->y());
+    this->state.set_blast3d_pos(2, _blast3d->z());
 }
 
 void FlightControllerPlugin::GroundtruthCallback(GroundtruthPtr &_gt) {

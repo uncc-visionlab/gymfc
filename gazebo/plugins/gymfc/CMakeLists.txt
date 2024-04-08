@@ -51,6 +51,7 @@ set(control_msgs
   msgs/CommandMotorSpeed.proto
   )
 set(sensor_msgs
+  msgs/Blast3d.proto
   msgs/EscSensor.proto
   msgs/Float.proto
   msgs/Groundtruth.proto
@@ -58,6 +59,7 @@ set(sensor_msgs
   msgs/MagneticField.proto
   msgs/Pressure.proto
   msgs/SITLGps.proto
+  msgs/Wind.proto
   msgs/State.proto
   msgs/Action.proto
   ${PROTOBUF_IMPORT_DIRS}/vector3d.proto

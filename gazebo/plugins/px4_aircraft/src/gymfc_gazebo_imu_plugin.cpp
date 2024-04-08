@@ -7,7 +7,7 @@ namespace gazebo {
     void GymFCGazeboImuPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
         //gzdbg << "Loading IMU sensor\n";
         GazeboImuPlugin::Load(_model, _sdf);
-        this->resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboImuPlugin::OnTimeReset, this));
+        resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboImuPlugin::OnTimeReset, this));
         gymfc_imu_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Imu>("~/" + model_->GetName() + imu_topic_, 10);
         gzdbg << "GymFC imu publishes to " << gymfc_imu_pub_topic_ << std::endl;
         imu_pub_->Fini();

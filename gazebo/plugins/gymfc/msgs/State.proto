@@ -56,4 +56,12 @@ message State
   repeated double gt_wgs84_pos = 24 [packed=true];
   repeated float gt_enu_vel = 25 [packed=true];
   repeated float gt_attitude_quat = 26 [packed=true];
+
+  // Motor Wind
+  repeated float motor_wind3d_xyz = 27 [packed=true];
+
+  // Blast3d
+  optional double blast3d_time = 28;
+  optional float blast3d_weight_TNT = 29;
+  repeated double blast3d_pos = 30 [packed=true];
 }

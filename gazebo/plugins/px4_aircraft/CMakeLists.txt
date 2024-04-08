@@ -8,7 +8,7 @@ cmake_policy(SET CMP0054 NEW)
 
 set(NO_ROS ON)
 # No cmake module for find_package(mavlink) and setup needed compile variables to make px4 mavlink plugin
-set(BUILD_MAVLINK_PLUGIN OFF)
+set(BUILD_MAVLINK_PLUGIN ON)
 if(${BUILD_MAVLINK_PLUGIN})
   # location of mavlink source headers, specifically the parent folder holding development/mavlink.h
   # For a Noetic ROS install, the path to mavlink.h is /opt/ros/noetic/include/mavlink/v2.0/development/mavlink.h
@@ -356,9 +356,6 @@ add_library(gymfc_gazebo_motor_model SHARED include/common.h
         src/gymfc_gazebo_motor_model.cpp src/gazebo_motor_model.cpp)
 
 set(plugins
-##        gazebo_mavlink_interface
-##        gazebo_multirotor_base_plugin
-
         gymfc_gazebo_barometer_plugin
         gymfc_gazebo_gps_plugin
         gymfc_gazebo_groundtruth_plugin

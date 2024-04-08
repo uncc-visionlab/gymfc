@@ -7,7 +7,7 @@ namespace gazebo {
     void GymFCGazeboGpsPlugin::Load(sensors::SensorPtr _parent, sdf::ElementPtr _sdf) {
         //gzdbg << "Loading GPS sensor\n";
         GpsPlugin::Load(_parent, _sdf);
-        this->resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboGpsPlugin::OnTimeReset, this));
+        resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboGpsPlugin::OnTimeReset, this));
         gymfc_gps_pub_ = node_handle_->Advertise<sensor_msgs::msgs::SITLGps>(gymfc_gps_pub_topic_);
         gzdbg << "GymFC GPS publishes to " << gymfc_gps_pub_topic_ << std::endl;
     }
