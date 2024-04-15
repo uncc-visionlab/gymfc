@@ -104,7 +104,6 @@ class GazeboImuPlugin : public ModelPlugin {
   void InitializeParams();
   void Publish();
 
- protected:
   void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
   void addNoise(
