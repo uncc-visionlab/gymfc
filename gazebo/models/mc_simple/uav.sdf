@@ -1,0 +1,77 @@
+<sdf version='1.7'>
+  <model name='uav'>
+    <link name='link'>
+      <inertial>
+        <pose>0 0 0 0 -0 0</pose>
+        <mass>1.95</mass>
+        <inertia>
+          <ixx>0.02</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>0.02</iyy>
+          <iyz>0</iyz>
+          <izz>0.04</izz>
+        </inertia>
+      </inertial>
+      <collision name='link_collision'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://uav_gazebo/meshes/quadrotor_base.dae</uri>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
+      <visual name='link_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>1 1 1</scale>
+            <uri>model://uav_gazebo/meshes/quadrotor_base.dae</uri>
+          </mesh>
+        </geometry>
+        <material>
+          <script>
+            <name>Gazebo/Orange</name>
+            <uri>file://media/materials/scripts/gazebo.material</uri>
+          </script>
+        </material>
+      </visual>
+      <gravity>1</gravity>
+      <sensor name='imu_sensor' type='imu'>
+        <always_on>1</always_on>
+        <update_rate>100</update_rate>
+        <visualize>1</visualize>
+        <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
+          <topicName>uav_imu</topicName>
+          <bodyName>link</bodyName>
+          <updateRateHZ>100.0</updateRateHZ>
+          <gaussianNoise>0.0001</gaussianNoise>
+          <xyzOffset>0 0 0</xyzOffset>
+          <rpyOffset>0 0 0</rpyOffset>
+          <frameName>uav_imu</frameName>
+        </plugin>
+        <pose>0 0 0 0 -0 0</pose>
+      </sensor>
+    </link>
+    <plugin name='pose_3d_plugin' filename='libgazebo_ros_p3d.so'>
+      <bodyName>link</bodyName>
+      <topicName>uav_pos</topicName>
+      <frameName>world</frameName>
+      <gaussianNoise>0.01</gaussianNoise>
+      <updateRate>10</updateRate>
+    </plugin>
+    <plugin name='uav_fm' filename='libcontrol_plugin.so'>
+      <bodyName>link</bodyName>
+      <topicName>uav_fm</topicName>
+    </plugin>
+  </model>
+</sdf>
