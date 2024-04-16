@@ -10,6 +10,9 @@ namespace gazebo {
         resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCBarometerPlugin::OnTimeReset, this));
         gymfc_baro_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Pressure>(gymfc_baro_pub_topic_);
         gzdbg << "GymFC barometer publishes to " << gymfc_baro_pub_topic_ << std::endl;
+          // Listen to the update event. This event is broadcast every simulation iteration.
+        update_connection_ = event::Events::ConnectWorldUpdateBegin(
+                boost::bind(&GymFCBarometerPlugin::OnUpdate, this, _1));
     }
 
     void GymFCBarometerPlugin::OnTimeReset() {

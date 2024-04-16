@@ -10,6 +10,8 @@ namespace gazebo {
         resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGroundtruthPlugin::OnTimeReset, this));
         gymfc_gt_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Groundtruth>(gymfc_gt_pub_topic_);
         gzdbg << "GymFC groundtruth publishes to " << gymfc_gt_pub_topic_ << std::endl;
+        updateConnection_ = event::Events::ConnectWorldUpdateBegin(
+                boost::bind(&GymFCGroundtruthPlugin::OnUpdate, this, _1));
     }
 
     void GymFCGroundtruthPlugin::OnTimeReset() {

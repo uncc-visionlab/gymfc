@@ -10,6 +10,8 @@ namespace gazebo {
         resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboGpsPlugin::OnTimeReset, this));
         gymfc_gps_pub_ = node_handle_->Advertise<sensor_msgs::msgs::SITLGps>(gymfc_gps_pub_topic_);
         gzdbg << "GymFC GPS publishes to " << gymfc_gps_pub_topic_ << std::endl;
+        updateWorldConnection_ = event::Events::ConnectWorldUpdateBegin(
+                boost::bind(&GymFCGazeboGpsPlugin::OnWorldUpdate, this, _1));
     }
 
     void GymFCGazeboGpsPlugin::OnTimeReset() {

@@ -11,7 +11,7 @@ namespace gazebo {
         resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCGazeboImuPlugin::OnTimeReset, this));
         gzdbg << "GymFC imu publishes to " << gymfc_imu_pub_topic_ << std::endl;
         gymfc_imu_pub_ = node_handle_->Advertise<sensor_msgs::msgs::Imu>(gymfc_imu_pub_topic_);
-        this->updateConnection_ = event::Events::ConnectWorldUpdateBegin(
+        updateConnection_ = event::Events::ConnectWorldUpdateBegin(
                 boost::bind(&GymFCGazeboImuPlugin::OnUpdate, this, _1));
     }
 

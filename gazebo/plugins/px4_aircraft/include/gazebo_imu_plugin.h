@@ -111,7 +111,7 @@ class GazeboImuPlugin : public ModelPlugin {
       Eigen::Vector3d* angular_velocity,
       const double dt);
 
-  void OnUpdate(const common::UpdateInfo&);
+  virtual void OnUpdate(const common::UpdateInfo&);
 
   transport::NodePtr node_handle_;
   transport::PublisherPtr imu_pub_;

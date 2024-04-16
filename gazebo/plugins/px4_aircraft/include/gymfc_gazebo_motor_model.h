@@ -29,6 +29,8 @@ namespace gazebo {
     protected:
         virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
         virtual void OnTimeReset();
+        virtual void OnUpdate(const common::UpdateInfo &_info);
+
     private:
         event::ConnectionPtr resetEvent_;
         void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);

@@ -102,6 +102,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   double time_constant_up_{kDefaultTimeConstantUp};
   transport::NodePtr node_handle_;
   common::PID pid_;
+  event::ConnectionPtr updateConnection_;
   void VelocityCallback(CommandMotorSpeedPtr &rot_velocities);
   std::unique_ptr<FirstOrderFilter<double>>  rotor_velocity_filter_;
 
@@ -148,7 +149,7 @@ class GazeboMotorModel : public MotorModel, public ModelPlugin {
   bool use_pid_;
   physics::LinkPtr link_;
   /// \brief Pointer to the update event connection.
-  event::ConnectionPtr updateConnection_;
+//  event::ConnectionPtr updateConnection_;
 
   boost::thread callback_queue_thread_;
   void QueueThread();

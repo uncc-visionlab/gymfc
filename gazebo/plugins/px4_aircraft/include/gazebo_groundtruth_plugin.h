@@ -76,12 +76,13 @@ protected:
   physics::WorldPtr world_;
   sensor_msgs::msgs::Groundtruth groundtruth_msg;
   transport::NodePtr node_handle_;
+  event::ConnectionPtr updateConnection_;
 
 private:
   std::string namespace_;
   physics::ModelPtr model_;
 //  physics::WorldPtr world_;
-  event::ConnectionPtr updateConnection_;
+//  event::ConnectionPtr updateConnection_;
 
 //  transport::NodePtr node_handle_;
   transport::PublisherPtr gt_pub_;

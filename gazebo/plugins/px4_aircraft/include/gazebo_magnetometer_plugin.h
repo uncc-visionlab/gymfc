@@ -90,6 +90,7 @@ protected:
 
   physics::WorldPtr world_;
   transport::NodePtr node_handle_;
+  event::ConnectionPtr update_connection_;
   sensor_msgs::msgs::MagneticField mag_message_;
   common::Time last_time_;
   common::Time last_pub_time_;
@@ -108,7 +109,7 @@ private:
   double groundtruth_lat_rad_;
   double groundtruth_lon_rad_;
 
-  event::ConnectionPtr update_connection_;
+//  event::ConnectionPtr update_connection_;
 //  sensor_msgs::msgs::MagneticField mag_message_;
 
 //  common::Time last_time_;

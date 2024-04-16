@@ -93,12 +93,13 @@ namespace gazebo {
     common::Time last_time_;
     sensor_msgs::msgs::Pressure baro_msg_;
     unsigned int pub_rate_;
+    event::ConnectionPtr update_connection_;
 
   private:
     std::string namespace_;
     physics::ModelPtr model_;
 //    physics::WorldPtr world_;
-    event::ConnectionPtr update_connection_;
+//    event::ConnectionPtr update_connection_;
     std::string baro_topic_;
 
 //    transport::NodePtr node_handle_;

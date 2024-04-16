@@ -14,6 +14,7 @@ namespace gazebo {
         gymfc_esc_pub_ = node_handle_->Advertise<sensor_msgs::msgs::EscSensor>(esc_pub_topic_);
         gzdbg << "GymFC motor number=" << motor_number_ << " subscribed to " << gymfc_command_sub_topic_
               << " publishes esc to " << esc_pub_topic_ << std::endl;
+        updateConnection_ = event::Events::ConnectWorldUpdateBegin(boost::bind(&GymFCGazeboMotorModel::OnUpdate, this, _1));
     }
 
     void GymFCGazeboMotorModel::OnTimeReset() {
@@ -33,6 +34,11 @@ namespace gazebo {
     void GymFCGazeboMotorModel::VelocityCallback(CommandMotorSpeedPtr &rot_velocities) {
         GazeboMotorModel::VelocityCallback(rot_velocities);
         //gzdbg << "Velocity motor " << motor_number_ << " = " << rot_velocities->motor_speed(motor_number_) << std::endl;
+    }
+
+    void GymFCGazeboMotorModel::OnUpdate(const common::UpdateInfo &_info) {
+        GazeboMotorModel::OnUpdate(_info);
+        //Publish();
     }
 
     void GymFCGazeboMotorModel::Publish() {

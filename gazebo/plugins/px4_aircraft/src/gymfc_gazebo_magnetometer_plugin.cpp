@@ -10,6 +10,8 @@ namespace gazebo {
         resetEvent_ = event::Events::ConnectTimeReset(boost::bind(&GymFCMagnetometerPlugin::OnTimeReset, this));
         gymfc_magneto_pub_ = node_handle_->Advertise<sensor_msgs::msgs::MagneticField>(gymfc_magneto_pub_topic_);
         gzdbg << "GymFC magnetometer publishes to " << gymfc_magneto_pub_topic_ << std::endl;
+        update_connection_ = event::Events::ConnectWorldUpdateBegin(
+                boost::bind(&GymFCMagnetometerPlugin::OnUpdate, this, _1));
     }
 
     void GymFCMagnetometerPlugin::OnTimeReset() {
@@ -20,7 +22,7 @@ namespace gazebo {
 #endif
     }
 
-    void GymFCMagnetometerPlugin::OnUpdate(const common::UpdateInfo& info) {
+    void GymFCMagnetometerPlugin::OnUpdate(const common::UpdateInfo &info) {
         MagnetometerPlugin::OnUpdate(info);
         if (new_msg_published) {
             //gzdbg << "published magnetometer message." << std::endl;

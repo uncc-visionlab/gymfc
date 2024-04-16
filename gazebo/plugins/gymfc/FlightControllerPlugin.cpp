@@ -620,7 +620,7 @@ void FlightControllerPlugin::FlushSensors() {
 
     // TODO: this must be based on the units or come up with something generic
     double error = 0.017;// About 1 deg/s
-    while (1) {
+    while (true) {
         // Pitch and Yaw are negative
         //gzdbg << " Size =" << this->state.imu_angular_velocity_rpy_size() << std::endl;
         //gzdbg << "IMU [" << this->state.imu_angular_velocity_rpy(0) << "," << this->state.imu_angular_velocity_rpy(1) << "," << this->state.imu_angular_velocity_rpy(2) << "]" << std::endl;
@@ -676,7 +676,7 @@ void FlightControllerPlugin::LoopThread() {
         // {
         if (this->action.world_control() == gymfc::msgs::Action::RESET) {
             gzdbg << " Flushing sensors..." << std::endl;
-            // Block until we get respone from sensors
+            // Block until we get response from sensors
             this->FlushSensors();
             gzdbg << " Sensors flushed." << std::endl;
             this->state.set_sim_time(this->world->SimTime().Double());
