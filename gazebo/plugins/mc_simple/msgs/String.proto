@@ -1,0 +1,6 @@
+syntax = "proto2";
+package gz_std_msgs;
+
+message String {
+  required string frame_id = 1;
+}
