@@ -1,0 +1,9 @@
+syntax = "proto2";
+package geometry_msgs.msgs;
+import "vector3d.proto";
+
+message Wrench
+{
+  required gazebo.msgs.Vector3d force = 1;
+  required gazebo.msgs.Vector3d torque = 2;
+}
