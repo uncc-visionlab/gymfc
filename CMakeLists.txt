@@ -4,6 +4,7 @@ project(gymfc_plugins)
 add_subdirectory(gazebo/plugins/gymfc ${CMAKE_CURRENT_BINARY_DIR}/gymfc_plugins)
 #add_subdirectory(gazebo/plugins/gazebo_ros ${CMAKE_CURRENT_BINARY_DIR}/gazebo_ros)
 #add_subdirectory(gazebo/plugins/gymfc_aircraft ${CMAKE_CURRENT_BINARY_DIR}/gymfc_aircraft_plugins)
+add_subdirectory(gazebo/plugins/mc_simple ${CMAKE_CURRENT_BINARY_DIR}/mc_simple)
 add_subdirectory(gazebo/plugins/px4_aircraft ${CMAKE_CURRENT_BINARY_DIR}/px4_aircraft_plugins)
 add_subdirectory(gazebo/plugins/px4_extensions ${CMAKE_CURRENT_BINARY_DIR}/px4_extension_plugins)
 

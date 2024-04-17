@@ -202,6 +202,10 @@ void FlightControllerPlugin::Load(physics::WorldPtr _world, sdf::ElementPtr _sdf
 
 //    this->cmdPub = this->nodeHandle->Advertise<cmd_msgs::msgs::MotorCommand>(this->cmdPubTopic);
     this->cmdPub = this->nodeHandle->Advertise<mav_msgs::msgs::CommandMotorSpeed>(this->cmdPubTopic);
+    if (numActuators == 6) {
+        this->fmPub = this->nodeHandle->Advertise<geometry_msgs::msgs::Wrench>(this->fmPubTopic);
+    }
+
     // Force pause because we drive the simulation steps
     this->world->SetPaused(true);
     this->callbackLoopThread = boost::thread(boost::bind(&FlightControllerPlugin::LoopThread, this));
@@ -690,7 +694,7 @@ void FlightControllerPlugin::LoopThread() {
         //gzdbg << "Callback count " << this->sensorCallbackCount << std::endl;
         //Forward the motor commands from the agent to each motor
         //cmd_msgs::msgs::MotorCommand cmd;
-        if (numActuators > 0) {
+        if (numActuators > 0) { //} && numActuators != 6) {
             //gzdbg << "Sending " << numActuators << " motor commands to digital twin." << std::endl;
             mav_msgs::msgs::CommandMotorSpeed cmd;
             for (unsigned int i = 0; i < this->numActuators; i++) {
@@ -701,6 +705,22 @@ void FlightControllerPlugin::LoopThread() {
             //gzdbg << "Publishing motor command\n";
             this->cmdPub->Publish(cmd);
             //gzdbg << "Done publishing motor command\n";
+        }
+        if (numActuators == 6) {
+            geometry_msgs::msgs::Wrench fmCmd;
+            gazebo::msgs::Vector3d *force = new gazebo::msgs::Vector3d();
+            force->set_x(this->action.motor(0));
+            force->set_y(this->action.motor(1));
+            force->set_z(this->action.motor(2));
+            fmCmd.set_allocated_force(force);
+            gazebo::msgs::Vector3d *torque = new gazebo::msgs::Vector3d();
+            torque->set_x(this->action.motor(3));
+            torque->set_y(this->action.motor(4));
+            torque->set_z(this->action.motor(5));
+            fmCmd.set_allocated_torque(torque);
+//            gzdbg << "Sending force " << force->z() << " and torque = (" << torque->x()
+//                  << ", " << torque->y() << ", " << torque->z() << ")" << std::endl;
+            this->fmPub->Publish(fmCmd);
         }
         // Triggers other plugins to publish
         this->world->Step(1);
@@ -803,7 +823,6 @@ bool FlightControllerPlugin::ReceiveAction() {
     if (recvSize < 0) {
         return false;
     }
-    //gzdbg << "Size " << recvSize << " Data " << buf << std::endl;
     /*
     for (int i = 0; i < recvSize; ++i)
     {

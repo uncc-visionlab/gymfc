@@ -30,6 +30,8 @@
 
 //#include "MotorCommand.pb.h"
 #include "CommandMotorSpeed.pb.h"
+#include "Wrench.pb.h"
+
 #include "EscSensor.pb.h"
 #include "Groundtruth.pb.h"
 #include "Imu.pb.h"
@@ -42,7 +44,7 @@
 
 #include "State.pb.h"
 #include "Action.pb.h"
-#include "../../../cmake-build-debug/px4_extension_plugins/Blast3d.pb.h"
+#include "Blast3d.pb.h"
 
 #define ENV_SITL_PORT "GYMFC_SITL_PORT"
 #define ENV_DIGITAL_TWIN_SDF "GYMFC_DIGITAL_TWIN_SDF"
@@ -52,6 +54,7 @@
 namespace gazebo {
     static const std::string kGymFCDefaultBlast3dPubTopic = "/aircraft/sensor/blast3d";
     static const std::string kGymFCDefaultCommandPubTopic = "/aircraft/command/motor";
+    static const std::string kGymFCDefaultCommandFMTopic ="/aircraft/command/uav_fm";
     static const std::string kGymFCDefaultMotorVelocitySubTopic = "/aircraft/sensor/esc";
     static const std::string kGymFCDefaultMotorWindPubTopic = "/aircraft/sensor/motor_wind";
     static const std::string kGymFCDefaultImuSubTopic = "/aircraft/sensor/imu";
@@ -211,6 +214,7 @@ namespace gazebo {
         std::string digitalTwinSDF;
 
         std::string cmdPubTopic{kGymFCDefaultCommandPubTopic};
+        std::string fmPubTopic{kGymFCDefaultCommandFMTopic};
 
         std::string blast3dSubTopic{kGymFCDefaultBlast3dPubTopic};
         std::string escSubTopic{kGymFCDefaultMotorVelocitySubTopic};
@@ -232,6 +236,7 @@ namespace gazebo {
         // while all other aircraft components are now external and communicated
         // over protobufs
         transport::PublisherPtr cmdPub;
+        transport::PublisherPtr fmPub;
 
         // Subscribe to all possible sensors
         transport::SubscriberPtr baroSub;

@@ -2,7 +2,6 @@
 // Created by arwillis on 2/20/24.
 //
 #include "gymfc_gazebo_imu_plugin.h"
-#include <thread>
 
 namespace gazebo {
     void GymFCGazeboImuPlugin::Load(physics::ModelPtr _model, sdf::ElementPtr _sdf) {
