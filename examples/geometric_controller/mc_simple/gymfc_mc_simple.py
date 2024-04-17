@@ -47,7 +47,7 @@ if __name__ == '__main__':
     verbose = True
     render = True
 
-    SIM_DURATION = 60
+    SIM_DURATION = 15
 
     # Need to set the aircraft model after we create the environment because
     # the model is unique and can't be hardcoded in the gym init.
@@ -68,7 +68,6 @@ if __name__ == '__main__':
     env.verbose = verbose
     env.max_sim_time = SIM_DURATION
 
-    # motor_rpm_sp = np.array([START_MOTOR_RPM] * 4)
     force_and_moment = [0.0] * 6
 
     quadcopter = Rover()
@@ -76,7 +75,7 @@ if __name__ == '__main__':
     quadcopter.mode = 0  # Idle
 
     # let the quad settle onto the ground and spin up the motors
-    # let GPS, IMU and other messages to populate into the observation message per their configured rate
+    # let GPS, IMU and other messages populate into the observation message at their configured rate
     while env.sim_time < 1:
         ob, reward, done, _ = env.step_basic(force_and_moment)
 
@@ -91,13 +90,14 @@ if __name__ == '__main__':
     position_xyz_gt_previous = np.zeros(3)
     position_xyz_gps_previous = np.zeros(3)
 
-    while env.sim_time < 15:
+    while env.sim_time < SIM_DURATION:
         if 1 < env.sim_time < 3:
             quadcopter.mode = 1  # Warm-up
         elif 3 <= env.sim_time < 12:
             quadcopter.mode = 2  # Take-off
         elif 12 <= env.sim_time < 15:
             quadcopter.mode = 3  # Land
+        # print("Commanding force and moment {}".format(force_and_moment))
         ob, reward, done, _ = env.step_basic(force_and_moment)
 
         # convert ground truth wgs84 coordinate to a UTM coordinate
@@ -120,7 +120,8 @@ if __name__ == '__main__':
         if imu_update:
             imu_update_time = env.sim_time
             dt_imu = imu_update_time - imu_update_time_previous
-            if dt_imu > 0 and dt_imu > 0.003:
+            if dt_imu > 0 and dt_imu > 0.01:
+                # print("Got a IMU update at time {}".format(env.sim_time))
                 quadcopter.gymfc_imu_callback(ob.imu_orientation_quat, ob.imu_angular_velocity_rpy,
                                               ob.imu_linear_acceleration_xyz, dt_imu)
                 imu_update_time_previous = imu_update_time
@@ -129,6 +130,7 @@ if __name__ == '__main__':
             gps_update_time = env.sim_time
             dt_gps = gps_update_time - gps_update_time_previous
             if dt_gps > 0:
+                # print("Got a GPS update at time {}.".format(env.sim_time))
                 quadcopter.gymfc_gps_callback(position_xyz_gt, velocity_xyz_gt)
                 gps_update_time_previous = gps_update_time
 

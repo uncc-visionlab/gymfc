@@ -1,6 +1,5 @@
-import datetime
 import numpy as np
-import pdb
+
 
 
 class Trajectory:
@@ -9,9 +8,9 @@ class Trajectory:
         self.is_mode_changed = False
         self.is_landed = False
 
-        self.t0 = datetime.datetime.now()
-        self.t = 0.0
-        self.t_traj = 0.0
+        # self.t0 = datetime.datetime.now()
+        # self.t = 0.0
+        # self.t_traj = 0.0
 
         self.xd = np.zeros(3)
         self.xd_dot = np.zeros(3)
@@ -173,7 +172,7 @@ class Trajectory:
         # t_now = datetime.datetime.now()
         # self.t = (t_now - self.t0).total_seconds()
         t_now = time
-        self.t = (t_now - self.t0)
+        self.t = (time - self.t0)
 
     def manual(self):
         if not self.manual_mode_init:
@@ -208,7 +207,8 @@ class Trajectory:
 
             self.trajectory_started = True
 
-        self.update_current_time(time)
+        # self.update_current_time(time)
+        self.t = (time - self.t0)
 
         if self.t < self.t_traj:
             self.xd[2] = self.x_init[2] + self.takeoff_velocity * self.t
@@ -233,7 +233,8 @@ class Trajectory:
 
             self.trajectory_started = True
 
-        self.update_current_time(time)
+        # self.update_current_time(time)
+        self.t = (time - self.t0)
 
         if self.t < self.t_traj:
             self.xd[2] = self.x_init[2] + self.landing_velocity * self.t
@@ -253,6 +254,7 @@ class Trajectory:
                 self.xd_dot[2] = self.landing_velocity
 
     def stay(self):
+        print("Changed to STAY mode.")
         if not self.trajectory_started:
             self.set_desired_states_to_current()
             self.trajectory_started = True
@@ -270,7 +272,8 @@ class Trajectory:
             num_circles = 2
             self.t_traj = self.circle_radius / self.circle_linear_v + num_circles * 2 * np.pi / self.circle_W
 
-        self.update_current_time(time)
+        # self.update_current_time(time)
+        self.t = (time - self.t0)
 
         if self.t < (self.circle_radius / self.circle_linear_v):
             self.xd[0] = self.circle_center[0] + self.circle_linear_v * self.t

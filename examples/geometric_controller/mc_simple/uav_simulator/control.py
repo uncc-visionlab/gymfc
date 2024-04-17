@@ -1,15 +1,13 @@
 from .matrix_utils import hat, vee, deriv_unit_vector, saturate
 from .integral_utils import IntegralError, IntegralErrorVec3
 
-import datetime
 import numpy as np
-import pdb
 
 
 class Control:
     """Controller for the UAV trajectory tracking.
 
-    This class detemines the control outputs for a quadrotor UAV given it's
+    This class determines the control outputs for a quadrotor UAV given it's
     current state and the desired states.
 
     Attributes:
@@ -102,11 +100,6 @@ class Control:
     """
 
     def __init__(self):
-
-        self.t0 = datetime.datetime.now()
-        self.t = 0.0
-        self.t_pre = 0.0
-        self.dt = 1e-9
 
         # Current state
         self.x = np.zeros(3)
@@ -202,7 +195,7 @@ class Control:
 
     def run(self, states, desired, dt):
         """Run the controller to get the force-moments required to achieve the 
-        the desired states from the current state.
+        desired states from the current state.
 
         Args:
             state: (x, v, a, R, W) current states of the UAV
@@ -235,7 +228,6 @@ class Control:
         for a Quadrotor UAV using Geometric Methods on SE(3)"
         URL: https://arxiv.org/pdf/1003.2005.pdf
         """
-        self.dt = dt
 
         m = self.m
         g = self.g
@@ -262,16 +254,13 @@ class Control:
         xd_3dot = self.xd_3dot
         xd_4dot = self.xd_4dot
 
-        # self.update_current_time()
-        # self.dt = self.t - self.t_pre
-
         # Translational error functions
         eX = x - xd  # position error - eq (11)
         eV = v - xd_dot  # velocity error - eq (12)
 
         # Position integral terms
         if self.use_integral:
-            self.eIX.integrate(self.c1 * eX + eV, self.dt)  # eq (13)
+            self.eIX.integrate(self.c1 * eX + eV, dt)  # eq (13)
             self.eIX.error = saturate(self.eIX.error, -self.sat_sigma, self.sat_sigma)
         else:
             self.eIX.set_zero()
@@ -345,7 +334,6 @@ class Control:
         with a Decoupled Yaw Control"
         URL: https://doi.org/10.23919/ACC.2019.8815189
         """
-        self.dt = dt
 
         R = self.R
         R_T = self.R.T
@@ -386,9 +374,9 @@ class Control:
         # Attitude integral terms
         eI = ew + self.c2 * eb
 
-        self.eI1.integrate(eI @ b1, self.dt)  # b1 axis - eq (29)
-        self.eI2.integrate(eI @ b2, self.dt)  # b2 axis - eq (30)
-        self.eIy.integrate(ewy + self.c3 * ey, self.dt)
+        self.eI1.integrate(eI @ b1, dt)  # b1 axis - eq (29)
+        self.eI2.integrate(eI @ b2, dt)  # b2 axis - eq (30)
+        self.eIy.integrate(ewy + self.c3 * ey, dt)
 
         # Control moment for the roll/pitch dynamics - eq (31)
         tau = -self.kR[0, 0] * eb \

@@ -1,6 +1,5 @@
 from .matrix_utils import hat, vee, expm_SO3
 
-import datetime
 import numpy as np
 
 
@@ -63,14 +62,10 @@ class Estimator:
         # Initial covariances of x
         self.P = np.diag([
             1.0, 1.0, 1.0,  # position
-            1.0, 1.0, 1.0,  # velocity
+            2.0, 2.0, 2.0,  # velocity
             0.01, 0.01, 0.01,  # attitude
             1.0  # accelerometer z bias
         ])
-
-        # self.t0 = datetime.datetime.now()
-        # self.t = 0.0
-        # self.t_pre = 0.0
 
         self.W_pre = np.zeros(3)
         self.a_imu_pre = np.zeros(3)
@@ -102,7 +97,6 @@ class Estimator:
             W_imu: (3x1 numpy array) angular rate measured by the IMU [rad/s]
         """
 
-        # h = self.get_dt()
         h = dt
 
         self.R_pre = np.copy(self.R)
@@ -186,14 +180,10 @@ class Estimator:
 
         H = np.block([
             [self.eye3, self.zero3, self.zero3, np.zeros((3, 1))],
-            [self.zero3, self.eye3, self.zero3, np.zeros((3, 1))]
-        ])
+            [self.zero3, self.eye3, self.zero3, np.zeros((3, 1))]])
         H_T = H.T
 
-        V = np.block([
-            [V_x_gps, self.zero3],
-            [self.zero3, V_v_gps]
-        ])
+        V = np.block([[V_x_gps, self.zero3], [self.zero3, V_v_gps]])
 
         S = H.dot(self.P).dot(H_T) + V
         K = self.P.dot(H_T).dot(np.linalg.inv(S))

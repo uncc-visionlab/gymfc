@@ -1,9 +1,8 @@
-from uav_simulator.matrix_utils import hat, vee, q_to_R
+from uav_simulator.matrix_utils import q_to_R
 from uav_simulator.control import Control
 from uav_simulator.estimator import Estimator
 from uav_simulator.trajectory import Trajectory
 
-import datetime
 import numpy as np
 
 
@@ -14,14 +13,6 @@ class Rover:
         self.save_on = False
         # self.modes = ['Idle', 'Warm-up', 'Take-off', 'Land', 'Stay', 'Circle']
         self.mode = 0
-
-        # self.t0 = datetime.datetime.now()
-        # self.t = 0.0
-        # self.t_pre = 0.0
-        # self.freq_imu = 0.0
-        # self.freq_gps = 0.0
-        # self.freq_control = 0.0
-        # self.freq_log = 0.0
 
         self.x = np.zeros(3)
         self.v = np.zeros(3)
