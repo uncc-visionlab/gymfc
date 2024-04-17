@@ -73,6 +73,7 @@ protected:
   virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
   virtual void OnUpdate(const common::UpdateInfo& /*_info*/);
 
+  physics::ModelPtr model_;
   physics::WorldPtr world_;
   sensor_msgs::msgs::Groundtruth groundtruth_msg;
   transport::NodePtr node_handle_;
@@ -80,7 +81,7 @@ protected:
 
 private:
   std::string namespace_;
-  physics::ModelPtr model_;
+//  physics::ModelPtr model_;
 //  physics::WorldPtr world_;
 //  event::ConnectionPtr updateConnection_;
 
