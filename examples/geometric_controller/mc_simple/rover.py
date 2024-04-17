@@ -15,13 +15,13 @@ class Rover:
         # self.modes = ['Idle', 'Warm-up', 'Take-off', 'Land', 'Stay', 'Circle']
         self.mode = 0
 
-        self.t0 = datetime.datetime.now()
-        self.t = 0.0
-        self.t_pre = 0.0
-        self.freq_imu = 0.0
-        self.freq_gps = 0.0
-        self.freq_control = 0.0
-        self.freq_log = 0.0
+        # self.t0 = datetime.datetime.now()
+        # self.t = 0.0
+        # self.t_pre = 0.0
+        # self.freq_imu = 0.0
+        # self.freq_gps = 0.0
+        # self.freq_control = 0.0
+        # self.freq_log = 0.0
 
         self.x = np.zeros(3)
         self.v = np.zeros(3)
@@ -57,8 +57,7 @@ class Rover:
 
     def run_controller(self, time, dt):
         states = self.estimator.get_states()
-        desired = self.trajectory.get_desired(self.mode, states,
-                                              self.x_offset, self.yaw_offset, time)
+        desired = self.trajectory.get_desired(self.mode, states, self.x_offset, self.yaw_offset, time)
         fM = self.control.run(states, desired, dt)
 
         self.x, self.v, self.a, self.R, self.W = states
