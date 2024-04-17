@@ -126,14 +126,14 @@
       <robotNamespace></robotNamespace>
       <linkName>/imu_link</linkName>
       <imuTopic>/imu</imuTopic>
-      <gyroscopeNoiseDensity>0.00018665</gyroscopeNoiseDensity>
-      <gyroscopeRandomWalk>3.8785e-05</gyroscopeRandomWalk>
-      <gyroscopeBiasCorrelationTime>1000.0</gyroscopeBiasCorrelationTime>
-      <gyroscopeTurnOnBiasSigma>0.0087</gyroscopeTurnOnBiasSigma>
-      <accelerometerNoiseDensity>0.00186</accelerometerNoiseDensity>
-      <accelerometerRandomWalk>0.006</accelerometerRandomWalk>
-      <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
-      <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
+      <gyroscopeNoiseDensity>0.000018665</gyroscopeNoiseDensity>
+      <gyroscopeRandomWalk>1.8785e-05</gyroscopeRandomWalk>
+      <gyroscopeBiasCorrelationTime>1.0</gyroscopeBiasCorrelationTime>
+      <gyroscopeTurnOnBiasSigma>0.001</gyroscopeTurnOnBiasSigma>
+      <accelerometerNoiseDensity>0.0001</accelerometerNoiseDensity>
+      <accelerometerRandomWalk>0.0001</accelerometerRandomWalk>
+      <accelerometerBiasCorrelationTime>1.0</accelerometerBiasCorrelationTime>
+      <accelerometerTurnOnBiasSigma>0.001</accelerometerTurnOnBiasSigma>
     </plugin>
     <plugin name='groundtruth_plugin' filename='libgymfc_gazebo_groundtruth_plugin.so'>
       <robotNamespace/>
