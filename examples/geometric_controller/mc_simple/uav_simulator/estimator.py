@@ -57,7 +57,7 @@ class Estimator:
         self.Q = np.diag([
             0.001, 0.001, 0.001,  # acceleration
             0.025, 0.025, 0.025,  # angular velocity
-            0.0001  # acclerometer z bias
+            0.0001  # accelerometer z bias
         ])
 
         # Initial covariances of x
