@@ -18,7 +18,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://uav_gazebo/meshes/quadrotor_base.dae</uri>
+            <uri>model://mc_simple/meshes/quadrotor_base.dae</uri>
           </mesh>
         </geometry>
         <surface>
@@ -35,7 +35,7 @@
         <geometry>
           <mesh>
             <scale>1 1 1</scale>
-            <uri>model://uav_gazebo/meshes/quadrotor_base.dae</uri>
+            <uri>model://mc_simple/meshes/quadrotor_base.dae</uri>
           </mesh>
         </geometry>
         <material>
@@ -46,6 +46,7 @@
         </material>
       </visual>
       <gravity>1</gravity>
+      <!--
       <sensor name='imu_sensor' type='imu'>
         <always_on>1</always_on>
         <update_rate>100</update_rate>
@@ -61,7 +62,25 @@
         </plugin>
         <pose>0 0 0 0 -0 0</pose>
       </sensor>
+      -->
+      <sensor name="gps" type="gps">
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>5.0</update_rate>
+        <always_on>true</always_on>
+        <visualize>false</visualize>
+        <plugin name="gps_plugin" filename="libgymfc_gazebo_gps_plugin.so">
+          <robotNamespace></robotNamespace>
+          <gpsNoise>true</gpsNoise>
+          <gpsXYRandomWalk>2.0</gpsXYRandomWalk>
+          <gpsZRandomWalk>4.0</gpsZRandomWalk>
+          <gpsXYNoiseDensity>2.0e-4</gpsXYNoiseDensity>
+          <gpsZNoiseDensity>4.0e-4</gpsZNoiseDensity>
+          <gpsVXYNoiseDensity>0.2</gpsVXYNoiseDensity>
+          <gpsVZNoiseDensity>0.4</gpsVZNoiseDensity>
+        </plugin>
+      </sensor>
     </link>
+    <!--
     <plugin name='pose_3d_plugin' filename='libgazebo_ros_p3d.so'>
       <bodyName>link</bodyName>
       <topicName>uav_pos</topicName>
@@ -69,9 +88,90 @@
       <gaussianNoise>0.01</gaussianNoise>
       <updateRate>10</updateRate>
     </plugin>
+    -->
+    <link name='/imu_link'>
+      <pose>0 0 0 0 0 0</pose>
+      <inertial>
+        <pose>0 0 0 0 0 0</pose>
+        <mass>0.015</mass>
+        <inertia>
+          <ixx>1e-05</ixx>
+          <ixy>0</ixy>
+          <ixz>0</ixz>
+          <iyy>1e-05</iyy>
+          <iyz>0</iyz>
+          <izz>1e-05</izz>
+        </inertia>
+      </inertial>
+    </link>
+    <joint name='/imu_joint' type='revolute'>
+      <child>/imu_link</child>
+      <parent>link</parent>
+      <axis>
+        <xyz>1 0 0</xyz>
+        <limit>
+          <lower>0</lower>
+          <upper>0</upper>
+          <effort>0</effort>
+          <velocity>0</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+        <use_parent_model_frame>1</use_parent_model_frame>
+      </axis>
+    </joint>
+    <plugin name='rotors_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
+      <robotNamespace></robotNamespace>
+      <linkName>/imu_link</linkName>
+      <imuTopic>/imu</imuTopic>
+      <gyroscopeNoiseDensity>0.00018665</gyroscopeNoiseDensity>
+      <gyroscopeRandomWalk>3.8785e-05</gyroscopeRandomWalk>
+      <gyroscopeBiasCorrelationTime>1000.0</gyroscopeBiasCorrelationTime>
+      <gyroscopeTurnOnBiasSigma>0.0087</gyroscopeTurnOnBiasSigma>
+      <accelerometerNoiseDensity>0.00186</accelerometerNoiseDensity>
+      <accelerometerRandomWalk>0.006</accelerometerRandomWalk>
+      <accelerometerBiasCorrelationTime>300.0</accelerometerBiasCorrelationTime>
+      <accelerometerTurnOnBiasSigma>0.196</accelerometerTurnOnBiasSigma>
+    </plugin>
+    <plugin name='groundtruth_plugin' filename='libgymfc_gazebo_groundtruth_plugin.so'>
+      <robotNamespace/>
+    </plugin>
+    <plugin name='magnetometer_plugin' filename='libgymfc_gazebo_magnetometer_plugin.so'>
+      <robotNamespace/>
+      <pubRate>100</pubRate>
+      <noiseDensity>0.0004</noiseDensity>
+      <randomWalk>6.4e-06</randomWalk>
+      <biasCorrelationTime>600</biasCorrelationTime>
+      <magTopic>/mag</magTopic>
+    </plugin>
+    <plugin name='barometer_plugin' filename='libgymfc_gazebo_barometer_plugin.so'>
+      <robotNamespace/>
+      <pubRate>50</pubRate>
+      <baroTopic>/baro</baroTopic>
+      <baroDriftPaPerSec>0</baroDriftPaPerSec>
+    </plugin>
+    <plugin name="config" filename="libAircraftConfigPlugin.so">
+        <motorCount>6</motorCount>
+        <!-- Where is the center of thrust in relation to this specified link -->
+        <centerOfThrust>
+            <link>battery</link>
+            <offset>0 0 0.058</offset>
+        </centerOfThrust>
+      <sensors>
+         <sensor type="imu"/>
+         <!--<sensor type="esc"/>-->
+         <sensor type="groundtruth"/>
+         <sensor type="barometer"/>
+         <sensor type="magnetometer"/>
+         <sensor type="gps"/>
+         <!-- <sensor type="battery"/> -->
+      </sensors>
+    </plugin>
     <plugin name='uav_fm' filename='libcontrol_plugin.so'>
       <bodyName>link</bodyName>
-      <topicName>uav_fm</topicName>
+      <topicName>/aircraft/command/uav_fm</topicName>
     </plugin>
   </model>
 </sdf>
