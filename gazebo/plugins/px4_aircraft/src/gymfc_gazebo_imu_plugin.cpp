@@ -42,6 +42,8 @@ namespace gazebo {
         linear_acc_msg->set_x(linear_acc.X());
         linear_acc_msg->set_y(linear_acc.Y());
         linear_acc_msg->set_z(linear_acc.Z());
+        gymfc_imu_msg.set_time_usec(imu_message_.time_usec());
+        gymfc_imu_msg.set_seq(imu_message_.seq());
         gymfc_imu_msg.set_allocated_orientation(orientation_msg);
         gymfc_imu_msg.set_allocated_angular_velocity(angular_vel_msg);
         gymfc_imu_msg.set_allocated_linear_acceleration(linear_acc_msg);

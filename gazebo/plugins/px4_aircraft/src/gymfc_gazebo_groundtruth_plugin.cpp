@@ -31,6 +31,7 @@ namespace gazebo {
         ignition::math::Vector3d& pos = pose.Pos();
         ignition::math::Quaterniond& vatt = pose.Rot();
         sensor_msgs::msgs::Groundtruth gymfc_gt_msg;
+        gymfc_gt_msg.set_time_usec(groundtruth_msg.time_usec());
         gymfc_gt_msg.set_attitude_q_w(vatt.W());
         gymfc_gt_msg.set_attitude_q_x(vatt.X());
         gymfc_gt_msg.set_attitude_q_y(vatt.Y());
