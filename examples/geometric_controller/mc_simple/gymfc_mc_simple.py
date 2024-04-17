@@ -85,20 +85,18 @@ if __name__ == '__main__':
     utm_initial_gt = np.array([*proj_wgs842utm(ob.gt_wgs84_pos[1], ob.gt_wgs84_pos[0]), ob.gt_wgs84_pos[2]])
     utm_initial_gps = np.array([*proj_wgs842utm(ob.gps_wgs84_pos[1], ob.gps_wgs84_pos[0]), ob.gps_wgs84_pos[2]])
 
-    imu_update_time = 0.0
-    imu_update_time_previous = 0.0
-    gps_update_time = 0.0
-    gps_update_time_previous = 0.0
+    imu_update_time_previous = env.sim_time
+    gps_update_time_previous = env.sim_time
 
     position_xyz_gt_previous = np.zeros(3)
     position_xyz_gps_previous = np.zeros(3)
 
-    while env.sim_time < 20:
+    while env.sim_time < 15:
         if 1 < env.sim_time < 3:
             quadcopter.mode = 1  # Warm-up
-        elif 3 <= env.sim_time < 7:
+        elif 3 <= env.sim_time < 12:
             quadcopter.mode = 2  # Take-off
-        elif 7 <= env.sim_time < 12:
+        elif 12 <= env.sim_time < 15:
             quadcopter.mode = 3  # Land
         ob, reward, done, _ = env.step_basic(force_and_moment)
 
@@ -122,19 +120,19 @@ if __name__ == '__main__':
         if imu_update:
             imu_update_time = env.sim_time
             dt_imu = imu_update_time - imu_update_time_previous
-            if dt_imu > 0 and imu_update_time_previous > 0:
+            if dt_imu > 0 and dt_imu > 0.003:
                 quadcopter.gymfc_imu_callback(ob.imu_orientation_quat, ob.imu_angular_velocity_rpy,
                                               ob.imu_linear_acceleration_xyz, dt_imu)
-            imu_update_time_previous = imu_update_time
+                imu_update_time_previous = imu_update_time
 
-        # if gps_update:
-        #     gps_update_time = env.sim_time
-        #     dt_gps = gps_update_time - gps_update_time_previous
-        #     if dt_gps > 0 and gps_update_time_previous > 0:
-        #         quadcopter.gymfc_gps_callback(position_xyz_gt, velocity_xyz_gt)
-        #     gps_update_time_previous = gps_update_time
+        if gps_update:
+            gps_update_time = env.sim_time
+            dt_gps = gps_update_time - gps_update_time_previous
+            if dt_gps > 0:
+                quadcopter.gymfc_gps_callback(position_xyz_gt, velocity_xyz_gt)
+                gps_update_time_previous = gps_update_time
 
-        fM = quadcopter.run_controller()
+        fM = quadcopter.run_controller(env.sim_time, env.stepsize)
         fM = fM.flatten()
         if (not quadcopter.motor_on) or (quadcopter.mode < 2):
             force_and_moment = [0.0] * 6

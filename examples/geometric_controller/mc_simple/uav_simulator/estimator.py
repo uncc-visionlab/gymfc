@@ -114,8 +114,7 @@ class Estimator:
 
         # This assumes IMU provide acceleration without g
         self.a = self.R.dot(self.R_bi).dot(a_imu) + self.b_a * self.e3
-        a_pre = self.R_pre.dot(self.R_bi).dot(self.a_imu_pre) \
-                + self.b_a_pre * self.e3
+        a_pre = self.R_pre.dot(self.R_bi).dot(self.a_imu_pre) + self.b_a_pre * self.e3
 
         self.x = self.x + h * self.v + h ** 2 / 2.0 * a_pre
         self.v = self.v + h / 2.0 * (self.a + a_pre)
@@ -212,18 +211,18 @@ class Estimator:
         I_KH = self.eye10 - K.dot(H)
         self.P = I_KH.dot(self.P).dot(I_KH.T) + K.dot(V).dot(K.T)
 
-    def get_dt(self):
-        """Get the time difference between two loops.
-
-        Return:
-            dt: (float) time difference between two loops
-        """
-
-        self.t_pre = self.t * 1.0
-        t_now = datetime.datetime.now()
-        self.t = (t_now - self.t0).total_seconds()
-
-        return self.t - self.t_pre
+    # def get_dt(self):
+    #     """Get the time difference between two loops.
+    #
+    #     Return:
+    #         dt: (float) time difference between two loops
+    #     """
+    #
+    #     self.t_pre = self.t * 1.0
+    #     t_now = datetime.datetime.now()
+    #     self.t = (t_now - self.t0).total_seconds()
+    #
+    #     return self.t - self.t_pre
 
     def get_states(self):
         """Return the current states of the estimator.
@@ -235,4 +234,4 @@ class Estimator:
             R: (3x3 numpy array) current attitude of the UAV in SO(3)
             W: (3x1 numpy array) current angular velocity of the UAV [rad/s]
         """
-        return (self.x, self.v, self.a, self.R, self.W)
+        return self.x, self.v, self.a, self.R, self.W

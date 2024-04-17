@@ -55,11 +55,11 @@ class Rover:
         self.estimator = Estimator()
         self.trajectory = Trajectory()
 
-    def run_controller(self):
+    def run_controller(self, time, dt):
         states = self.estimator.get_states()
         desired = self.trajectory.get_desired(self.mode, states,
-                                              self.x_offset, self.yaw_offset)
-        fM = self.control.run(states, desired)
+                                              self.x_offset, self.yaw_offset, time)
+        fM = self.control.run(states, desired, dt)
 
         self.x, self.v, self.a, self.R, self.W = states
         return fM
@@ -84,7 +84,6 @@ class Rover:
         x_g = np.array([gps_enu_pos[0], -gps_enu_pos[1], -gps_enu_pos[2]])
         v_g = np.array([gps_enu_vel[0], -gps_enu_vel[1], -gps_enu_vel[2]])
         self.estimator.gps_correction(x_g, v_g, self.V_x_gps, self.V_v_gps)
-
 
 # def reset_uav():
 #     # rospy.wait_for_service('/gazebo/set_model_state')

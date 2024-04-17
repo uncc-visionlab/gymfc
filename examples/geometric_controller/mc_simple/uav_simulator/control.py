@@ -103,7 +103,7 @@ class Control:
 
     def __init__(self):
 
-        self.t0 = datetime.datetime.now() 
+        self.t0 = datetime.datetime.now()
         self.t = 0.0
         self.t_pre = 0.0
         self.dt = 1e-9
@@ -162,7 +162,7 @@ class Control:
 
         self.ky = self.kR[2, 2]  # Yaw gain for decoupled-yaw controller
         self.kwy = self.kR[2, 2]  # Yaw angular rate gain for decoupled-yaw 
-            # controller
+        # controller
 
         # Position gains
         self.kX = np.diag([16.0, 16.0, 20.0])  # Position gains
@@ -188,8 +188,8 @@ class Control:
             [-self.c_tf, self.c_tf, -self.c_tf, self.c_tf]
         ])
         self.fM_to_forces_inv = np.linalg.inv(fM_to_forces)  # Force to 
-            # force-moment conversion matrix
-        
+        # force-moment conversion matrix
+
         # Integral errors
         self.eIX = IntegralErrorVec3()  # Position integral error
         self.eIR = IntegralErrorVec3()  # Attitude integral error
@@ -200,8 +200,7 @@ class Control:
 
         self.sat_sigma = 1.8
 
-
-    def run(self, states, desired):
+    def run(self, states, desired, dt):
         """Run the controller to get the force-moments required to achieve the 
         the desired states from the current state.
 
@@ -222,14 +221,13 @@ class Control:
         # force-moments.
         if is_landed:
             return np.zeros(4)
-            
-        self.position_control()
-        self.attitude_control()
+
+        self.position_control(dt)
+        self.attitude_control(dt)
 
         return self.fM
 
-
-    def position_control(self):
+    def position_control(self, dt):
         """Position controller to determine desired attitude and angular rates
         to achieve the deisred states.
 
@@ -237,6 +235,7 @@ class Control:
         for a Quadrotor UAV using Geometric Methods on SE(3)"
         URL: https://arxiv.org/pdf/1003.2005.pdf
         """
+        self.dt = dt
 
         m = self.m
         g = self.g
@@ -256,15 +255,15 @@ class Control:
         b1d = self.b1d
         b1d_dot = self.b1d_dot
         b1d_2dot = self.b1d_2dot
-        
+
         xd = self.xd
         xd_dot = self.xd_dot
         xd_2dot = self.xd_2dot
         xd_3dot = self.xd_3dot
         xd_4dot = self.xd_4dot
 
-        self.update_current_time()
-        self.dt = self.t - self.t_pre
+        # self.update_current_time()
+        # self.dt = self.t - self.t_pre
 
         # Translational error functions
         eX = x - xd  # position error - eq (11)
@@ -273,18 +272,13 @@ class Control:
         # Position integral terms
         if self.use_integral:
             self.eIX.integrate(self.c1 * eX + eV, self.dt)  # eq (13)
-            self.eIX.error = saturate(self.eIX.error, \
-                -self.sat_sigma, self.sat_sigma)
+            self.eIX.error = saturate(self.eIX.error, -self.sat_sigma, self.sat_sigma)
         else:
             self.eIX.set_zero()
 
         # Force 'f' along negative b3-axis - eq (14)
         # This term equals to R.e3
-        A = - kX @ eX \
-            - kV @ eV \
-            - kIX * self.eIX.error \
-            - m * g * e3 \
-            + m * xd_2dot
+        A = - kX @ eX - kV @ eV - kIX * self.eIX.error - m * g * e3 + m * xd_2dot
 
         hatW = hat(W)
 
@@ -293,21 +287,12 @@ class Control:
         f_total = -A @ b3
 
         # Intermediate terms for rotational errors
-        ea = g * e3 \
-            - f_total / m * b3 \
-            - xd_2dot
-        A_dot = - kX @ eV \
-            - kV @ ea \
-            + m * xd_3dot
+        ea = g * e3 - f_total / m * b3 - xd_2dot
+        A_dot = - kX @ eV - kV @ ea + m * xd_3dot
 
-        fdot = - A_dot @ b3 \
-            - A @ b3_dot
-        eb = - fdot / m * b3 \
-            - f_total / m * b3_dot \
-            - xd_3dot
-        A_2dot = - kX @ ea \
-            - kV @ eb \
-            + m * xd_4dot
+        fdot = - A_dot @ b3 - A @ b3_dot
+        eb = - fdot / m * b3 - f_total / m * b3_dot - xd_3dot
+        A_2dot = - kX @ ea - kV @ eb + m * xd_4dot
 
         b3c, b3c_dot, b3c_2dot = deriv_unit_vector(-A, -A_dot, -A_2dot)
 
@@ -316,9 +301,7 @@ class Control:
 
         A2 = -hat_b1d @ b3c
         A2_dot = - hat_b1d_dot @ b3c - hat_b1d @ b3c_dot
-        A2_2dot = - hat(b1d_2dot) @ b3c \
-            - 2.0 * hat_b1d_dot @ b3c_dot \
-            - hat_b1d @ b3c_2dot
+        A2_2dot = - hat(b1d_2dot) @ b3c - 2.0 * hat_b1d_dot @ b3c_dot - hat_b1d @ b3c_2dot
 
         b2c, b2c_dot, b2c_2dot = deriv_unit_vector(A2, A2_dot, A2_2dot)
 
@@ -327,9 +310,7 @@ class Control:
 
         b1c = hat_b2c @ b3c
         b1c_dot = hat_b2c_dot @ b3c + hat_b2c @ b3c_dot
-        b1c_2dot = hat(b2c_2dot) @ b3c \
-            + 2.0 * hat_b2c_dot @ b3c_dot \
-            + hat_b2c @ b3c_2dot
+        b1c_2dot = hat(b2c_2dot) @ b3c + 2.0 * hat_b2c_dot @ b3c_dot + hat_b2c @ b3c_2dot
 
         Rd = np.vstack((b1c, b2c, b3c)).T
         Rd_dot = np.vstack((b1c_dot, b2c_dot, b3c_dot)).T
@@ -354,18 +335,17 @@ class Control:
         # Yaw
         self.b1c = b1c
         self.wc3 = e3 @ (R_T @ Rd @ Wd)
-        self.wc3_dot = e3 @ (R_T @ Rd @ Wd_dot) \
-            - e3 @ (hatW @ R_T @ Rd @ Wd)
+        self.wc3_dot = e3 @ (R_T @ Rd @ Wd_dot) - e3 @ (hatW @ R_T @ Rd @ Wd)
 
-
-    def attitude_control(self):
+    def attitude_control(self, dt):
         """Deacouple-yaw attitude controller to achieve the desired attitude and
         angular rates.
-        
+
         This uses the controller defined in "Geometric Controls of a Quadrotor
-        with a Decoupled Yaw Control" 
+        with a Decoupled Yaw Control"
         URL: https://doi.org/10.23919/ACC.2019.8815189
         """
+        self.dt = dt
 
         R = self.R
         R_T = self.R.T
@@ -381,7 +361,7 @@ class Control:
         Wd = self.Wd
 
         J = self.J
-        
+
         b1 = R @ self.e1
         b2 = R @ self.e2
         b3 = R @ self.e3
@@ -412,12 +392,11 @@ class Control:
 
         # Control moment for the roll/pitch dynamics - eq (31)
         tau = -self.kR[0, 0] * eb \
-            - self.kW[0, 0] * ew \
-            - J[0, 0] * b3.T @ W_12d * b3_dot \
-            - J[0, 0] * hat_b3 @ hat_b3 @ W_12d_dot
+              - self.kW[0, 0] * ew \
+              - J[0, 0] * b3.T @ W_12d * b3_dot \
+              - J[0, 0] * hat_b3 @ hat_b3 @ W_12d_dot
         if self.use_integral:
-            tau += -self.kI * self.eI1.error * b1 \
-                - self.kI * self.eI2.error * b2
+            tau += -self.kI * self.eI1.error * b1 - self.kI * self.eI2.error * b2
 
         # Control moment around b1 axis - roll - eq (24)
         M1 = b1.T @ tau + J[2, 2] * W[2] * W[1]
@@ -426,10 +405,8 @@ class Control:
         M2 = b2.T @ tau - J[2, 2] * W[2] * W[0]
 
         # Control moment around b3 axis - yaw - eq (52)
-        M3 = - self.ky * ey \
-            - self.kwy * ewy \
-            + self.J[2, 2] * self.wc3_dot
-        
+        M3 = - self.ky * ey - self.kwy * ewy + self.J[2, 2] * self.wc3_dot
+
         if self.use_integral:
             M3 += - self.kyI * self.eIy.error
 
@@ -439,16 +416,14 @@ class Control:
         self.fM[0] = self.f_total
         for i in range(3):
             self.fM[i + 1] = M[i]
-            
+
         f_motor = self.fM_to_forces_inv @ self.fM
 
         # For saving:
         RdtR = Rd_T @ R
         eR = 0.5 * vee(RdtR - RdtR.T)
-        self.eIR.error = np.array([self.eI1.error, self.eI2.error, \
-            self.eIy.error])
+        self.eIR.error = np.array([self.eI1.error, self.eI2.error, self.eIy.error])
         eW = W - R_T @ Rd @ Wd
-
 
     def set_integral_errors_to_zero(self):
         """Set all integrals to zero."""
@@ -459,20 +434,18 @@ class Control:
         self.eIy.set_zero()
         self.eIX.set_zero()
 
+    # def update_current_time(self):
+    #     """Update the current time since epoch."""
+    #     self.t_pre = self.t
+    #
+    #     t_now = datetime.datetime.now()
+    #     self.t = (t_now - self.t0).total_seconds()
 
-    def update_current_time(self):
-        """Update the current time since epoch."""
-        self.t_pre = self.t
-
-        t_now = datetime.datetime.now()
-        self.t = (t_now - self.t0).total_seconds()
-
-
-    def get_current_time(self):
-        """Return the current time since epoch.
-        
-        Return:
-            t: (float) time since epoch [s]
-        """
-        t_now = datetime.datetime.now()
-        return (t_now - self.t0).total_seconds()
+    # def get_current_time(self):
+    #     """Return the current time since epoch.
+    #
+    #     Return:
+    #         t: (float) time since epoch [s]
+    #     """
+    #     t_now = datetime.datetime.now()
+    #     return (t_now - self.t0).total_seconds()

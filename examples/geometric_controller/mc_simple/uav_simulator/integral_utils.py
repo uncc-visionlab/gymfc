@@ -6,7 +6,6 @@ class IntegralErrorVec3:
         self.error = np.zeros(3)
         self.integrand = np.zeros(3)
 
-
     def integrate(self, current_integrand, dt):
         self.error += (self.integrand + current_integrand) * dt / 2.0
         self.integrand = current_integrand
@@ -20,7 +19,6 @@ class IntegralError:
     def __init__(self):
         self.error = 0.0
         self.integrand = 0.0
-
 
     def integrate(self, current_integrand, dt):
         self.error += (self.integrand + current_integrand) * dt / 2.0

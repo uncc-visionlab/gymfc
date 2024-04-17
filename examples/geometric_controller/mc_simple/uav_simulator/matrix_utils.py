@@ -1,5 +1,4 @@
 import numpy as np
-# import pdb
 
 
 def hat(x):
@@ -11,14 +10,14 @@ def hat(x):
     Returns:
         x_hat: (3x3 numpy array) hat of the input vector
     """
-    
+
     ensure_vector(x, 3)
     x_hat = np.array([
         [0.0, -x[2], x[1]],
         [x[2], 0.0, -x[0]],
         [-x[1], x[0], 0.0]
     ])
-    
+
     return x_hat
 
 
@@ -32,7 +31,7 @@ def vee(x):
         (3x1 numpy array) vee map of the input matrix
     """
     ensure_skew(x, 3)
-    return np.array([x[2,1], x[0,2], x[1,0]])
+    return np.array([x[2, 1], x[0, 2], x[1, 0]])
 
 
 def q_to_R(q):
@@ -87,18 +86,17 @@ def deriv_unit_vector(A, A_dot, A_2dot):
     A_A_dot = A.dot(A_dot)
 
     q = A / nA
-    q_dot = A_dot / nA \
-        - A.dot(A_A_dot) / nA3
+    q_dot = A_dot / nA - A.dot(A_A_dot) / nA3
 
     q_2dot = A_2dot / nA \
-        - A_dot.dot(2.0 * A_A_dot) / nA3 \
-        - A.dot(A_dot.dot(A_dot) + A.dot(A_2dot)) / nA3 \
-        + 3.0 * A.dot(A_A_dot).dot(A_A_dot)  / nA5
+             - A_dot.dot(2.0 * A_A_dot) / nA3 \
+             - A.dot(A_dot.dot(A_dot) + A.dot(A_2dot)) / nA3 \
+             + 3.0 * A.dot(A_A_dot).dot(A_A_dot) / nA5
 
-    return (q, q_dot, q_2dot)
+    return q, q_dot, q_2dot
 
 
-def saturate(x, x_min,  x_max):
+def saturate(x, x_min, x_max):
     """Saturate input vector between two values.
     
     Args:
@@ -115,7 +113,7 @@ def saturate(x, x_min,  x_max):
             x[i] = x_max
         elif x[i] < x_min:
             x[i] = x_min
-    
+
     return x
 
 
@@ -137,7 +135,7 @@ def expm_SO3(r):
     y2 = sinx_over_x(theta / 2.0)
 
     hat_r = hat(r)
-    R = np.eye(3) + y * hat_r + 0.5 * y2**2 * hat_r @ hat_r
+    R = np.eye(3) + y * hat_r + 0.5 * y2 ** 2 * hat_r @ hat_r
 
     return R
 
@@ -152,14 +150,14 @@ def sinx_over_x(x):
     Returns:
         y: (float) value of sin(x)/x
     """
-    
+
     eps = 1e-6
     if abs(x) < eps:
-        y = - x**10 / 39916800.0 + x**8 / 362880.0 - x**6 / 5040.0 \
-            + x**4 / 120.0 - x**2 / 6.0 + 1.0
+        y = - x ** 10 / 39916800.0 + x ** 8 / 362880.0 - x ** 6 / 5040.0 \
+            + x ** 4 / 120.0 - x ** 2 / 6.0 + 1.0
     else:
         y = np.sin(x) / x
-    
+
     return y
 
 
@@ -179,8 +177,8 @@ def ensure_vector(x, n):
 
     if not len(np.ravel(x)) == n:
         raise ValueError('Input array needs to be of length {}, but the size' \
-            'detected is {}'.format(n, np.shape(x)))
-    
+                         'detected is {}'.format(n, np.shape(x)))
+
     return True
 
 
@@ -201,8 +199,8 @@ def ensure_matrix(x, m, n):
 
     if not np.shape(x) == (m, n):
         raise ValueError('Input array needs to be of size {} x {}, but the ' \
-            'size detected is {}'.format(m, n, np.shape(x)))
-    
+                         'size detected is {}'.format(m, n, np.shape(x)))
+
     return True
 
 
@@ -218,10 +216,10 @@ def ensure_skew(x, n):
         exception otherwise.
     """
     ensure_matrix(x, n, n)
-    
+
     if not np.allclose(x.T, -x):
         raise ValueError('Input array must be a skew-symmetric matrix')
-    
+
     return True
 
 
@@ -235,11 +233,11 @@ def ensure_SO3(x):
         True if the input array is in SO(3). Raises an exception otherwise.
     """
     ensure_matrix(x, 3, 3)
-    
+
     if not np.array_equal(x.T @ x, np.eye(3)):
         raise ValueError('Input array does not satisfy R^TR = I')
 
     if not abs(np.linalg.det(x)) - 1.0 < 1e-9:
         raise ValueError('Input array does not det(R) = 1')
-    
+
     return True
