@@ -1,16 +1,15 @@
 import numpy as np
 
 
-
 class Trajectory:
     def __init__(self):
         self.mode = 0
         self.is_mode_changed = False
         self.is_landed = False
 
-        # self.t0 = datetime.datetime.now()
-        # self.t = 0.0
-        # self.t_traj = 0.0
+        self.t = 0.0
+        self.t0 = 0.0
+        self.t_traj = 0.0
 
         self.xd = np.zeros(3)
         self.xd_dot = np.zeros(3)
@@ -109,7 +108,6 @@ class Trajectory:
 
         self.t = 0.0
         self.t_traj = 0.0
-        # self.t0 = datetime.datetime.now()
         self.t0 = time
 
         self.x_offset = np.zeros(3)
@@ -168,11 +166,11 @@ class Trajectory:
         else:
             return False
 
-    def update_current_time(self, time):
-        # t_now = datetime.datetime.now()
-        # self.t = (t_now - self.t0).total_seconds()
-        t_now = time
-        self.t = (time - self.t0)
+    # def update_current_time(self, time):
+    #     # t_now = datetime.datetime.now()
+    #     # self.t = (t_now - self.t0).total_seconds()
+    #     t_now = time
+    #     self.t = (time - self.t0)
 
     def manual(self):
         if not self.manual_mode_init:

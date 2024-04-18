@@ -55,7 +55,7 @@ class Rover:
         return fM
 
     def gymfc_imu_callback(self, imu_quat, imu_vel_rpy, imu_linear_acc_xyz, dt_imu):
-        q = np.roll(np.array(imu_quat), -1)  # move to x,y,z,w order
+        q = np.roll(np.array(imu_quat), -1)  # move from w,x,y,z to x,y,z,w order
 
         R_gi = q_to_R(q)  # IMU to Gazebo frame
         R_fi = self.R_fg.dot(R_gi)  # IMU to FDCL frame (NED freme)

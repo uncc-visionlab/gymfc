@@ -180,8 +180,8 @@ class Control:
             [self.l, 0.0, -self.l, 0.0],
             [-self.c_tf, self.c_tf, -self.c_tf, self.c_tf]
         ])
-        self.fM_to_forces_inv = np.linalg.inv(fM_to_forces)  # Force to 
-        # force-moment conversion matrix
+        # Force to force-moment conversion matrix
+        self.fM_to_forces_inv = np.linalg.inv(fM_to_forces)
 
         # Integral errors
         self.eIX = IntegralErrorVec3()  # Position integral error
@@ -222,7 +222,7 @@ class Control:
 
     def position_control(self, dt):
         """Position controller to determine desired attitude and angular rates
-        to achieve the deisred states.
+        to achieve the desired states.
 
         This uses the controller defined in "Control of Complex Maneuvers
         for a Quadrotor UAV using Geometric Methods on SE(3)"
