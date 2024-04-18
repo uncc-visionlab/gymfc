@@ -262,21 +262,23 @@ void GazeboImuPlugin::OnUpdate(const common::UpdateInfo& _info) {
   orientation->set_z(C_W_I.Z());
   orientation->set_w(C_W_I.W());
 
-#if GAZEBO_MAJOR_VERSION < 5
-  ignition::math::Vector3d velocity_current_W = link_->GetWorldLinearVel();
+//#if GAZEBO_MAJOR_VERSION < 5
+  ignition::math::Vector3d velocity_current_W = link_->WorldLinearVel();
   // link_->RelativeLinearAccel() does not work sometimes with old gazebo versions.
   // TODO For an accurate simulation, this might have to be fixed. Consider the
   // This issue is solved in gazebo 5.
+  // ARW Fix for geometric controller 4/18/2024
+  // Relative linear accel seems to be zero when the imu link coincides with the center of gravity
   ignition::math::Vector3d acceleration = (velocity_current_W - velocity_prev_W_) / dt;
   ignition::math::Vector3d acceleration_I =
       C_W_I.RotateVectorReverse(acceleration - gravity_W_);
 
   velocity_prev_W_ = velocity_current_W;
-#elif GAZEBO_MAJOR_VERSION >= 9
-  ignition::math::Vector3d acceleration_I = link_->RelativeLinearAccel() - C_W_I.RotateVectorReverse(gravity_W_);
-#else
-  ignition::math::Vector3d acceleration_I = ignitionFromGazeboMath(link_->GetRelativeLinearAccel() - C_W_I.RotateVectorReverse(gravity_W_));
-#endif
+//#elif GAZEBO_MAJOR_VERSION >= 9
+//  ignition::math::Vector3d acceleration_I = link_->RelativeLinearAccel() - C_W_I.RotateVectorReverse(gravity_W_);
+//#else
+//  ignition::math::Vector3d acceleration_I = ignitionFromGazeboMath(link_->GetRelativeLinearAccel() - C_W_I.RotateVectorReverse(gravity_W_));
+//#endif
 
 #if GAZEBO_MAJOR_VERSION >= 9
   ignition::math::Vector3d angular_vel_I = link_->RelativeAngularVel();

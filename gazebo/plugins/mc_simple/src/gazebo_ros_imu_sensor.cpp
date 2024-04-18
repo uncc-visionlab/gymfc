@@ -148,13 +148,13 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
 //publishing data
 IGN_PROFILE_BEGIN("publish");
 #endif
-    gzdbg << __FUNCTION__ << "(): ROS sensor imu data: q(x,y,z,w)=(" << imu_msg.orientation().x() << ", "
-          << imu_msg.orientation().y() << ", " << imu_msg.orientation().z()
-          << ", " << imu_msg.orientation().w() << ") ang_vel(p,q,r)=(" << imu_msg.angular_velocity().x()
-          << ", " << imu_msg.angular_velocity().y() << ", " << imu_msg.angular_velocity().z() << ") "
-          << " lin_acc(x,y,z)=(" << imu_msg.linear_acceleration().x() << ", "
-          << imu_msg.linear_acceleration().y() << ", " << imu_msg.linear_acceleration().x() << ") "
-          << std::endl;
+//    gzdbg << __FUNCTION__ << "(): ROS sensor imu data: q(x,y,z,w)=(" << imu_msg.orientation().x() << ", "
+//          << imu_msg.orientation().y() << ", " << imu_msg.orientation().z()
+//          << ", " << imu_msg.orientation().w() << ") ang_vel(p,q,r)=(" << imu_msg.angular_velocity().x()
+//          << ", " << imu_msg.angular_velocity().y() << ", " << imu_msg.angular_velocity().z() << ") "
+//          << " lin_acc(x,y,z)=(" << imu_msg.linear_acceleration().x() << ", "
+//          << imu_msg.linear_acceleration().y() << ", " << imu_msg.linear_acceleration().z() << ") "
+//          << std::endl;
     imu_data_publisher->Publish(imu_msg);
 #ifdef ENABLE_PROFILER
     IGN_PROFILE_END();
