@@ -18,60 +18,52 @@
 #include <iostream>
 #include <gazebo/sensors/ImuSensor.hh>
 #include <gazebo/physics/World.hh>
+
 #ifdef ENABLE_PROFILER
 #include <ignition/common/Profiler.hh>
 #endif
+
 #include <ignition/math/Rand.hh>
 
 GZ_REGISTER_SENSOR_PLUGIN(gazebo::GazeboRosImuSensor)
 
-gazebo::GazeboRosImuSensor::GazeboRosImuSensor(): SensorPlugin()
-{
+gazebo::GazeboRosImuSensor::GazeboRosImuSensor() : SensorPlugin() {
     accelerometer_data = ignition::math::Vector3d(0, 0, 0);
     gyroscope_data = ignition::math::Vector3d(0, 0, 0);
-    orientation = ignition::math::Quaterniond(1,0,0,0);
-    sensor=NULL;
+    orientation = ignition::math::Quaterniond(1, 0, 0, 0);
+    sensor = NULL;
     seq_ = 0;
 }
 
-void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::ElementPtr sdf_)
-{
+void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::ElementPtr sdf_) {
     gzdbg << "Loading " << __FUNCTION__ << "()" << std::endl;
-    sdf=sdf_;
-    sensor=dynamic_cast<gazebo::sensors::ImuSensor*>(sensor_.get());
+    sdf = sdf_;
+    sensor = dynamic_cast<gazebo::sensors::ImuSensor *>(sensor_.get());
 
-    if(sensor==NULL)
-    {
+    if (sensor == NULL) {
 //        ROS_FATAL("Error: Sensor pointer is NULL!");
         return;
     }
 
     bool initial_orientation_as_reference = false;
-    if (!sdf->HasElement("initialOrientationAsReference"))
-    {
+    if (!sdf->HasElement("initialOrientationAsReference")) {
 //        ROS_INFO("<initialOrientationAsReference> is unset, using default value of false "
 //                 "to comply with REP 145 (world as orientation reference)");
-    }
-    else
-    {
+    } else {
         initial_orientation_as_reference = sdf->Get<bool>("initialOrientationAsReference");
     }
 
-    if (initial_orientation_as_reference)
-    {
+    if (initial_orientation_as_reference) {
 //        ROS_WARN("<initialOrientationAsReference> set to true, this behavior is deprecated "
 //                 "as it does not comply with REP 145.");
-    }
-    else
-    {
+    } else {
         // This complies with REP 145
         sensor->SetWorldToReferenceOrientation(ignition::math::Quaterniond::Identity);
     }
 
     sensor->SetActive(true);
 
-    if(!LoadParameters())
-    {
+    if (!LoadParameters()) {
 //        ROS_FATAL("Error Loading Parameters!");
         return;
     }
@@ -89,13 +81,13 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
 
     imu_data_publisher = node->Advertise<sensor_msgs::msgs::Imu>(topic_name, 1);
     gzdbg << "GymFC ros imu publishes to " << topic_name << std::endl;
-    connection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosImuSensor::UpdateChild, this, _1));
+    connection = gazebo::event::Events::ConnectWorldUpdateBegin(
+            boost::bind(&GazeboRosImuSensor::UpdateChild, this, _1));
 
     last_time = sensor->LastUpdateTime();
 }
 
-void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_info)
-{
+void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_info) {
 #ifdef ENABLE_PROFILER
     IGN_PROFILE("GazeboRosImuSensor::UpdateChild");
 #endif
@@ -107,25 +99,25 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
 //    if(imu_data_publisher.getNumSubscribers() > 0)
 //    {
 #ifdef ENABLE_PROFILER
-        IGN_PROFILE_BEGIN("fill ROS message");
+    IGN_PROFILE_BEGIN("fill ROS message");
 #endif
-        orientation = offset.Rot()*sensor->Orientation(); //applying offsets to the orientation measurement
-        accelerometer_data = sensor->LinearAcceleration();
-        gyroscope_data = sensor->AngularVelocity();
+    orientation = offset.Rot() * sensor->Orientation(); //applying offsets to the orientation measurement
+    accelerometer_data = sensor->LinearAcceleration();
+    gyroscope_data = sensor->AngularVelocity();
 
-        //Guassian noise is applied to all measurements
-        gazebo::msgs::Quaternion* orientation_msg = new gazebo::msgs::Quaternion;
+    //Guassian noise is applied to all measurements
+    gazebo::msgs::Quaternion *orientation_msg = new gazebo::msgs::Quaternion;
     orientation_msg->set_x(orientation.X() + GaussianKernel(0, gaussian_noise));
     orientation_msg->set_y(orientation.Y() + GaussianKernel(0, gaussian_noise));
     orientation_msg->set_z(orientation.Z() + GaussianKernel(0, gaussian_noise));
     orientation_msg->set_w(orientation.W() + GaussianKernel(0, gaussian_noise));
 
-    gazebo::msgs::Vector3d* linear_acceleration_msg = new gazebo::msgs::Vector3d;
+    gazebo::msgs::Vector3d *linear_acceleration_msg = new gazebo::msgs::Vector3d;
     linear_acceleration_msg->set_x(accelerometer_data.X() + GaussianKernel(0, gaussian_noise));
     linear_acceleration_msg->set_y(accelerometer_data.Y() + GaussianKernel(0, gaussian_noise));
     linear_acceleration_msg->set_z(accelerometer_data.Z() + GaussianKernel(0, gaussian_noise));
 
-    gazebo::msgs::Vector3d* angular_velocity_msg = new gazebo::msgs::Vector3d;
+    gazebo::msgs::Vector3d *angular_velocity_msg = new gazebo::msgs::Vector3d;
     angular_velocity_msg->set_x(gyroscope_data.X() + GaussianKernel(0, gaussian_noise));
     angular_velocity_msg->set_y(gyroscope_data.Y() + GaussianKernel(0, gaussian_noise));
     angular_velocity_msg->set_z(gyroscope_data.Z() + GaussianKernel(0, gaussian_noise));
@@ -134,7 +126,7 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
     imu_msg.set_allocated_linear_acceleration(linear_acceleration_msg);
     imu_msg.set_allocated_angular_velocity(angular_velocity_msg);
     //covariance is related to the Gaussian noise
-    double gn2 = gaussian_noise*gaussian_noise;
+    double gn2 = gaussian_noise * gaussian_noise;
 //        imu_msg.orientation_covariance[0] = gn2;
 //        imu_msg.orientation_covariance[4] = gn2;
 //        imu_msg.orientation_covariance[8] = gn2;
@@ -152,13 +144,20 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
     imu_msg.set_time_usec(_info.simTime.sec * 1000000 + _info.simTime.nsec / 1000);
     imu_msg.set_seq(seq_++);
 #ifdef ENABLE_PROFILER
-        IGN_PROFILE_END();
-    //publishing data
-    IGN_PROFILE_BEGIN("publish");
+    IGN_PROFILE_END();
+//publishing data
+IGN_PROFILE_BEGIN("publish");
 #endif
-        imu_data_publisher->Publish(imu_msg);
+    gzdbg << __FUNCTION__ << "(): ROS sensor imu data: q(x,y,z,w)=(" << imu_msg.orientation().x() << ", "
+          << imu_msg.orientation().y() << ", " << imu_msg.orientation().z()
+          << ", " << imu_msg.orientation().w() << ") ang_vel(p,q,r)=(" << imu_msg.angular_velocity().x()
+          << ", " << imu_msg.angular_velocity().y() << ", " << imu_msg.angular_velocity().z() << ") "
+          << " lin_acc(x,y,z)=(" << imu_msg.linear_acceleration().x() << ", "
+          << imu_msg.linear_acceleration().y() << ", " << imu_msg.linear_acceleration().x() << ") "
+          << std::endl;
+    imu_data_publisher->Publish(imu_msg);
 #ifdef ENABLE_PROFILER
-        IGN_PROFILE_END();
+    IGN_PROFILE_END();
 #endif
 //        ros::spinOnce();
 //    }
@@ -166,107 +165,84 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
     last_time = current_time;
 }
 
-double gazebo::GazeboRosImuSensor::GaussianKernel(double mu, double sigma)
-{
+double gazebo::GazeboRosImuSensor::GaussianKernel(double mu, double sigma) {
     // generation of two normalized uniform random variables
     double U1 = ignition::math::Rand::DblUniform();
     double U2 = ignition::math::Rand::DblUniform();
 
     // using Box-Muller transform to obtain a varaible with a standard normal distribution
-    double Z0 = sqrt(-2.0 * ::log(U1)) * cos(2.0*M_PI * U2);
+    double Z0 = sqrt(-2.0 * ::log(U1)) * cos(2.0 * M_PI * U2);
 
     // scaling
     Z0 = sigma * Z0 + mu;
     return Z0;
 }
 
-bool gazebo::GazeboRosImuSensor::LoadParameters()
-{
+bool gazebo::GazeboRosImuSensor::LoadParameters() {
     //loading parameters from the sdf file
 
     //NAMESPACE
-    if (sdf->HasElement("robotNamespace"))
-    {
-        robot_namespace =  sdf->Get<std::string>("robotNamespace") +"/";
+    if (sdf->HasElement("robotNamespace")) {
+        robot_namespace = sdf->Get<std::string>("robotNamespace") + "/";
 //        ROS_INFO_STREAM("<robotNamespace> set to: "<<robot_namespace);
-    }
-    else
-    {
+    } else {
         std::string scoped_name = sensor->ParentName();
         std::size_t it = scoped_name.find("::");
 
-        robot_namespace = "/" +scoped_name.substr(0,it)+"/";
+        robot_namespace = "/" + scoped_name.substr(0, it) + "/";
 //        ROS_WARN_STREAM("missing <robotNamespace>, set to default: " << robot_namespace);
     }
 
     //TOPIC
-    if (sdf->HasElement("topicName"))
-    {
-        topic_name =  sdf->Get<std::string>("topicName");
+    if (sdf->HasElement("topicName")) {
+        topic_name = sdf->Get<std::string>("topicName");
 //        ROS_INFO_STREAM("<topicName> set to: "<<topic_name);
-    }
-    else
-    {
+    } else {
         topic_name = "imu_data";
 //        ROS_WARN_STREAM("missing <topicName>, set to /namespace/default: " << topic_name);
     }
 
     //BODY NAME
-    if (sdf->HasElement("frameName"))
-    {
-        body_name =  sdf->Get<std::string>("frameName");
+    if (sdf->HasElement("frameName")) {
+        body_name = sdf->Get<std::string>("frameName");
 //        ROS_INFO_STREAM("<frameName> set to: "<<body_name);
-    }
-    else
-    {
+    } else {
 //        ROS_FATAL("missing <frameName>, cannot proceed");
         return false;
     }
 
     //UPDATE RATE
-    if (sdf->HasElement("updateRateHZ"))
-    {
-        update_rate =  sdf->Get<double>("updateRateHZ");
+    if (sdf->HasElement("updateRateHZ")) {
+        update_rate = sdf->Get<double>("updateRateHZ");
 //        ROS_INFO_STREAM("<updateRateHZ> set to: " << update_rate);
-    }
-    else
-    {
+    } else {
         update_rate = 1.0;
 //        ROS_WARN_STREAM("missing <updateRateHZ>, set to default: " << update_rate);
     }
 
     //NOISE
-    if (sdf->HasElement("gaussianNoise"))
-    {
-        gaussian_noise =  sdf->Get<double>("gaussianNoise");
+    if (sdf->HasElement("gaussianNoise")) {
+        gaussian_noise = sdf->Get<double>("gaussianNoise");
 //        ROS_INFO_STREAM("<gaussianNoise> set to: " << gaussian_noise);
-    }
-    else
-    {
+    } else {
         gaussian_noise = 0.0;
 //        ROS_WARN_STREAM("missing <gaussianNoise>, set to default: " << gaussian_noise);
     }
 
     //POSITION OFFSET, UNUSED
-    if (sdf->HasElement("xyzOffset"))
-    {
-        offset.Pos() =  sdf->Get<ignition::math::Vector3d>("xyzOffset");
+    if (sdf->HasElement("xyzOffset")) {
+        offset.Pos() = sdf->Get<ignition::math::Vector3d>("xyzOffset");
 //        ROS_INFO_STREAM("<xyzOffset> set to: " << offset.Pos()[0] << ' ' << offset.Pos()[1] << ' ' << offset.Pos()[2]);
-    }
-    else
-    {
+    } else {
         offset.Pos() = ignition::math::Vector3d(0, 0, 0);
 //        ROS_WARN_STREAM("missing <xyzOffset>, set to default: " << offset.Pos()[0] << ' ' << offset.Pos()[1] << ' ' << offset.Pos()[2]);
     }
 
     //ORIENTATION OFFSET
-    if (sdf->HasElement("rpyOffset"))
-    {
+    if (sdf->HasElement("rpyOffset")) {
         offset.Rot() = ignition::math::Quaterniond(sdf->Get<ignition::math::Vector3d>("rpyOffset"));
 //        ROS_INFO_STREAM("<rpyOffset> set to: " << offset.Rot().Roll() << ' ' << offset.Rot().Pitch() << ' ' << offset.Rot().Yaw());
-    }
-    else
-    {
+    } else {
         offset.Rot() = ignition::math::Quaterniond::Identity;
 //        ROS_WARN_STREAM("missing <rpyOffset>, set to default: " << offset.Rot().Roll() << ' ' << offset.Rot().Pitch() << ' ' << offset.Rot().Yaw());
     }
@@ -274,10 +250,8 @@ bool gazebo::GazeboRosImuSensor::LoadParameters()
     return true;
 }
 
-gazebo::GazeboRosImuSensor::~GazeboRosImuSensor()
-{
-    if (connection.get())
-    {
+gazebo::GazeboRosImuSensor::~GazeboRosImuSensor() {
+    if (connection.get()) {
         connection.reset();
         connection = gazebo::event::ConnectionPtr();
     }

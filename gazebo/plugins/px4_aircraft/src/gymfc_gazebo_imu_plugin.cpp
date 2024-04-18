@@ -48,6 +48,13 @@ namespace gazebo {
 //        gymfc_imu_msg.set_allocated_angular_velocity(angular_vel_msg);
 //        gymfc_imu_msg.set_allocated_linear_acceleration(linear_acc_msg);
         //gymfc_imu_msg = imu_message_;
+        gzdbg << __FUNCTION__ << "(): PX4 imu data: q(x,y,z,w)=(" << imu_message_.orientation().x() << ", "
+              << imu_message_.orientation().y() << ", " << imu_message_.orientation().z()
+              << ", " << imu_message_.orientation().w() << ") ang_vel(p,q,r)=(" << imu_message_.angular_velocity().x()
+              << ", " << imu_message_.angular_velocity().y() << ", " << imu_message_.angular_velocity().z() << ") "
+              << " lin_acc(x,y,z)=(" << imu_message_.linear_acceleration().x() << ", "
+              << imu_message_.linear_acceleration().y() << ", " << imu_message_.linear_acceleration().x() << ") "
+              << std::endl;
         gymfc_imu_pub_->Publish(imu_message_);
 //        sensor_msgs::msgs::Imu gymfc_imu_message_;
 //        gymfc_imu_message_.CopyFrom(imu_message_);
