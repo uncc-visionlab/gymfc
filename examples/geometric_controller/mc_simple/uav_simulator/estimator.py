@@ -201,19 +201,6 @@ class Estimator:
         I_KH = self.eye10 - K.dot(H)
         self.P = I_KH.dot(self.P).dot(I_KH.T) + K.dot(V).dot(K.T)
 
-    # def get_dt(self):
-    #     """Get the time difference between two loops.
-    #
-    #     Return:
-    #         dt: (float) time difference between two loops
-    #     """
-    #
-    #     self.t_pre = self.t * 1.0
-    #     t_now = datetime.datetime.now()
-    #     self.t = (t_now - self.t0).total_seconds()
-    #
-    #     return self.t - self.t_pre
-
     def get_states(self):
         """Return the current states of the estimator.
 

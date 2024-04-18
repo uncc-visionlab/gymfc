@@ -166,12 +166,6 @@ class Trajectory:
         else:
             return False
 
-    # def update_current_time(self, time):
-    #     # t_now = datetime.datetime.now()
-    #     # self.t = (t_now - self.t0).total_seconds()
-    #     t_now = time
-    #     self.t = (time - self.t0)
-
     def manual(self):
         if not self.manual_mode_init:
             self.set_desired_states_to_current()

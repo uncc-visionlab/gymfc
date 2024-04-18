@@ -422,18 +422,3 @@ class Control:
         self.eIy.set_zero()
         self.eIX.set_zero()
 
-    # def update_current_time(self):
-    #     """Update the current time since epoch."""
-    #     self.t_pre = self.t
-    #
-    #     t_now = datetime.datetime.now()
-    #     self.t = (t_now - self.t0).total_seconds()
-
-    # def get_current_time(self):
-    #     """Return the current time since epoch.
-    #
-    #     Return:
-    #         t: (float) time since epoch [s]
-    #     """
-    #     t_now = datetime.datetime.now()
-    #     return (t_now - self.t0).total_seconds()
