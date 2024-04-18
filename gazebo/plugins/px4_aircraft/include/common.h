@@ -305,7 +305,7 @@ inline const bool checkWorldHomePosition(gazebo::physics::WorldPtr& world,
   world_longitude = spherical_coords->LongitudeReference().Radian();
   world_altitude = spherical_coords->GetElevationReference();
   // This logic is required given that the spherical coordinates reference call
-  // return 0 if the spherical coordnates are not defined in the world file
+  // return 0 if the spherical coordinates are not defined in the world file
   return (world_latitude && world_latitude && world_latitude) ? true : false;
 }
 

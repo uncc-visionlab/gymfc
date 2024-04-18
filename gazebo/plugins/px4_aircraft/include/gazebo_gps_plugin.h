@@ -81,6 +81,7 @@ protected:
   sensor_msgs::msgs::SITLGps gps_msg;
   std::queue<sensor_msgs::msgs::SITLGps> gps_delay_buffer_;
   event::ConnectionPtr updateWorldConnection_;
+  event::ConnectionPtr updateSensorConnection_;
 
 private:
   std::string namespace_;
@@ -96,7 +97,7 @@ private:
   physics::ModelPtr model_;
 //  physics::WorldPtr world_;
 //  event::ConnectionPtr updateWorldConnection_;
-  event::ConnectionPtr updateSensorConnection_;
+//  event::ConnectionPtr updateSensorConnection_;
 
 //  transport::NodePtr node_handle_;
   transport::PublisherPtr gps_pub_;

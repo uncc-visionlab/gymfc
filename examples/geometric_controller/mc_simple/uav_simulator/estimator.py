@@ -62,7 +62,7 @@ class Estimator:
         # Initial covariances of x
         self.P = np.diag([
             1.0, 1.0, 1.0,  # position
-            2.0, 2.0, 2.0,  # velocity
+            1.0, 1.0, 1.0,  # velocity
             0.01, 0.01, 0.01,  # attitude
             1.0  # accelerometer z bias
         ])

@@ -46,13 +46,12 @@
         </material>
       </visual>
       <gravity>1</gravity>
-      <!--
       <sensor name='imu_sensor' type='imu'>
         <always_on>1</always_on>
         <update_rate>100</update_rate>
         <visualize>1</visualize>
         <plugin name='imu_plugin' filename='libgazebo_ros_imu_sensor.so'>
-          <topicName>uav_imu</topicName>
+          <topicName>/aircraft/sensor/imu</topicName>
           <bodyName>link</bodyName>
           <updateRateHZ>100.0</updateRateHZ>
           <gaussianNoise>0.0001</gaussianNoise>
@@ -62,7 +61,6 @@
         </plugin>
         <pose>0 0 0 0 -0 0</pose>
       </sensor>
-      -->
       <sensor name="gps" type="gps">
         <pose>0 0 0 0 0 0</pose>
         <update_rate>10.0</update_rate>
@@ -122,19 +120,21 @@
         <use_parent_model_frame>1</use_parent_model_frame>
       </axis>
     </joint>
+    <!--
     <plugin name='rotors_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
       <robotNamespace></robotNamespace>
       <linkName>/imu_link</linkName>
       <imuTopic>/imu</imuTopic>
-      <gyroscopeNoiseDensity>0.000018665</gyroscopeNoiseDensity>
-      <gyroscopeRandomWalk>1.8785e-05</gyroscopeRandomWalk>
-      <gyroscopeBiasCorrelationTime>1.0</gyroscopeBiasCorrelationTime>
-      <gyroscopeTurnOnBiasSigma>0.001</gyroscopeTurnOnBiasSigma>
-      <accelerometerNoiseDensity>0.0001</accelerometerNoiseDensity>
-      <accelerometerRandomWalk>0.0001</accelerometerRandomWalk>
-      <accelerometerBiasCorrelationTime>1.0</accelerometerBiasCorrelationTime>
-      <accelerometerTurnOnBiasSigma>0.001</accelerometerTurnOnBiasSigma>
+      <gyroscopeNoiseDensity>0.0000018665</gyroscopeNoiseDensity>
+      <gyroscopeRandomWalk>1.8785e-06</gyroscopeRandomWalk>
+      <gyroscopeBiasCorrelationTime>0.0</gyroscopeBiasCorrelationTime>
+      <gyroscopeTurnOnBiasSigma>0.00001</gyroscopeTurnOnBiasSigma>
+      <accelerometerNoiseDensity>0.000001</accelerometerNoiseDensity>
+      <accelerometerRandomWalk>0.000001</accelerometerRandomWalk>
+      <accelerometerBiasCorrelationTime>0.0</accelerometerBiasCorrelationTime>
+      <accelerometerTurnOnBiasSigma>0.00001</accelerometerTurnOnBiasSigma>
     </plugin>
+    -->
     <plugin name='groundtruth_plugin' filename='libgymfc_gazebo_groundtruth_plugin.so'>
       <robotNamespace/>
     </plugin>

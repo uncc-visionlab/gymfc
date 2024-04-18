@@ -88,7 +88,7 @@ void gazebo::GazeboRosImuSensor::Load(gazebo::sensors::SensorPtr sensor_, sdf::E
     node->Init(this->robot_namespace);
 
     imu_data_publisher = node->Advertise<sensor_msgs::msgs::Imu>(topic_name, 1);
-
+    gzdbg << "GymFC ros imu publishes to " << topic_name << std::endl;
     connection = gazebo::event::Events::ConnectWorldUpdateBegin(boost::bind(&GazeboRosImuSensor::UpdateChild, this, _1));
 
     last_time = sensor->LastUpdateTime();
@@ -101,8 +101,8 @@ void gazebo::GazeboRosImuSensor::UpdateChild(const gazebo::common::UpdateInfo &_
 #endif
     common::Time current_time = sensor->LastUpdateTime();
 
-    if(update_rate>0 && (current_time-last_time).Double() < 1.0/update_rate) //update rate check
-        return;
+//    if(update_rate>0 && (current_time-last_time).Double() < 1.0/update_rate) //update rate check
+//        return;
 //    if (imu_data_publisher->HasConnections()) {}
 //    if(imu_data_publisher.getNumSubscribers() > 0)
 //    {

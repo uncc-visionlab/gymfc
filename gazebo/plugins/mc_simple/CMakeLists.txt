@@ -104,8 +104,8 @@ add_library(control_plugin
 #add_library(gazebo_ros_imu src/gazebo_ros_imu.cpp)
 #target_link_libraries(gazebo_ros_imu ${catkin_LIBRARIES} ${Boost_LIBRARIES})
 #
-add_library(gazebo_ros_imu_sensor src/gazebo_ros_imu_sensor.cpp)
-target_link_libraries(gazebo_ros_imu_sensor ${GAZEBO_LIBRARIES} ${catkin_LIBRARIES} ${Boost_LIBRARIES} control_msgs)
+add_library(gazebo_ros_imu_sensor SHARED src/gazebo_ros_imu_sensor.cpp)
+target_link_libraries(gazebo_ros_imu_sensor ${GAZEBO_LIBRARIES} control_msgs)
 add_dependencies(gazebo_ros_imu_sensor control_msgs)
 
 target_link_libraries(control_plugin ${GAZEBO_LIBRARIES} control_msgs)
