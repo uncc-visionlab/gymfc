@@ -19,7 +19,7 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   package='gymfc.msgs',
   syntax='proto2',
   serialized_options=None,
-  serialized_pb=_b('\n\x0bState.proto\x12\ngymfc.msgs\"\xff\x05\n\x05State\x12\x10\n\x08sim_time\x18\x01 \x02(\x02\x12$\n\x18imu_angular_velocity_rpy\x18\x02 \x03(\x02\x42\x02\x10\x01\x12\'\n\x1bimu_linear_acceleration_xyz\x18\x03 \x03(\x02\x42\x02\x10\x01\x12 \n\x14imu_orientation_quat\x18\x04 \x03(\x02\x42\x02\x10\x01\x12&\n\x1a\x65sc_motor_angular_velocity\x18\x05 \x03(\x02\x42\x02\x10\x01\x12\x1b\n\x0f\x65sc_temperature\x18\x06 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_current\x18\x07 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_voltage\x18\x08 \x03(\x02\x42\x02\x10\x01\x12\x15\n\tesc_force\x18\t \x03(\x02\x42\x02\x10\x01\x12\x16\n\nesc_torque\x18\n \x03(\x02\x42\x02\x10\x01\x12\x14\n\x0cvbat_voltage\x18\x0b \x01(\x02\x12\x14\n\x0cvbat_current\x18\x0c \x01(\x02\x12\x31\n\x0bstatus_code\x18\r \x02(\x0e\x32\x1c.gymfc.msgs.State.StatusCode\x12\x11\n\x05\x66orce\x18\x0e \x03(\x02\x42\x02\x10\x01\x12\x19\n\rgps_wgs84_pos\x18\x0f \x03(\x01\x42\x02\x10\x01\x12\x0f\n\x07gps_eph\x18\x10 \x01(\x02\x12\x0f\n\x07gps_epv\x18\x11 \x01(\x02\x12\x16\n\x0egps_ground_vel\x18\x12 \x01(\x02\x12\x17\n\x0bgps_enu_vel\x18\x13 \x03(\x02\x42\x02\x10\x01\x12\x18\n\x10\x62\x61ro_temperature\x18\x14 \x01(\x02\x12\x1e\n\x16\x62\x61ro_absolute_pressure\x18\x15 \x01(\x02\x12\x1e\n\x16\x62\x61ro_pressure_altitude\x18\x16 \x01(\x02\x12\"\n\x16magneto_magnetic_field\x18\x17 \x03(\x01\x42\x02\x10\x01\x12\x18\n\x0cgt_wgs84_pos\x18\x18 \x03(\x01\x42\x02\x10\x01\x12\x16\n\ngt_enu_vel\x18\x19 \x03(\x02\x42\x02\x10\x01\x12\x1c\n\x10gt_attitude_quat\x18\x1a \x03(\x02\x42\x02\x10\x01\"\x1f\n\nStatusCode\x12\x06\n\x02OK\x10\x00\x12\t\n\x05\x45RROR\x10\x01')
+  serialized_pb=_b('\n\x0bState.proto\x12\ngymfc.msgs\"\xe8\x06\n\x05State\x12\x10\n\x08sim_time\x18\x01 \x02(\x02\x12$\n\x18imu_angular_velocity_rpy\x18\x02 \x03(\x02\x42\x02\x10\x01\x12\'\n\x1bimu_linear_acceleration_xyz\x18\x03 \x03(\x02\x42\x02\x10\x01\x12 \n\x14imu_orientation_quat\x18\x04 \x03(\x02\x42\x02\x10\x01\x12&\n\x1a\x65sc_motor_angular_velocity\x18\x05 \x03(\x02\x42\x02\x10\x01\x12\x1b\n\x0f\x65sc_temperature\x18\x06 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_current\x18\x07 \x03(\x02\x42\x02\x10\x01\x12\x17\n\x0b\x65sc_voltage\x18\x08 \x03(\x02\x42\x02\x10\x01\x12\x15\n\tesc_force\x18\t \x03(\x02\x42\x02\x10\x01\x12\x16\n\nesc_torque\x18\n \x03(\x02\x42\x02\x10\x01\x12\x14\n\x0cvbat_voltage\x18\x0b \x01(\x02\x12\x14\n\x0cvbat_current\x18\x0c \x01(\x02\x12\x31\n\x0bstatus_code\x18\r \x02(\x0e\x32\x1c.gymfc.msgs.State.StatusCode\x12\x11\n\x05\x66orce\x18\x0e \x03(\x02\x42\x02\x10\x01\x12\x19\n\rgps_wgs84_pos\x18\x0f \x03(\x01\x42\x02\x10\x01\x12\x0f\n\x07gps_eph\x18\x10 \x01(\x02\x12\x0f\n\x07gps_epv\x18\x11 \x01(\x02\x12\x16\n\x0egps_ground_vel\x18\x12 \x01(\x02\x12\x17\n\x0bgps_enu_vel\x18\x13 \x03(\x02\x42\x02\x10\x01\x12\x18\n\x10\x62\x61ro_temperature\x18\x14 \x01(\x02\x12\x1e\n\x16\x62\x61ro_absolute_pressure\x18\x15 \x01(\x02\x12\x1e\n\x16\x62\x61ro_pressure_altitude\x18\x16 \x01(\x02\x12\"\n\x16magneto_magnetic_field\x18\x17 \x03(\x01\x42\x02\x10\x01\x12\x18\n\x0cgt_wgs84_pos\x18\x18 \x03(\x01\x42\x02\x10\x01\x12\x16\n\ngt_enu_vel\x18\x19 \x03(\x02\x42\x02\x10\x01\x12\x1c\n\x10gt_attitude_quat\x18\x1a \x03(\x02\x42\x02\x10\x01\x12\x1c\n\x10motor_wind3d_xyz\x18\x1b \x03(\x02\x42\x02\x10\x01\x12\x14\n\x0c\x62last3d_time\x18\x1c \x01(\x01\x12\x1a\n\x12\x62last3d_weight_TNT\x18\x1d \x01(\x02\x12\x17\n\x0b\x62last3d_pos\x18\x1e \x03(\x01\x42\x02\x10\x01\"\x1f\n\nStatusCode\x12\x06\n\x02OK\x10\x00\x12\t\n\x05\x45RROR\x10\x01')
 )
 
 
@@ -41,8 +41,8 @@ _STATE_STATUSCODE = _descriptor.EnumDescriptor(
   ],
   containing_type=None,
   serialized_options=None,
-  serialized_start=764,
-  serialized_end=795,
+  serialized_start=869,
+  serialized_end=900,
 )
 _sym_db.RegisterEnumDescriptor(_STATE_STATUSCODE)
 
@@ -236,6 +236,34 @@ _STATE = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='motor_wind3d_xyz', full_name='gymfc.msgs.State.motor_wind3d_xyz', index=26,
+      number=27, type=2, cpp_type=6, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='blast3d_time', full_name='gymfc.msgs.State.blast3d_time', index=27,
+      number=28, type=1, cpp_type=5, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='blast3d_weight_TNT', full_name='gymfc.msgs.State.blast3d_weight_TNT', index=28,
+      number=29, type=2, cpp_type=6, label=1,
+      has_default_value=False, default_value=float(0),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=None, file=DESCRIPTOR),
+    _descriptor.FieldDescriptor(
+      name='blast3d_pos', full_name='gymfc.msgs.State.blast3d_pos', index=29,
+      number=30, type=1, cpp_type=5, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      serialized_options=_b('\020\001'), file=DESCRIPTOR),
   ],
   extensions=[
   ],
@@ -250,7 +278,7 @@ _STATE = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=28,
-  serialized_end=795,
+  serialized_end=900,
 )
 
 _STATE.fields_by_name['status_code'].enum_type = _STATE_STATUSCODE
@@ -282,4 +310,6 @@ _STATE.fields_by_name['magneto_magnetic_field']._options = None
 _STATE.fields_by_name['gt_wgs84_pos']._options = None
 _STATE.fields_by_name['gt_enu_vel']._options = None
 _STATE.fields_by_name['gt_attitude_quat']._options = None
+_STATE.fields_by_name['motor_wind3d_xyz']._options = None
+_STATE.fields_by_name['blast3d_pos']._options = None
 # @@protoc_insertion_point(module_scope)
