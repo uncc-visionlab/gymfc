@@ -19,6 +19,17 @@
       <useCustomBlastData>false</useCustomBlastData>
       <customBlastDataFile></customBlastDataFile>
     </plugin>
+    <!--
+    <plugin name='wind3d_plugin' filename='libgazebo_wind3d_world_plugin.so'>
+      <windVelocityMax>0.1</windVelocityMax>
+      <publishRate>1.0</publishRate>
+      <useCustomStaticWindField>false</useCustomStaticWindField>
+      <useCustomDynamicWindField>true</useCustomDynamicWindField>
+      <customDynamicWindFieldPath>/home2/arwillis/uncc_wind_control/ros_image/ros_ws/src/px4_gazebo_wind3d/datasets/UNCC_EngCampus/all_FFT_data.csv</customDynamicWindFieldPath>
+      <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
+      <windPubTopic>world_wind</windPubTopic>
+    </plugin>
+    -->
     <gravity>0 0 -9.8066</gravity>
     <!--<gravity>0 0 0</gravity>-->
     <physics name='default_physics' default='0' type='ode'>

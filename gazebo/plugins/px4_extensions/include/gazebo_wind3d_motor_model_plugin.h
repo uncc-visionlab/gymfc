@@ -51,7 +51,7 @@ namespace turning_direction {
 
 namespace gazebo {
     // Default values
-    static const bool kPrintOnMsgCallback = true;
+    static const bool kPrintOnMsgCallback = false;
     static const std::string kDefaultWindServerRegisterTopic = "/gazebo/default/wind3d_register_link";
     
     static const std::string kDefaultNamespace = "";

@@ -23,13 +23,19 @@
     <!-- -->
     <plugin name='wind3d_plugin' filename='libgazebo_wind3d_world_plugin.so'>
       <windVelocityMax>0.1</windVelocityMax>
-      <publishRate>1.0</publishRate>
+      <publishRate>100.0</publishRate>
       <useCustomStaticWindField>false</useCustomStaticWindField>
       <useCustomDynamicWindField>true</useCustomDynamicWindField>
-      <customDynamicWindFieldPath>/home2/arwillis/uncc_wind_control/ros_image/ros_ws/src/px4_gazebo_wind3d/datasets/UNCC_EngCampus/all_FFT_data.csv</customDynamicWindFieldPath>
+      <customDynamicWindFieldPath>/home2/arwillis/uncc_wind_control/python/gymfc/gazebo/plugins/px4_extensions/examples/datasets/wind/wind3d_UNCC_EngCampus_FFT.csv</customDynamicWindFieldPath>
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windPubTopic>world_wind</windPubTopic>
     </plugin>
+    <!--
+    <plugin name='blast3d_plugin' filename='libgazebo_blast3d_world_plugin.so'>
+      <publishRate>2.0</publishRate>
+      <blast3dServerRegisterLinkTopic>/gazebo/default/blast3d_register_link</blast3dServerRegisterLinkTopic>
+    </plugin>
+    -->
     <!-- -->
     <physics name='default_physics' default='0' type='ode'>
       <gravity>0 0 -9.8066</gravity>

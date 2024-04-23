@@ -304,7 +304,7 @@ void FlightControllerPlugin::EscSensorCallback(EscSensorPtr &_escSensor) {
 
 void FlightControllerPlugin::MotorWindCallback(WindPtr &_motorWind) {
     boost::mutex::scoped_lock lock(g_CallbackMutex);
-    gzdbg << __FUNCTION__ << "(): Received Wind3d message for motor " << _motorWind->frame_id() << std::endl;
+//    gzdbg << __FUNCTION__ << "(): Received Wind3d message for motor " << _motorWind->frame_id() << std::endl;
     int motor_number = std::stoi(_motorWind->frame_id());
     this->state.set_motor_wind3d_xyz(3 * motor_number + 0, _motorWind->velocity().x());
     this->state.set_motor_wind3d_xyz(3 * motor_number + 1, _motorWind->velocity().y());
@@ -312,7 +312,7 @@ void FlightControllerPlugin::MotorWindCallback(WindPtr &_motorWind) {
 }
 
 void FlightControllerPlugin::Blast3dCallback(Blast3dPtr &_blast3d) {
-    gzdbg << __FUNCTION__ << "(): Received Blast3d message for time " << _blast3d->time() << std::endl;
+//    gzdbg << __FUNCTION__ << "(): Received Blast3d message for time " << _blast3d->time() << std::endl;
     boost::mutex::scoped_lock lock(g_CallbackMutex);
     this->state.set_blast3d_time(_blast3d->time());
     this->state.set_blast3d_weight_tnt(_blast3d->weight_tnt_kg());

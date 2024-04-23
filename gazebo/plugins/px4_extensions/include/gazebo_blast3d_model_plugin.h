@@ -70,10 +70,10 @@ namespace gazebo {
     protected:
         /// \brief    Called when the plugin is first created, and after the world
         ///           has been loaded. This function should not be blocking.
-        void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
+        virtual void Load(physics::ModelPtr _model, sdf::ElementPtr _sdf);
 
         /// \brief  	This gets called by the world update start event.
-        void OnUpdate(const common::UpdateInfo&);
+        virtual void OnUpdate(const common::UpdateInfo&);
 
     protected:
         /// \brief    Flag that is set to true once CreatePubsAndSubs() is called, used
@@ -86,7 +86,7 @@ namespace gazebo {
         ///           has loaded and listening to ConnectGazeboToRosTopic and ConnectRosToGazeboTopic messages).
         void CreatePubsAndSubs();
 
-        void Blast3DCallback(Blast3dMsgPtr& blast3d_msg);
+        virtual void Blast3DCallback(Blast3dMsgPtr& blast3d_msg);
 
         /// \brief    Handle for the Gazebo node.
         gazebo::transport::NodePtr node_handle_;

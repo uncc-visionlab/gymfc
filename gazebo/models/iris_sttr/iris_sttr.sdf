@@ -360,7 +360,7 @@
       <child>gps0::link</child>
       <parent>base_link</parent>
     </joint>
-    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
+    <plugin name='wind3d_back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
       <robotNamespace/>
       <reversible>False</reversible>
       <jointName>rotor_0_joint</jointName>
@@ -380,7 +380,7 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/rotor_0/wind</windServerLinkTopic>
     </plugin>
-    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
+    <plugin name='wind3d_back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
       <robotNamespace/>
       <reversible>False</reversible>
       <jointName>rotor_1_joint</jointName>
@@ -400,7 +400,7 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/rotor_1/wind</windServerLinkTopic>
     </plugin>
-    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
+    <plugin name='wind3d_back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
       <robotNamespace/>
       <reversible>False</reversible>
       <jointName>rotor_2_joint</jointName>
@@ -420,7 +420,7 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/rotor_2/wind</windServerLinkTopic>
     </plugin>
-    <plugin name='back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
+    <plugin name='wind3d_back_right_motor_model' filename='libgymfc_gazebo_wind3d_motor_model_plugin.so'>
       <robotNamespace/>
       <reversible>False</reversible>
       <jointName>rotor_3_joint</jointName>
@@ -578,7 +578,7 @@
       </control_channels>
     </plugin>
     -->
-    <plugin name='rotors_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
+    <plugin name='gymfc_gazebo_imu_plugin' filename='libgymfc_gazebo_imu_plugin.so'>
       <robotNamespace/>
       <linkName>/imu_link</linkName>
       <imuTopic>/imu</imuTopic>
@@ -613,16 +613,15 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/anemometer_wind</windServerLinkTopic>
     </plugin>
-    <!--
+    -->
     <plugin name='gazebo_dynamic_wind_plugin' filename='libgazebo_dynamic_wind_plugin.so'>
       <robotNamespace/>
       <frameId>world</frameId>
       <linkName>base_link</linkName>
-      <publishRate>5</publishRate>
+      <publishRate>100</publishRate>
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/iris/base_link/wind</windServerLinkTopic>
     </plugin>
-    -->
     <!--
     <plugin name='microphone_1_plugin' filename='libgazebo_blast3d_microphone_plugin.so'>
       <robotNamespace/>
@@ -635,6 +634,7 @@
       <blast3dServerLinkTopic>/gazebo/default/blast3d/blast_audio</blast3dServerLinkTopic>
     </plugin>
     -->
+    <!--
     <link name='sensor_link'>
       <pose>0.09 0 -0.03 0 -0 0</pose>
       <inertial>
@@ -702,7 +702,7 @@
         </centerOfThrust>
         <sensors>
          <sensor type="imu"/>
-         <!--<sensor type="esc"/>-->
+         <sensor type="esc"/>
          <sensor type="barometer"/>
          <sensor type="groundtruth"/>
          <sensor type="gps"/>
