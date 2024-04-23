@@ -595,7 +595,7 @@
       <robotNamespace/>
       <frameId>world</frameId>
       <linkName>base_link</linkName>
-      <blast3dPressureDataFolder>/home.md1/jzhang72/NetBeansProjects/uncc_wind_control/ros_image/ros_ws/src/gazebo_blast3d/datasets/pressure</blast3dPressureDataFolder>
+      <blast3dPressureDataFolder>/home2/arwillis/uncc_wind_control/python/gymfc/gazebo/plugins/px4_extensions/examples/datasets/pressure</blast3dPressureDataFolder>
       <blast3dServerRegisterLinkTopic>/gazebo/default/blast3d_register_link</blast3dServerRegisterLinkTopic>
       <blast3dServerLinkTopic>/gazebo/default/blast3d/base_link</blast3dServerLinkTopic>
     </plugin>
@@ -613,6 +613,7 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/anemometer_wind</windServerLinkTopic>
     </plugin>
+    <!--
     <plugin name='gazebo_dynamic_wind_plugin' filename='libgazebo_dynamic_wind_plugin.so'>
       <robotNamespace/>
       <frameId>world</frameId>
@@ -621,18 +622,19 @@
       <windServerRegisterLinkTopic>/gazebo/default/world_wind_register_link</windServerRegisterLinkTopic>
       <windServerLinkTopic>/gazebo/default/iris/base_link/wind</windServerLinkTopic>
     </plugin>
-
-
+    -->
+    <!--
     <plugin name='microphone_1_plugin' filename='libgazebo_blast3d_microphone_plugin.so'>
       <robotNamespace/>
       <frameId>world</frameId>
       <linkName>base_link</linkName>
       <publishRate>5</publishRate>
       <audioLinkTopic>audio</audioLinkTopic>
-      <customAudioDataFolder>/home.md1/jzhang72/NetBeansProjects/uncc_wind_control/ros_image/ros_ws/src/gazebo_blast3d/datasets/audio</customAudioDataFolder>
+      <customAudioDataFolder>/home2/arwillis/uncc_wind_control/python/gymfc/gazebo/plugins/px4_extensions/examples/datasets/audio</customAudioDataFolder>
       <blast3dServerRegisterLinkTopic>/gazebo/default/blast3d_register_link</blast3dServerRegisterLinkTopic>
       <blast3dServerLinkTopic>/gazebo/default/blast3d/blast_audio</blast3dServerLinkTopic>
     </plugin>
+    -->
     <link name='sensor_link'>
       <pose>0.09 0 -0.03 0 -0 0</pose>
       <inertial>
@@ -665,7 +667,7 @@
         <update_rate>120</update_rate>
         <always_on>1</always_on>
         <plugin name='event_camera_plugin' filename='libgazebo_blast3d_camera_plugin.so'>
-          <blast3dVideoDataFolder>/home.md1/jzhang72/NetBeansProjects/uncc_wind_control/ros_image/ros_ws/src/gazebo_blast3d/datasets/video</blast3dVideoDataFolder>
+          <blast3dVideoDataFolder>/home2/arwillis/uncc_wind_control/python/gymfc/gazebo/plugins/px4_extensions/examples/datasets/video</blast3dVideoDataFolder>
           <cameraMode>event</cameraMode>
           <cameraName>event_cam</cameraName>
           <frameName>/event_camera_link</frameName>
